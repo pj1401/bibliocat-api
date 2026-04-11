@@ -27,6 +27,10 @@ docker-compose build --no-cache
 # Start database and run setup
 docker-compose up db setup
 docker-compose up db       # Start only database
+
+# Stop container
+docker-compose down
+docker-compose down -v # Removes volumes
 ```
 
 ## Run dev
