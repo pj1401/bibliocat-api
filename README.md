@@ -20,6 +20,13 @@ CSV_PATH=data/google_books_1299.csv
 ```powershell
 # Copy from .example.env to .env
 cp .example.env .env
+
+# Build image
+docker-compose build --no-cache
+
+# Start database and run setup
+docker-compose up db setup
+docker-compose up db       # Start only database
 ```
 
 ## Run dev

@@ -5,8 +5,8 @@ Entry point for the seed script.
 import os
 from dotenv import load_dotenv
 
-from setup.src.database_loader import DatabaseLoader
-from setup.src.models import Book
+from src.database_loader import DatabaseLoader
+from src.models import Book
 
 # Load environment variables
 load_dotenv()
