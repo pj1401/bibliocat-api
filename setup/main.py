@@ -6,13 +6,13 @@ import os
 from dotenv import load_dotenv
 
 from src.database_loader import DatabaseLoader
-from src.models import Book
+from src.models import Base, Book
 
 # Load environment variables
 load_dotenv()
 
 SQL_URI = str(os.getenv("SQL_URI"))
-db_loader = DatabaseLoader(SQL_URI)
+db_loader = DatabaseLoader(SQL_URI, Base)
 
 
 def main():
