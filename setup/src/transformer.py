@@ -11,6 +11,11 @@ def transform_authors(df: pd.DataFrame) -> pd.DataFrame:
     """Transform raw data into authors DataFrame."""
     authors_df = df[["author"]].drop_duplicates().reset_index(drop=True)
     authors_df["id"] = authors_df.index + 1
+    authors_df = authors_df.rename(
+        columns={
+            "author": "name",
+        }
+    )
     return authors_df
 
 
@@ -18,6 +23,11 @@ def transform_publishers(df: pd.DataFrame) -> pd.DataFrame:
     """Transform raw data into publishers DataFrame."""
     publishers_df = df[["publisher"]].drop_duplicates().reset_index(drop=True)
     publishers_df["id"] = publishers_df.index + 1
+    publishers_df = publishers_df.rename(
+        columns={
+            "publisher": "name",
+        }
+    )
     return publishers_df
 
 
