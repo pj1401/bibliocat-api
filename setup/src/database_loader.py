@@ -9,6 +9,8 @@ from sqlalchemy import create_engine, inspect
 from sqlalchemy.orm import sessionmaker, DeclarativeBase
 from sqlalchemy.exc import SQLAlchemyError
 
+from src.models import Author, Publisher
+
 
 class DatabaseLoader:
     def __init__(self, uri: str, base_model: Type[DeclarativeBase]) -> None:
@@ -16,7 +18,32 @@ class DatabaseLoader:
         base_model.metadata.create_all(self.engine)
         self.session_factory = sessionmaker(bind=self.engine)
 
-    def load_table(self, seed_data: pd.DataFrame, model: Type[DeclarativeBase]) -> None:
+    def seed_authors(self, data: pd.DataFrame) -> None:
+        """Seed the authors table."""
+        self.load_table("authors", data, Author)
+
+    def seed_publishers(self, data: pd.DataFrame) -> None:
+        """Seed the publishers table."""
+        self.load_table("publishers", data, Publisher)
+
+    def load_table(
+        self, table_name: str, data: pd.DataFrame, model: Type[DeclarativeBase]
+    ) -> None:
+        """Load seed data from a DataFrame into a table."""
+        session = self.session_factory()
+        try:
+            if inspect(self.engine).has_table(table_name):
+                session.query(model).delete()
+            session.add_all(data.to_dict("records"))
+            session.commit()
+            print(f"Successfully loaded {len(data)} {table_name}.")
+        except SQLAlchemyError as err:
+            session.rollback()
+            raise err
+        finally:
+            session.close()
+    
+    def load_books_table(self, seed_data: pd.DataFrame, model: Type[DeclarativeBase]) -> None:
         """Load seed data from a DataFrame into a table."""
         session = self.session_factory()
         try:

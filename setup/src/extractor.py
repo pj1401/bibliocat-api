@@ -1,5 +1,6 @@
 """
 Extractor module for extracting data from files.
+module: src/extractor.py
 """
 
 from collections.abc import Iterator

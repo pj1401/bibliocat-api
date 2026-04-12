@@ -1,13 +1,14 @@
 """
 Entry point for the seed script.
+module: main.py
 """
 
 import os
 from dotenv import load_dotenv
-from src.transformer import transform_books_data
+from src.transformer import transform_data
 from src.extractor import read_csv_data
 from src.database_loader import DatabaseLoader
-from src.models import Base, Book
+from src.models import Base
 
 # Load environment variables
 load_dotenv()
@@ -21,12 +22,9 @@ def main():
     csv_data = extract_data(CSV_PATH, CHUNK_SIZE)
     db_loader = DatabaseLoader(SQL_URI, Base)
     for chunk in csv_data:
-        print(chunk.head())
-        # TODO: transform data
-        transformed_df = transform_books_data(chunk)
-        # seed database
-        db_loader.load_table(transformed_df, Book)
-        pass
+        authors_df, publishers_df = transform_data(chunk)
+        db_loader.seed_authors(authors_df)
+        db_loader.seed_publishers(publishers_df)
 
 
 def extract_data(file_path: str, chunk_size: int):
