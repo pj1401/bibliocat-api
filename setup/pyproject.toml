@@ -5,6 +5,7 @@ requires-python = ">=3.12"
 dependencies = [
     "dotenv>=0.9.9",
     "pandas>=3.0.2",
+    "psycopg2>=2.9.11",
     "sqlalchemy>=2.0.49",
 ]
 
