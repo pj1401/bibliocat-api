@@ -31,7 +31,17 @@ def transform_publishers(df: pd.DataFrame) -> pd.DataFrame:
     return publishers_df
 
 
-def transform_data(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
+def transform_categories(df: pd.DataFrame) -> pd.DataFrame:
+    """Transform raw data into categories DataFrame."""
+    categories_df = (
+        df["generes"].str.split(", ").explode().str.strip().to_frame(name="name")
+    )
+    categories_df = categories_df.drop_duplicates().reset_index(drop=True)
+    categories_df["id"] = categories_df.index + 1
+    return categories_df
+
+
+def transform_data(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """
     Split and transform the raw DataFrame into authors, publishers, categories, and books.
     :param df: The DataFrame to transform.
@@ -39,4 +49,5 @@ def transform_data(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
     """
     authors_df = transform_authors(df)
     publishers_df = transform_publishers(df)
-    return authors_df, publishers_df
+    categories_df = transform_categories(df)
+    return authors_df, publishers_df, categories_df

@@ -9,7 +9,7 @@ from sqlalchemy import create_engine, inspect
 from sqlalchemy.orm import sessionmaker, DeclarativeBase
 from sqlalchemy.exc import SQLAlchemyError
 
-from src.models import Author, Publisher
+from src.models import Author, Category, Publisher
 
 # Use generic type model
 M = TypeVar("M", bound=DeclarativeBase)
@@ -20,6 +20,14 @@ class DatabaseLoader:
         self.engine = create_engine(uri, pool_pre_ping=True)
         base_model.metadata.create_all(self.engine)
         self.session_factory = sessionmaker(bind=self.engine)
+
+    def seed_database(
+        self, data: tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]
+    ) -> None:
+        authors_df, publishers_df, categories_df = data
+        self.seed_authors(authors_df)
+        self.seed_publishers(publishers_df)
+        self.seed_categories(categories_df)
 
     def seed_authors(self, data: pd.DataFrame) -> None:
         """Seed the authors table."""
@@ -32,6 +40,13 @@ class DatabaseLoader:
             Publisher(name=row["name"], id=row["id"]) for _, row in data.iterrows()
         ]
         self.load_table("publishers", publishers, Publisher)
+
+    def seed_categories(self, data: pd.DataFrame) -> None:
+        """Seed the categories table."""
+        categories = [
+            Category(name=row["name"], id=row["id"]) for _, row in data.iterrows()
+        ]
+        self.load_table("categories", categories, Category)
 
     def load_table(self, table_name: str, data: List[M], model: Type[M]) -> None:
         """Load seed data from a DataFrame into a table."""

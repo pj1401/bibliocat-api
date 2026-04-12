@@ -22,9 +22,8 @@ def main():
     csv_data = extract_data(CSV_PATH, CHUNK_SIZE)
     db_loader = DatabaseLoader(SQL_URI, Base)
     for chunk in csv_data:
-        authors_df, publishers_df = transform_data(chunk)
-        db_loader.seed_authors(authors_df)
-        db_loader.seed_publishers(publishers_df)
+        transformed_dfs = transform_data(chunk)
+        db_loader.seed_database(transformed_dfs)
 
 
 def extract_data(file_path: str, chunk_size: int):
