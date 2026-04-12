@@ -4,14 +4,14 @@ Entry point for the seed script.
 
 import os
 from dotenv import load_dotenv
-from setup.src.extractor import read_csv_data
+from src.extractor import read_csv_data
 from src.database_loader import DatabaseLoader
 from src.models import Base, Book
 
 # Load environment variables
 load_dotenv()
 
-CSV_PATH = os.getenv("SQL_URI", "")
+CSV_PATH = os.getenv("CSV_PATH", "")
 CHUNK_SIZE = int(os.getenv("CHUNK_SIZE", 5000))
 SQL_URI = str(os.getenv("SQL_URI"))
 db_loader = DatabaseLoader(SQL_URI, Base)
@@ -19,6 +19,11 @@ db_loader = DatabaseLoader(SQL_URI, Base)
 
 def main():
     csv_data = extract_data(CSV_PATH, CHUNK_SIZE)
+    for chunk in csv_data:
+        print(chunk.head())
+        # transform data
+        # seed database
+        pass
     seed_books(db_loader)
 
 
@@ -28,7 +33,7 @@ def extract_data(file_path: str, chunk_size: int):
         chunk_size,
         [
             "title",
-            "authors",
+            "author",
             "language",
             "ISBN",
             "rating",
