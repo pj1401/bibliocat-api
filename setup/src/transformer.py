@@ -41,7 +41,37 @@ def transform_categories(df: pd.DataFrame) -> pd.DataFrame:
     return categories_df
 
 
-def transform_data(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+def transform_books(
+    df: pd.DataFrame, publisher_map: dict, category_map: dict
+) -> pd.DataFrame:
+    """Transform raw data into books DataFrame."""
+    books_df = df.copy()
+    books_df = books_df.rename(
+        columns={
+            "ISBN": "isbn",
+            "published_date": "published_date",
+            "generes": "categories_list",
+            "description": "description",
+        }
+    )
+
+    # Map publisher name to publisher_id
+    books_df["publisher_id"] = books_df["publisher"].map(publisher_map)
+
+    # Map categories (split and explode)
+    books_df["categories_list"] = books_df["categories_list"].str.split(", ")
+    books_df = books_df.explode("categories_list")
+    books_df["category_id"] = books_df["categories_list"].map(category_map)
+
+    # Drop unnecessary columns
+    books_df = books_df.drop(columns=["publisher", "categories_list"])
+    print(books_df.head())
+    return books_df
+
+
+def transform_data(
+    df: pd.DataFrame,
+) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """
     Split and transform the raw DataFrame into authors, publishers, categories, and books.
     :param df: The DataFrame to transform.
@@ -50,4 +80,10 @@ def transform_data(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame, pd.Dat
     authors_df = transform_authors(df)
     publishers_df = transform_publishers(df)
     categories_df = transform_categories(df)
-    return authors_df, publishers_df, categories_df
+
+    # Create mapping dictionaries for publishers and categories
+    publisher_map = publishers_df.set_index("name")["id"].to_dict()
+    category_map = categories_df.set_index("name")["id"].to_dict()
+
+    books_df = transform_books(df, publisher_map, category_map)
+    return authors_df, publishers_df, categories_df, books_df

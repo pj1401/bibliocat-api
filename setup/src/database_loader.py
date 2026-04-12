@@ -9,7 +9,7 @@ from sqlalchemy import create_engine, inspect
 from sqlalchemy.orm import sessionmaker, DeclarativeBase
 from sqlalchemy.exc import SQLAlchemyError
 
-from src.models import Author, Category, Publisher
+from src.models import Author, Book, Category, Publisher
 
 # Use generic type model
 M = TypeVar("M", bound=DeclarativeBase)
@@ -22,12 +22,13 @@ class DatabaseLoader:
         self.session_factory = sessionmaker(bind=self.engine)
 
     def seed_database(
-        self, data: tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]
+        self, data: tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]
     ) -> None:
-        authors_df, publishers_df, categories_df = data
+        authors_df, publishers_df, categories_df, books_df = data
         self.seed_authors(authors_df)
         self.seed_publishers(publishers_df)
         self.seed_categories(categories_df)
+        self.seed_books(books_df)
 
     def seed_authors(self, data: pd.DataFrame) -> None:
         """Seed the authors table."""
@@ -47,6 +48,23 @@ class DatabaseLoader:
             Category(name=row["name"], id=row["id"]) for _, row in data.iterrows()
         ]
         self.load_table("categories", categories, Category)
+
+    def seed_books(self, data: pd.DataFrame) -> None:
+        """Seed the books table."""
+        books = [
+            Book(
+                title=row["title"],
+                isbn=row["isbn"],
+                published_date=row["published_date"],
+                description=row["description"],
+                language=row["language"],
+                page_count=row["page_count"],
+                rating=row["rating"],
+                voters=row["voters"],
+            )
+            for _, row in data.iterrows()
+        ]
+        self.load_table("books", books, Book)
 
     def load_table(self, table_name: str, data: List[M], model: Type[M]) -> None:
         """Load seed data from a DataFrame into a table."""
