@@ -9,7 +9,7 @@ class Author(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String(255), nullable=False)
-    books = relationship("Book", backref="author")
+    books = relationship("Book", secondary="authors_books_table", backref="authors")
 
 
 class Book(Base):
@@ -26,13 +26,14 @@ class Book(Base):
     voters = Column(Integer)  # Number of reviewers
 
     publisher_id = Column(Integer, ForeignKey("publishers.id"))
+    categories = relationship("Category", secondary="categories_books_table", backref="books")
 
 
 authors_books_table = Table(
     "authors_books_table",
     Base.metadata,
-    Column(Integer, ForeignKey("authors.id")),
-    Column(Integer, ForeignKey("books.id")),
+    Column("author_id", Integer, ForeignKey("authors.id"), primary_key=True),
+    Column("book_id", Integer, ForeignKey("books.id"), primary_key=True),
 )
 
 
@@ -43,17 +44,15 @@ class Publisher(Base):
     name = Column(String(255), nullable=False)
     books = relationship("Book", backref="publisher")
 
-
 class Category(Base):
     __tablename__ = "categories"
 
     id = Column(Integer, primary_key=True)
     name = Column(String(255), nullable=False)
 
-
 categories_books_table = Table(
     "categories_books_table",
     Base.metadata,
-    Column(Integer, ForeignKey("categories.id")),
-    Column(Integer, ForeignKey("books.id")),
+    Column("category_id", Integer, ForeignKey("categories.id"), primary_key=True),
+    Column("book_id", Integer, ForeignKey("books.id"), primary_key=True),
 )
