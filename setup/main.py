@@ -4,6 +4,7 @@ Entry point for the seed script.
 
 import os
 from dotenv import load_dotenv
+from src.transformer import transform_books_data
 from src.extractor import read_csv_data
 from src.database_loader import DatabaseLoader
 from src.models import Base, Book
@@ -14,17 +15,18 @@ load_dotenv()
 CSV_PATH = os.getenv("CSV_PATH", "")
 CHUNK_SIZE = int(os.getenv("CHUNK_SIZE", 5000))
 SQL_URI = str(os.getenv("SQL_URI"))
-db_loader = DatabaseLoader(SQL_URI, Base)
 
 
 def main():
     csv_data = extract_data(CSV_PATH, CHUNK_SIZE)
+    db_loader = DatabaseLoader(SQL_URI, Base)
     for chunk in csv_data:
         print(chunk.head())
-        # transform data
+        # TODO: transform data
+        transformed_df = transform_books_data(chunk)
         # seed database
+        db_loader.load_table(transformed_df, Book)
         pass
-    seed_books(db_loader)
 
 
 def extract_data(file_path: str, chunk_size: int):
@@ -45,24 +47,6 @@ def extract_data(file_path: str, chunk_size: int):
             "page_count",
         ],
     )
-
-
-def seed_books(db_loader: DatabaseLoader):
-    books = [
-        Book(
-            title="The Great Gatsby",
-            author="F. Scott Fitzgerald",
-            isbn="9780743273565",
-            published_date="1925-04-10",
-        ),
-        Book(
-            title="1984",
-            author="George Orwell",
-            isbn="9780451524935",
-            published_date="1949-06-08",
-        ),
-    ]
-    db_loader.load_table(books, Book)
 
 
 if __name__ == "__main__":

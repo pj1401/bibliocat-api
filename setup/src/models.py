@@ -1,3 +1,7 @@
+"""Models module
+module: src/models.py
+"""
+
 from sqlalchemy import Table, Column, ForeignKey, Integer, String, Date, Numeric
 from sqlalchemy.orm import declarative_base, relationship
 
@@ -26,7 +30,9 @@ class Book(Base):
     voters = Column(Integer)  # Number of reviewers
 
     publisher_id = Column(Integer, ForeignKey("publishers.id"))
-    categories = relationship("Category", secondary="categories_books_table", backref="books")
+    categories = relationship(
+        "Category", secondary="categories_books_table", backref="books"
+    )
 
 
 authors_books_table = Table(
@@ -44,11 +50,13 @@ class Publisher(Base):
     name = Column(String(255), nullable=False)
     books = relationship("Book", backref="publisher")
 
+
 class Category(Base):
     __tablename__ = "categories"
 
     id = Column(Integer, primary_key=True)
     name = Column(String(255), nullable=False)
+
 
 categories_books_table = Table(
     "categories_books_table",
