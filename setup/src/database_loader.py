@@ -4,6 +4,7 @@ module: src/database_loader.py
 """
 
 from typing import List, Type, TypeVar
+import numpy as np
 import pandas as pd
 from sqlalchemy import create_engine, inspect
 from sqlalchemy.orm import sessionmaker, DeclarativeBase
@@ -36,8 +37,8 @@ class DatabaseLoader:
         self.seed_publishers(publishers_df)
         self.seed_categories(categories_df)
         self.seed_books(books_df)
-        self.seed_authors_books(books_df, authors_df)
-        self.seed_categories_books(books_df, authors_df)
+        self.seed_authors_books(books_df)
+        self.seed_categories_books(books_df)
 
     def seed_authors(self, data: pd.DataFrame) -> None:
         """Seed the authors table."""
@@ -91,9 +92,7 @@ class DatabaseLoader:
         finally:
             session.close()
 
-    def seed_authors_books(
-        self, books_data: pd.DataFrame, authors_data: pd.DataFrame
-    ) -> None:
+    def seed_authors_books(self, books_data: pd.DataFrame) -> None:
         """Seed the authors_books relationship table."""
         session = self.session_factory()
         try:
@@ -120,9 +119,7 @@ class DatabaseLoader:
         finally:
             session.close()
 
-    def seed_categories_books(
-        self, books_data: pd.DataFrame, categories_data: pd.DataFrame
-    ) -> None:
+    def seed_categories_books(self, books_data: pd.DataFrame) -> None:
         """Seed the categories_books relationship table."""
         session = self.session_factory()
         try:
@@ -135,11 +132,16 @@ class DatabaseLoader:
                         f"Warning: Book with ISBN {row['isbn']} not found in the database."
                     )
                     continue
-                if pd.notna(row.get("category_ids")):
-                    for category_id in row["category_ids"]:
+                category_ids = row.get("category_ids", [])
+                if isinstance(category_ids, (list, np.ndarray)):
+                    for category_id in category_ids:
                         relationships.append(
-                            {"category_id": category_id, "book_id": book.id}
+                            {"category_id": int(category_id), "book_id": book.id}
                         )
+                elif pd.notna(category_ids):
+                    relationships.append(
+                        {"category_id": int(category_ids), "book_id": book.id}
+                    )
             if relationships:
                 session.execute(categories_books_table.insert(), relationships)
                 session.commit()
