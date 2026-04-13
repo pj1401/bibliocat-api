@@ -25,6 +25,7 @@ RUN uv sync --frozen --no-dev
 COPY setup/src ./src
 COPY setup/main.py .
 COPY setup/data-subset/ ./data-subset
+# COPY setup/data/ ./data
 
 # Set PYTHONPATH to include /app
 ENV PYTHONPATH=/app

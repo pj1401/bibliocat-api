@@ -1,12 +1,14 @@
 """
 Entry point for the seed script.
+module: main.py
 """
 
 import os
 from dotenv import load_dotenv
+from src.transformer import transform_data
 from src.extractor import read_csv_data
 from src.database_loader import DatabaseLoader
-from src.models import Base, Book
+from src.models import Base
 
 # Load environment variables
 load_dotenv()
@@ -14,17 +16,14 @@ load_dotenv()
 CSV_PATH = os.getenv("CSV_PATH", "")
 CHUNK_SIZE = int(os.getenv("CHUNK_SIZE", 5000))
 SQL_URI = str(os.getenv("SQL_URI"))
-db_loader = DatabaseLoader(SQL_URI, Base)
 
 
 def main():
     csv_data = extract_data(CSV_PATH, CHUNK_SIZE)
+    db_loader = DatabaseLoader(SQL_URI, Base)
     for chunk in csv_data:
-        print(chunk.head())
-        # transform data
-        # seed database
-        pass
-    seed_books(db_loader)
+        transformed_dfs = transform_data(chunk)
+        db_loader.seed_database(transformed_dfs)
 
 
 def extract_data(file_path: str, chunk_size: int):
@@ -34,35 +33,17 @@ def extract_data(file_path: str, chunk_size: int):
         [
             "title",
             "author",
-            "language",
-            "ISBN",
             "rating",
-            "publisher",
-            "published_date",
             "voters",
             "description",
-            "generes",
+            "publisher",
             "page_count",
+            "generes",
+            "ISBN",
+            "language",
+            "published_date",
         ],
     )
-
-
-def seed_books(db_loader: DatabaseLoader):
-    books = [
-        Book(
-            title="The Great Gatsby",
-            author="F. Scott Fitzgerald",
-            isbn="9780743273565",
-            published_date="1925-04-10",
-        ),
-        Book(
-            title="1984",
-            author="George Orwell",
-            isbn="9780451524935",
-            published_date="1949-06-08",
-        ),
-    ]
-    db_loader.load_table(books, Book)
 
 
 if __name__ == "__main__":
