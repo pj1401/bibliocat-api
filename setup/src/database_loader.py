@@ -3,7 +3,7 @@ DatabaseLoader class.
 module: src/database_loader.py
 """
 
-from typing import List, Type, TypeVar
+from typing import Dict, List, Optional, Type, TypeVar
 import numpy as np
 import pandas as pd
 from sqlalchemy import Table, create_engine, inspect
@@ -94,13 +94,13 @@ class DatabaseLoader:
 
     def seed_authors_books(self, books_data: pd.DataFrame) -> None:
         """Seed the authors_books relationship table."""
-        relationships = []
+        relationships: List[Dict[str, int]] = []
         for _, row in books_data.iterrows():
-            book = self.get_book_by_isbn(isbn=row["isbn"])
+            book = self.get_book_by_isbn(row["isbn"])
             if not book:
                 continue
             for author_id in row["author_ids"]:
-                relationships.append({"author_id": author_id, "book_id": book.id})
+                relationships.append({"author_id": author_id, "book_id": int(book.id)})
         if relationships:
             self.seed_relationship_table(
                 relationships, authors_books_table, "author-book"
@@ -108,27 +108,27 @@ class DatabaseLoader:
 
     def seed_categories_books(self, books_data: pd.DataFrame) -> None:
         """Seed the categories_books relationship table."""
-        relationships = []
+        relationships: List[Dict[str, int]] = []
         for _, row in books_data.iterrows():
-            book = self.get_book_by_isbn(isbn=row["isbn"])
+            book = self.get_book_by_isbn(row["isbn"])
             if not book:
                 continue
             category_ids = row.get("category_ids", [])
             if isinstance(category_ids, (list, np.ndarray)):
                 for category_id in category_ids:
                     relationships.append(
-                        {"category_id": int(category_id), "book_id": book.id}
+                        {"category_id": int(category_id), "book_id": int(book.id)}
                     )
             elif pd.notna(category_ids):
                 relationships.append(
-                    {"category_id": int(category_ids), "book_id": book.id}
+                    {"category_id": int(category_ids), "book_id": int(book.id)}
                 )
         if relationships:
             self.seed_relationship_table(
                 relationships, categories_books_table, "category-book"
             )
 
-    def get_book_by_isbn(self, isbn: str):
+    def get_book_by_isbn(self, isbn: str) -> Optional[Book]:
         session = self.session_factory()
         try:
             book = session.query(Book).filter_by(isbn=isbn).first()
@@ -142,7 +142,7 @@ class DatabaseLoader:
             session.close()
 
     def seed_relationship_table(
-        self, relationships: list, table: Table, relationship_name: str
+        self, relationships: List[Dict[str, int]], table: Table, relationship_name: str
     ) -> None:
         """Seed a relationship table."""
         session = self.session_factory()
