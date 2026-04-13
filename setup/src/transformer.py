@@ -5,7 +5,7 @@ module: src/transformer.py
 """
 
 import pandas as pd
-from typing import Dict
+from typing import List, Dict, Any, cast
 
 
 def transform_authors(df: pd.DataFrame) -> pd.DataFrame:
@@ -70,26 +70,14 @@ def transform_books(
 
     # Map authors (keep as a list of author_ids)
     books_df["author_ids"] = (
-        books_df["author"]
-        .str.split(", ")
-        .apply(
-            lambda x: [
-                author_map.get(a.strip(), None) for a in x if a.strip() in author_map
-            ]
-        )
+        books_df["author"].str.split(", ").apply(map_author_ids, args=(author_map,))
     )
 
     # Map categories (keep as a list of category_ids)
     books_df["category_ids"] = (
         books_df["categories_list"]
         .str.split(", ")
-        .apply(
-            lambda x: [
-                category_map.get(c.strip(), None)
-                for c in x
-                if c.strip() in category_map
-            ]
-        )
+        .apply(map_category_ids, args=(category_map,))
     )
 
     # Drop unnecessary columns
@@ -130,6 +118,24 @@ def convert_int_columns(df: pd.DataFrame, int_columns: list[str]) -> pd.DataFram
     return df
 
 
+def map_author_ids(author_list: List[str], author_map: Dict[str, int]) -> List[Any]:
+    """Map author names to author IDs."""
+    return [
+        author_map.get(a.strip(), None) for a in author_list if a.strip() in author_map
+    ]
+
+
+def map_category_ids(
+    category_list: List[str], category_map: Dict[str, int]
+) -> List[Any]:
+    """Map category names to category IDs."""
+    return [
+        category_map.get(c.strip(), None)
+        for c in category_list
+        if c.strip() in category_map
+    ]
+
+
 def fill_missing(
     df: pd.DataFrame, col: str, default: int | str = "Unknown"
 ) -> pd.DataFrame:
@@ -154,9 +160,11 @@ def transform_data(
     categories_df = transform_categories(df)
 
     # Create mapping dictionaries
-    author_map = authors_df.set_index("name")["id"].to_dict()
-    publisher_map = publishers_df.set_index("name")["id"].to_dict()
-    category_map = categories_df.set_index("name")["id"].to_dict()
+    author_map = cast(Dict[str, int], authors_df.set_index("name")["id"].to_dict())
+    publisher_map = cast(
+        Dict[str, int], publishers_df.set_index("name")["id"].to_dict()
+    )
+    category_map = cast(Dict[str, int], categories_df.set_index("name")["id"].to_dict())
 
     books_df = transform_books(df, publisher_map, category_map, author_map)
     return authors_df, publishers_df, categories_df, books_df
