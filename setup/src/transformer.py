@@ -9,13 +9,16 @@ import pandas as pd
 
 def transform_authors(df: pd.DataFrame) -> pd.DataFrame:
     """Transform raw data into authors DataFrame."""
-    authors_df = df[["author"]].drop_duplicates().reset_index(drop=True)
-    authors_df["id"] = authors_df.index + 1
-    authors_df = authors_df.rename(
-        columns={
-            "author": "name",
-        }
+    authors_df = (
+        df["author"]
+        .str.split(", ")
+        .explode()
+        .str.strip()
+        .to_frame(name="name")
+        .drop_duplicates()
+        .reset_index(drop=True)
     )
+    authors_df["id"] = authors_df.index + 1
     return normalize_columns(authors_df)
 
 
@@ -42,7 +45,7 @@ def transform_categories(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def transform_books(
-    df: pd.DataFrame, publisher_map: dict, category_map: dict
+    df: pd.DataFrame, publisher_map: dict, category_map: dict, author_map: dict
 ) -> pd.DataFrame:
     """Transform raw data into books DataFrame."""
     books_df = df.copy()
@@ -67,13 +70,32 @@ def transform_books(
     # Map publisher name to publisher_id
     books_df["publisher_id"] = books_df["publisher"].map(publisher_map)
 
-    # Map categories (split and explode)
-    books_df["categories_list"] = books_df["categories_list"].str.split(", ")
-    books_df = books_df.explode("categories_list")
-    books_df["category_id"] = books_df["categories_list"].map(category_map)
+    # Map authors (keep as a list of author_ids)
+    books_df["author_ids"] = (
+        books_df["author"]
+        .str.split(", ")
+        .apply(
+            lambda x: [
+                author_map.get(a.strip(), None) for a in x if a.strip() in author_map
+            ]
+        )
+    )
+
+    # Map categories (keep as a list of category_ids)
+    books_df["category_ids"] = (
+        books_df["categories_list"]
+        .str.split(", ")
+        .apply(
+            lambda x: [
+                category_map.get(c.strip(), None)
+                for c in x
+                if c.strip() in category_map
+            ]
+        )
+    )
 
     # Drop unnecessary columns
-    books_df = books_df.drop(columns=["publisher", "categories_list"])
+    books_df = books_df.drop(columns=["publisher", "author", "categories_list"])
     return normalize_columns(books_df)
 
 
@@ -105,18 +127,14 @@ def normalize_columns(df: pd.DataFrame) -> pd.DataFrame:
 def transform_data(
     df: pd.DataFrame,
 ) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
-    """
-    Split and transform the raw DataFrame into authors, publishers, categories, and books.
-    :param df: The DataFrame to transform.
-    :returns: A tuple consisting of the transformed data split into four DataFrames.
-    """
     authors_df = transform_authors(df)
     publishers_df = transform_publishers(df)
     categories_df = transform_categories(df)
 
-    # Create mapping dictionaries for publishers and categories
+    # Create mapping dictionaries
+    author_map = authors_df.set_index("name")["id"].to_dict()
     publisher_map = publishers_df.set_index("name")["id"].to_dict()
     category_map = categories_df.set_index("name")["id"].to_dict()
 
-    books_df = transform_books(df, publisher_map, category_map)
+    books_df = transform_books(df, publisher_map, category_map, author_map)
     return authors_df, publishers_df, categories_df, books_df

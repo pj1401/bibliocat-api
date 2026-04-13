@@ -56,11 +56,12 @@ class DatabaseLoader:
                 title=row["title"],
                 isbn=row["isbn"],
                 published_date=row["published_date"],
-                description=row["description"],
-                language=row["language"],
+                description=row.get("description", ""),
+                language=row.get("language", ""),
                 page_count=row["page_count"],
                 rating=row["rating"],
                 voters=row["voters"],
+                publisher_id=row["publisher_id"],
             )
             for _, row in data.iterrows()
         ]
