@@ -6,7 +6,7 @@ module: src/database_loader.py
 from typing import List, Type, TypeVar
 import numpy as np
 import pandas as pd
-from sqlalchemy import create_engine, inspect
+from sqlalchemy import Table, create_engine, inspect
 from sqlalchemy.orm import sessionmaker, DeclarativeBase
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -94,60 +94,47 @@ class DatabaseLoader:
 
     def seed_authors_books(self, books_data: pd.DataFrame) -> None:
         """Seed the authors_books relationship table."""
-        session = self.session_factory()
-        try:
-            session.query(authors_books_table).delete()
-            relationships = []
-            for _, row in books_data.iterrows():
-                book = session.query(Book).filter_by(isbn=row["isbn"]).first()
-                if not book:
-                    print(
-                        f"Warning: Book with ISBN {row['isbn']} not found in the database."
-                    )
-                    continue
-                for author_id in row["author_ids"]:
-                    relationships.append({"author_id": author_id, "book_id": book.id})
-            if relationships:
-                session.execute(authors_books_table.insert(), relationships)
-                session.commit()
-                print(
-                    f"Successfully seeded {len(relationships)} author-book relationships."
-                )
-        except SQLAlchemyError as err:
-            session.rollback()
-            raise err
-        finally:
-            session.close()
+        relationships = []
+        for _, row in books_data.iterrows():
+            book = self.get_book_by_isbn(isbn=row["isbn"])
+            if not book:
+                continue
+            for author_id in row["author_ids"]:
+                relationships.append({"author_id": author_id, "book_id": book.id})
+        if relationships:
+            self.seed_relationship_table(
+                relationships, authors_books_table, "author-book"
+            )
 
     def seed_categories_books(self, books_data: pd.DataFrame) -> None:
         """Seed the categories_books relationship table."""
+        relationships = []
+        for _, row in books_data.iterrows():
+            book = self.get_book_by_isbn(isbn=row["isbn"])
+            if not book:
+                continue
+            category_ids = row.get("category_ids", [])
+            if isinstance(category_ids, (list, np.ndarray)):
+                for category_id in category_ids:
+                    relationships.append(
+                        {"category_id": int(category_id), "book_id": book.id}
+                    )
+            elif pd.notna(category_ids):
+                relationships.append(
+                    {"category_id": int(category_ids), "book_id": book.id}
+                )
+        if relationships:
+            self.seed_relationship_table(
+                relationships, categories_books_table, "category-book"
+            )
+
+    def get_book_by_isbn(self, isbn: str):
         session = self.session_factory()
         try:
-            session.query(categories_books_table).delete()
-            relationships = []
-            for _, row in books_data.iterrows():
-                book = session.query(Book).filter_by(isbn=row["isbn"]).first()
-                if not book:
-                    print(
-                        f"Warning: Book with ISBN {row['isbn']} not found in the database."
-                    )
-                    continue
-                category_ids = row.get("category_ids", [])
-                if isinstance(category_ids, (list, np.ndarray)):
-                    for category_id in category_ids:
-                        relationships.append(
-                            {"category_id": int(category_id), "book_id": book.id}
-                        )
-                elif pd.notna(category_ids):
-                    relationships.append(
-                        {"category_id": int(category_ids), "book_id": book.id}
-                    )
-            if relationships:
-                session.execute(categories_books_table.insert(), relationships)
-                session.commit()
-                print(
-                    f"Successfully seeded {len(relationships)} category-book relationships."
-                )
+            book = session.query(Book).filter_by(isbn=isbn).first()
+            if not book:
+                print(f"Warning: Book with ISBN {isbn} not found in the database.")
+            return book
         except SQLAlchemyError as err:
             session.rollback()
             raise err
@@ -155,23 +142,17 @@ class DatabaseLoader:
             session.close()
 
     def seed_relationship_table(
-        self, left_data: pd.DataFrame, right_data: pd.DataFrame
+        self, relationships: list, table: Table, relationship_name: str
     ) -> None:
         """Seed a relationship table."""
         session = self.session_factory()
         try:
-            session.query(authors_books_table).delete()
-            author_map = {author.name: author.id for _, author in right_data.iterrows()}
-            book_map = {book.title: book.id for _, book in left_data.iterrows()}
-            relationships = [
-                authors_books_table.insert().values(
-                    author_id=author_map[row["author"]], book_id=book_map[row["title"]]
-                )
-                for _, row in left_data.iterrows()
-            ]
-            session.execute(authors_books_table.insert(), relationships)
+            session.query(table).delete()
+            session.execute(table.insert(), relationships)
             session.commit()
-            print("Successfully seeded authors_books relationship table.")
+            print(
+                f"Successfully seeded {len(relationships)} {relationship_name} relationships."
+            )
         except SQLAlchemyError as err:
             session.rollback()
             raise err
