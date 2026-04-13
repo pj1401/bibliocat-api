@@ -26,7 +26,7 @@ class Book(Base):
     description = Column(String, default="")
     language = Column(String)
     page_count = Column(Integer, default=1)
-    rating = Column(Numeric(precision=2, scale=1))
+    rating = Column(Numeric(precision=2, scale=1), default=0)
     voters = Column(Integer, default=0)  # Number of reviewers
 
     publisher_id = Column(Integer, ForeignKey("publishers.id"))

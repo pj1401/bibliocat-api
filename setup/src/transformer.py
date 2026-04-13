@@ -38,7 +38,7 @@ def transform_categories(df: pd.DataFrame) -> pd.DataFrame:
     )
     categories_df = categories_df.drop_duplicates().reset_index(drop=True)
     categories_df["id"] = categories_df.index + 1
-    return normalize_columns(fill_missing(categories_df))
+    return normalize_columns(categories_df)
 
 
 def transform_books(
@@ -46,6 +46,8 @@ def transform_books(
 ) -> pd.DataFrame:
     """Transform raw data into books DataFrame."""
     books_df = df.copy()
+
+    # Rename columns
     books_df = books_df.rename(
         columns={
             "ISBN": "isbn",
@@ -53,15 +55,16 @@ def transform_books(
             "generes": "categories_list",
         }
     )
-    books_df = fill_missing(books_df)
 
-    books_df["voters"] = (
-        books_df["voters"]
-        .astype(str)
-        .str.replace(",", "", regex=False)
-        .str.replace(".", "", regex=False)
-        .astype(int)
-    )
+    # Fill missing values and convert invalid values.
+    books_df = fill_missing(books_df, "voters", 0)
+    books_df = fill_missing(books_df, "rating", 0)
+    books_df = fill_missing(books_df, "page_count", 1)
+    numeric_columns = ["voters", "rating", "page_count"]
+    books_df = convert_numeric_columns(books_df, numeric_columns)
+    books_df["voters"] = books_df["voters"].astype(int)
+    books_df["rating"] = books_df["rating"].astype(float)
+    books_df["page_count"] = books_df["page_count"].astype(int)
 
     # Map publisher name to publisher_id
     books_df["publisher_id"] = books_df["publisher"].map(publisher_map)
@@ -77,9 +80,29 @@ def transform_books(
     return normalize_columns(books_df)
 
 
-def fill_missing(df: pd.DataFrame, default: str = "Unknown") -> pd.DataFrame:
+def convert_numeric_columns(
+    df: pd.DataFrame, numeric_columns: list[str]
+) -> pd.DataFrame:
+    """Convert specified columns to numeric, handling commas, periods, and non-numeric values."""
+    for col in numeric_columns:
+        if col in df.columns:
+            df[col] = (
+                df[col]
+                .astype(str)
+                .str.replace(",", "", regex=False)
+                .str.replace(".", "", regex=False)
+            )
+            df[col] = pd.to_numeric(df[col], errors="coerce")
+    return df
+
+
+def fill_missing(
+    df: pd.DataFrame, col: str, default: int | str = "Unknown"
+) -> pd.DataFrame:
     """Replace NaN / None values with *default*."""
-    return df.fillna(default)
+    df = df.copy()
+    df[col] = df[col].fillna(default)
+    return df
 
 
 def normalize_columns(df: pd.DataFrame) -> pd.DataFrame:
