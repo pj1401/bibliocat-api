@@ -9,7 +9,14 @@ from sqlalchemy import create_engine, inspect
 from sqlalchemy.orm import sessionmaker, DeclarativeBase
 from sqlalchemy.exc import SQLAlchemyError
 
-from src.models import Author, Book, Category, Publisher
+from src.models import (
+    Author,
+    Book,
+    Category,
+    Publisher,
+    authors_books_table,
+    categories_books_table,
+)
 
 # Use generic type model
 M = TypeVar("M", bound=DeclarativeBase)
@@ -51,7 +58,6 @@ class DatabaseLoader:
 
     def seed_books(self, data: pd.DataFrame) -> None:
         """Seed the books table and its relationships."""
-        session = self.session_factory()
         books = [
             Book(
                 title=row["title"],
@@ -68,28 +74,8 @@ class DatabaseLoader:
         ]
         # Seed books
         self.load_table("books", books, Book)
-
-        # Seed authors_books_table
-        authors_books = [
-            {"author_id": author_id, "book_id": book.id}
-            for book in session.query(Book).all()
-            for author_id in book.authors
-            if author_id is not None
-        ]
-        if authors_books:
-            session.execute(authors_books_table.insert().values(authors_books))
-            session.commit()
-
-        # Seed categories_books_table
-        categories_books = [
-            {"category_id": category_id, "book_id": book.id}
-            for book in session.query(Book).all()
-            for category_id in book.categories
-            if category_id is not None
-        ]
-        if categories_books:
-            session.execute(categories_books_table.insert().values(categories_books))
-            session.commit()
+        self.seed_authors_books_table()
+        self.seed_categories_books_table()
 
     def load_table(self, table_name: str, data: List[M], model: Type[M]) -> None:
         """Load seed data from a DataFrame into a table."""
@@ -105,3 +91,37 @@ class DatabaseLoader:
             raise err
         finally:
             session.close()
+
+    def seed_authors_books_table(
+        self,
+    ) -> None:
+        """Seed the authors_books table."""
+        session = self.session_factory()
+        authors_books = [
+            {"author_id": author_id, "book_id": book.id}
+            for book in session.query(Book).all()
+            for author_id in book.authors
+            if author_id is not None
+        ]
+        if authors_books:
+            session.execute(authors_books_table.insert().values(authors_books))
+            session.commit()
+
+    def seed_categories_books_table(
+        self,
+    ) -> None:
+        """Seed the categories_books table."""
+        session = self.session_factory()
+        categories_books = [
+            {"category_id": category_id, "book_id": book.id}
+            for book in session.query(Book).all()
+            for category_id in book.categories
+            if category_id is not None
+        ]
+        if categories_books:
+            session.execute(categories_books_table.insert().values(categories_books))
+            session.commit()
+
+    def seed_relationship_table(self) -> None:
+        """Seed a relationship table."""
+        session = self.session_factory()
