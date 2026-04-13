@@ -60,11 +60,9 @@ def transform_books(
     books_df = fill_missing(books_df, "voters", 0)
     books_df = fill_missing(books_df, "rating", 0)
     books_df = fill_missing(books_df, "page_count", 1)
-    numeric_columns = ["voters", "rating", "page_count"]
-    books_df = convert_numeric_columns(books_df, numeric_columns)
-    books_df["voters"] = books_df["voters"].astype(int)
+    int_columns = ["voters", "page_count"]
+    books_df = convert_int_columns(books_df, int_columns)
     books_df["rating"] = books_df["rating"].astype(float)
-    books_df["page_count"] = books_df["page_count"].astype(int)
 
     # Map publisher name to publisher_id
     books_df["publisher_id"] = books_df["publisher"].map(publisher_map)
@@ -76,23 +74,15 @@ def transform_books(
 
     # Drop unnecessary columns
     books_df = books_df.drop(columns=["publisher", "categories_list"])
-    print(books_df.head())
     return normalize_columns(books_df)
 
 
-def convert_numeric_columns(
-    df: pd.DataFrame, numeric_columns: list[str]
-) -> pd.DataFrame:
+def convert_int_columns(df: pd.DataFrame, int_columns: list[str]) -> pd.DataFrame:
     """Convert specified columns to numeric, handling commas, periods, and non-numeric values."""
-    for col in numeric_columns:
+    for col in int_columns:
         if col in df.columns:
-            df[col] = (
-                df[col]
-                .astype(str)
-                .str.replace(",", "", regex=False)
-                .str.replace(".", "", regex=False)
-            )
-            df[col] = pd.to_numeric(df[col], errors="coerce")
+            df[col] = df[col].astype(str).str.replace(",", "", regex=False)
+            df[col] = pd.to_numeric(df[col], errors="coerce").astype(int)
     return df
 
 
