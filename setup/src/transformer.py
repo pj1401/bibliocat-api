@@ -59,6 +59,18 @@ def transform_books(
         }
     )
 
+    # Clean ISBNs
+    books_df["isbn"] = (
+        books_df["isbn"]
+        .astype(str)
+        .str.replace("-", "", regex=False)
+        .str[:13]
+    )
+
+    # Drop duplicates and invalid ISBNs
+    books_df = books_df.dropna(subset=["isbn"])
+    books_df = books_df.drop_duplicates(subset=["isbn"], keep="first")
+
     # Fill missing values and convert invalid values.
     books_df = fill_missing(books_df, "voters", 0)
     books_df = fill_missing(books_df, "rating", 0)

@@ -50,7 +50,8 @@ class DatabaseLoader:
         self.load_table("categories", categories, Category)
 
     def seed_books(self, data: pd.DataFrame) -> None:
-        """Seed the books table."""
+        """Seed the books table and its relationships."""
+        session = self.session_factory()
         books = [
             Book(
                 title=row["title"],
@@ -65,7 +66,30 @@ class DatabaseLoader:
             )
             for _, row in data.iterrows()
         ]
+        # Seed books
         self.load_table("books", books, Book)
+
+        # Seed authors_books_table
+        authors_books = [
+            {"author_id": author_id, "book_id": book.id}
+            for book in session.query(Book).all()
+            for author_id in book.authors
+            if author_id is not None
+        ]
+        if authors_books:
+            session.execute(authors_books_table.insert().values(authors_books))
+            session.commit()
+
+        # Seed categories_books_table
+        categories_books = [
+            {"category_id": category_id, "book_id": book.id}
+            for book in session.query(Book).all()
+            for category_id in book.categories
+            if category_id is not None
+        ]
+        if categories_books:
+            session.execute(categories_books_table.insert().values(categories_books))
+            session.commit()
 
     def load_table(self, table_name: str, data: List[M], model: Type[M]) -> None:
         """Load seed data from a DataFrame into a table."""
