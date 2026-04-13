@@ -5,6 +5,7 @@ module: src/transformer.py
 """
 
 import pandas as pd
+from typing import Dict
 
 
 def transform_authors(df: pd.DataFrame) -> pd.DataFrame:
@@ -45,31 +46,16 @@ def transform_categories(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def transform_books(
-    df: pd.DataFrame, publisher_map: dict, category_map: dict, author_map: dict
+    df: pd.DataFrame,
+    publisher_map: Dict[str, int],
+    category_map: Dict[str, int],
+    author_map: Dict[str, int],
 ) -> pd.DataFrame:
     """Transform raw data into books DataFrame."""
     books_df = df.copy()
-
-    # Rename columns
-    books_df = books_df.rename(
-        columns={
-            "ISBN": "isbn",
-            "published_date": "published_date",
-            "generes": "categories_list",
-        }
-    )
-
-    # Clean ISBNs
-    books_df["isbn"] = (
-        books_df["isbn"]
-        .astype(str)
-        .str.replace("-", "", regex=False)
-        .str[:13]
-    )
-
-    # Drop duplicates and invalid ISBNs
-    books_df = books_df.dropna(subset=["isbn"])
-    books_df = books_df.drop_duplicates(subset=["isbn"], keep="first")
+    books_df = rename_books_columns(books_df)
+    books_df = clean_isbns(books_df)
+    books_df = remove_duplicate_invalid_books(books_df)
 
     # Fill missing values and convert invalid values.
     books_df = fill_missing(books_df, "voters", 0)
@@ -109,6 +95,30 @@ def transform_books(
     # Drop unnecessary columns
     books_df = books_df.drop(columns=["publisher", "author", "categories_list"])
     return normalize_columns(books_df)
+
+
+def rename_books_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """Rename some of the columns in the books DataFrame."""
+    return df.rename(
+        columns={
+            "ISBN": "isbn",
+            "published_date": "published_date",
+            "generes": "categories_list",
+        }
+    )
+
+
+def clean_isbns(df: pd.DataFrame) -> pd.DataFrame:
+    """Clean ISBN values."""
+    df["isbn"] = df["isbn"].astype(str).str.replace("-", "", regex=False).str[:13]
+    return df
+
+
+def remove_duplicate_invalid_books(df: pd.DataFrame) -> pd.DataFrame:
+    """Drop duplicates and invalid ISBNs."""
+    df = df.dropna(subset=["isbn"])
+    df = df.drop_duplicates(subset=["isbn"], keep="first")
+    return df
 
 
 def convert_int_columns(df: pd.DataFrame, int_columns: list[str]) -> pd.DataFrame:
