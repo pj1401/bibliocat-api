@@ -3,7 +3,7 @@ DatabaseLoader class.
 module: src/database_loader.py
 """
 
-from typing import Dict, List, Optional, Type, TypeVar
+from typing import Dict, Iterator, List, Optional, Type, TypeVar, cast
 import numpy as np
 import pandas as pd
 from sqlalchemy import Table, create_engine, inspect
@@ -32,6 +32,7 @@ class DatabaseLoader:
     def seed_database(
         self, data: tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]
     ) -> None:
+        """Seed the database."""
         authors_df, publishers_df, categories_df, books_df = data
         self.seed_authors(authors_df)
         self.seed_publishers(publishers_df)
@@ -96,11 +97,16 @@ class DatabaseLoader:
         """Seed the authors_books relationship table."""
         relationships: List[Dict[str, int]] = []
         for _, row in books_data.iterrows():
-            book = self.get_book_by_isbn(row["isbn"])
-            if not book:
+            book: Optional[Book] = self.get_book_by_isbn(row["isbn"])
+            if book is None:
                 continue
             for author_id in row["author_ids"]:
-                relationships.append({"author_id": author_id, "book_id": int(book.id)})
+                relationships.append(
+                    {
+                        "author_id": author_id,
+                        "book_id": cast(int, book.id),
+                    }
+                )
         if relationships:
             self.seed_relationship_table(
                 relationships, authors_books_table, "author-book"
@@ -110,18 +116,24 @@ class DatabaseLoader:
         """Seed the categories_books relationship table."""
         relationships: List[Dict[str, int]] = []
         for _, row in books_data.iterrows():
-            book = self.get_book_by_isbn(row["isbn"])
-            if not book:
+            book: Optional[Book] = self.get_book_by_isbn(row["isbn"])
+            if book is None:
                 continue
             category_ids = row.get("category_ids", [])
             if isinstance(category_ids, (list, np.ndarray)):
-                for category_id in category_ids:
+                for category_id in cast(Iterator[int], category_ids):
                     relationships.append(
-                        {"category_id": int(category_id), "book_id": int(book.id)}
+                        {
+                            "category_id": category_id,
+                            "book_id": cast(int, book.id),
+                        }
                     )
             elif pd.notna(category_ids):
                 relationships.append(
-                    {"category_id": int(category_ids), "book_id": int(book.id)}
+                    {
+                        "category_id": category_ids,
+                        "book_id": cast(int, book.id),
+                    }
                 )
         if relationships:
             self.seed_relationship_table(
@@ -129,6 +141,7 @@ class DatabaseLoader:
             )
 
     def get_book_by_isbn(self, isbn: str) -> Optional[Book]:
+        """Fetch a book by ISBN."""
         session = self.session_factory()
         try:
             book = session.query(Book).filter_by(isbn=isbn).first()
