@@ -96,17 +96,24 @@ class DatabaseLoader:
     def seed_authors_books(self, books_data: pd.DataFrame) -> None:
         """Seed the authors_books relationship table."""
         relationships: List[Dict[str, int]] = []
+
+        # To filter existing relationships
+        seen: set[tuple[int, int]] = set()
+
         for _, row in books_data.iterrows():
             book: Optional[Book] = self.get_book_by_isbn(row["isbn"])
             if book is None:
                 continue
             for author_id in row["author_ids"]:
-                relationships.append(
-                    {
-                        "author_id": author_id,
-                        "book_id": cast(int, book.id),
-                    }
-                )
+                rel_tuple = (author_id, cast(int, book.id))
+                if rel_tuple not in seen:
+                    seen.add(rel_tuple)
+                    relationships.append(
+                        {
+                            "author_id": author_id,
+                            "book_id": cast(int, book.id),
+                        }
+                    )
         if relationships:
             self.seed_relationship_table(
                 relationships, authors_books_table, "author-book"
@@ -115,6 +122,7 @@ class DatabaseLoader:
     def seed_categories_books(self, books_data: pd.DataFrame) -> None:
         """Seed the categories_books relationship table."""
         relationships: List[Dict[str, int]] = []
+        seen: set[tuple[int, int]] = set()
         for _, row in books_data.iterrows():
             book: Optional[Book] = self.get_book_by_isbn(row["isbn"])
             if book is None:
@@ -122,19 +130,15 @@ class DatabaseLoader:
             category_ids = row.get("category_ids", [])
             if isinstance(category_ids, (list, np.ndarray)):
                 for category_id in cast(Iterator[int], category_ids):
-                    relationships.append(
-                        {
-                            "category_id": category_id,
-                            "book_id": cast(int, book.id),
-                        }
-                    )
-            elif pd.notna(category_ids):
-                relationships.append(
-                    {
-                        "category_id": category_ids,
-                        "book_id": cast(int, book.id),
-                    }
-                )
+                    rel_tuple = (category_id, cast(int, book.id))
+                    if rel_tuple not in seen:
+                        seen.add(rel_tuple)
+                        relationships.append(
+                            {
+                                "category_id": category_id,
+                                "book_id": cast(int, book.id),
+                            }
+                        )
         if relationships:
             self.seed_relationship_table(
                 relationships, categories_books_table, "category-book"
