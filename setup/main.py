@@ -33,15 +33,15 @@ def extract_data(file_path: str, chunk_size: int):
         [
             "title",
             "author",
-            "language",
-            "ISBN",
             "rating",
-            "publisher",
-            "published_date",
             "voters",
             "description",
-            "generes",
+            "publisher",
             "page_count",
+            "generes",
+            "ISBN",
+            "language",
+            "published_date",
         ],
     )
 

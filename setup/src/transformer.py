@@ -16,7 +16,7 @@ def transform_authors(df: pd.DataFrame) -> pd.DataFrame:
             "author": "name",
         }
     )
-    return authors_df
+    return normalize_columns(authors_df)
 
 
 def transform_publishers(df: pd.DataFrame) -> pd.DataFrame:
@@ -28,7 +28,7 @@ def transform_publishers(df: pd.DataFrame) -> pd.DataFrame:
             "publisher": "name",
         }
     )
-    return publishers_df
+    return normalize_columns(publishers_df)
 
 
 def transform_categories(df: pd.DataFrame) -> pd.DataFrame:
@@ -38,7 +38,7 @@ def transform_categories(df: pd.DataFrame) -> pd.DataFrame:
     )
     categories_df = categories_df.drop_duplicates().reset_index(drop=True)
     categories_df["id"] = categories_df.index + 1
-    return categories_df
+    return normalize_columns(fill_missing(categories_df))
 
 
 def transform_books(
@@ -51,8 +51,16 @@ def transform_books(
             "ISBN": "isbn",
             "published_date": "published_date",
             "generes": "categories_list",
-            "description": "description",
         }
+    )
+    books_df = fill_missing(books_df)
+
+    books_df["voters"] = (
+        books_df["voters"]
+        .astype(str)
+        .str.replace(",", "", regex=False)
+        .str.replace(".", "", regex=False)
+        .astype(int)
     )
 
     # Map publisher name to publisher_id
@@ -66,7 +74,19 @@ def transform_books(
     # Drop unnecessary columns
     books_df = books_df.drop(columns=["publisher", "categories_list"])
     print(books_df.head())
-    return books_df
+    return normalize_columns(books_df)
+
+
+def fill_missing(df: pd.DataFrame, default: str = "Unknown") -> pd.DataFrame:
+    """Replace NaN / None values with *default*."""
+    return df.fillna(default)
+
+
+def normalize_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """Lowercase column names and strip surrounding whitespace."""
+    df = df.copy()
+    df.columns = [col.strip().lower() for col in df.columns]
+    return df
 
 
 def transform_data(

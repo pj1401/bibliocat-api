@@ -23,11 +23,11 @@ class Book(Base):
     title = Column(String(255), nullable=False)
     isbn = Column(String(13), unique=True)
     published_date = Column(Date)
-    description = Column(String)
+    description = Column(String, default="")
     language = Column(String)
-    page_count = Column(Integer)
+    page_count = Column(Integer, default=1)
     rating = Column(Numeric(precision=2, scale=1))
-    voters = Column(Integer)  # Number of reviewers
+    voters = Column(Integer, default=0)  # Number of reviewers
 
     publisher_id = Column(Integer, ForeignKey("publishers.id"))
     categories = relationship(
