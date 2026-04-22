@@ -44,6 +44,13 @@ docker-compose down -v # Removes volumes(data)
 
 ## Run dev
 
+```python
+# Get a random string for FLASK_SECRET_KEY in .env
+>>> import os
+>>> os.urandom(16).hex()
+'aacddd29dfe77708800856e643ef2426'
+```
+
 ```powershell
 # Change to the api directory
 cd api/
