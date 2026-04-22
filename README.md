@@ -1,6 +1,6 @@
-# Library App
+# BiblioCat API
 
-Bibliotekskatalog
+Bibliotekskatalog API
 
 ## Seed database
 
