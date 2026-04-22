@@ -43,3 +43,17 @@ docker-compose down -v # Removes volumes(data)
 ```
 
 ## Run dev
+
+```powershell
+# Change to the api directory
+cd api/
+
+# Start the database
+docker-compose up db -d
+
+# Start the app
+uv run -- flask --app main run --debug
+
+# Stop the database when done
+docker-compose down
+```
