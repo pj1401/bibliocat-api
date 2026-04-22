@@ -92,3 +92,16 @@ categories_books_table = Table(
     Column("category_id", Integer, ForeignKey("categories.id"), primary_key=True),
     Column("book_id", Integer, ForeignKey("books.id"), primary_key=True),
 )
+
+class User(Base):
+    __tablename__ = "users"
+    id = Column(Integer, primary_key=True)
+    username = Column(String(255), nullable=False)
+    email = Column(String(255), nullable=False)
+    password_hash = Column(String(255), nullable=False)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(
+        DateTime,
+        default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc),
+    )
