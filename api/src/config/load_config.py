@@ -1,0 +1,37 @@
+"""
+Load env variables to a config object.
+module: src/config/load_config.py
+"""
+
+import os
+from dotenv import load_dotenv
+from flask import Config, Flask
+
+load_dotenv()
+
+
+class TypedConfig(Config):
+    DB_HOST: str
+    DB_NAME: str
+    DB_USER: str
+    DB_PASSWORD: str
+    DB_PORT: int
+    SQL_URI: str
+    FLASK_DEBUG: str
+    SECRET_KEY: str
+
+
+def load_config(app: Flask) -> None:
+    """Load the config."""
+    app.config.from_mapping(
+        {
+            "DB_HOST": os.getenv("POSTGRES_HOST"),
+            "DB_NAME": os.getenv("POSTGRES_DB"),
+            "DB_USER": os.getenv("POSTGRES_USER"),
+            "DB_PASSWORD": os.getenv("POSTGRES_PASSWORD"),
+            "DB_PORT": int(os.getenv("POSTGRES_PORT", "5432")),
+            "SQL_URI": os.getenv("SQL_URI"),
+            "FLASK_DEBUG": os.getenv("FLASK_DEBUG", "True"),
+            "SECRET_KEY": os.getenv("FLASK_SECRET_KEY"),
+        }
+    )
