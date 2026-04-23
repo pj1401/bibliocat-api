@@ -1,36 +1,25 @@
 """
-User models.
+The User model.
 module: src/util/models/user.py
 """
 
-from pydantic import BaseModel, EmailStr, Field
+from datetime import datetime, timezone
+from sqlalchemy import DateTime, Column, Integer, String
+from sqlalchemy.orm import declarative_base
+
+Base = declarative_base()
 
 
-class User(BaseModel):
-    """User base model."""
-
-    username: str = Field(..., min_length=3, max_length=20)
-    email: EmailStr
-
-
-class UserArguments(User):
-    """Represents user arguments for creating a user."""
-
-    password: str = Field(..., min_length=8)
-
-
-class NewUser(User):
-    """Represents create user data after going through business logic (service layer)."""
-
-    password_hash: str
-
-
-class UserModel(BaseModel):
-    """The database User model."""
-
-    __tablename__: str = "users"
-    user_id: int
-    username: str
-    email: EmailStr
-    password_hash: str
-    permission_level: int
+class User(Base):
+    __tablename__ = "users"
+    id = Column(Integer, primary_key=True)
+    username = Column(String(255), nullable=False)
+    email = Column(String(255), nullable=False)
+    password_hash = Column(String(255), nullable=False)
+    permission_level = Column(Integer, nullable=False, default=0)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(
+        DateTime,
+        default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc),
+    )
