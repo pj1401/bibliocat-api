@@ -6,12 +6,14 @@ module: src/hooks/exception_handlers.py
 from flask import Flask, json
 from werkzeug.exceptions import HTTPException
 from werkzeug.wrappers import response
+from src.util.errors.error import log_original_error
 
 
 def setup_exception_handlers(app: Flask):
     @app.errorhandler(HTTPException)
     def handle_exception(err: HTTPException) -> response.Response:  # type: ignore[unused-ignore]
         """Turn default error response to JSON"""
+        log_original_error(err)
         response = err.get_response()
         response.data = json.dumps(
             {
