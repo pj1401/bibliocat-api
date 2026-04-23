@@ -9,6 +9,14 @@ from typing import cast
 from flask import Flask
 
 
+def configure_logger(app: Flask) -> None:
+    """Configure loggers."""
+    set_logger_env(app)
+    formatter = get_logger_formatter()
+    remove_logger_handler(app)
+    add_logger_handler(app, formatter)
+
+
 def set_logger_env(app: Flask) -> None:
     """Determine environment and set logger level."""
     is_debug: bool = cast(str, app.config["FLASK_DEBUG"]).lower() in ("true", "1", "t")
