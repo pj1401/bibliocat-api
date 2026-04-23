@@ -16,6 +16,15 @@ class CustomError(Exception):
         self.message = message
 
 
+class UniqueViolationError(CustomError):
+    def __init__(
+        self,
+        err: Exception,
+        message: str = "Duplicate key value violates unique constraint.",
+    ):
+        super().__init__(err, message)
+
+
 class HttpError(CustomError):
     """An error with an HTTP status and message."""
 
@@ -46,7 +55,7 @@ def convert_to_http_error(err: Exception) -> HttpError:
 
 
 errorHttpStatusMap = {
-    "UniqueViolation": 400,
+    "UniqueViolationError": 400,
     "ValidationError": 400,
     "InvalidCredentialsError": 401,
 }

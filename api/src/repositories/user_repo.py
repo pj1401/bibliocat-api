@@ -3,7 +3,9 @@ The UserRepository class.
 module: src/repositories/user_repo.py
 """
 
+from sqlalchemy import exc
 from sqlalchemy.orm import Session
+from src.util.errors.error import UniqueViolationError
 from src.util.models.user import User
 from src.util.schemas.user import NewUser
 from src.db.connection_manager import DatabaseConnectionManager
@@ -26,6 +28,10 @@ class UserRepository:
             session.commit()
             session.refresh(user)
             return user
+        except exc.IntegrityError as err:
+            if session is not None:
+                session.rollback()
+            raise UniqueViolationError(err)
         except Exception as err:
             if session is not None:
                 session.rollback()
