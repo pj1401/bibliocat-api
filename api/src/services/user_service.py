@@ -4,7 +4,7 @@ module: src/services/user_service.py
 """
 
 import bcrypt
-from src.util.models.user import NewUser, UserArguments
+from src.util.schemas.user import NewUser, UserArguments
 from src.repositories.user_repo import UserRepository
 
 

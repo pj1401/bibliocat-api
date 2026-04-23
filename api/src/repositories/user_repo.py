@@ -3,8 +3,9 @@ The UserRepository class.
 module: src/repositories/user_repo.py
 """
 
-from psycopg2.extras import RealDictCursor
-from src.util.models.user import NewUser, UserModel
+from sqlalchemy.orm import Session
+from src.util.models.user import User
+from src.util.schemas.user import NewUser
 from src.db.connection_manager import DatabaseConnectionManager
 
 
@@ -13,20 +14,23 @@ class UserRepository:
         self.db_manager = db_manager
 
     def create_user(self, new_user: NewUser):
+        session: Session | None = None
         try:
-            query = """
-                    INSERT INTO users (username, email, password_hash)
-                    VALUES (%s, %s, %s)
-                    RETURNING user_id, username, email, permission_level
-                    """
-            conn = self.db_manager.get_connection()
-            cursor = conn.cursor(cursor_factory=RealDictCursor)
-            cursor.execute(
-                query, (new_user.username, new_user.email, new_user.password_hash)
+            session = self.db_manager.get_session()
+            user = User(
+                username=new_user.username,
+                email=new_user.email,
+                password_hash=new_user.password_hash,
             )
-            fetched = cursor.fetchone()
-            user = UserModel(**fetched)
-            conn.close()
+            session.add(user)
+            session.commit()
+            session.refresh(user)
+            print(user)
             return user
         except Exception as err:
+            if session is not None:
+                session.rollback()
             raise err
+        finally:
+            if session is not None:
+                session.close()
