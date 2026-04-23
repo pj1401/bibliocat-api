@@ -20,17 +20,16 @@ class DatabaseConnectionManager:
         self.dbname = db_config.dbname
         self.host = db_config.host
         self.user = db_config.user
+        self.password = db_config.password
         self.connection_pool = pool.QueuePool(
             self._get_connection_creator, max_overflow=10, pool_size=5
         )
 
-    def _get_connection_creator(self) -> Callable[[], DBAPIConnection]:
-        """Get a callable creator function."""
-
-        def connection_creator() -> psycopg2.extensions.connection:
-            return psycopg2.connect(user=self.user, host=self.host, dbname=self.dbname)
-
-        return connection_creator  # pyright: ignore[reportReturnType]
+    def _get_connection_creator(self) -> psycopg2.extensions.connection:
+        """Get a creator function."""
+        return psycopg2.connect(
+            user=self.user, host=self.host, dbname=self.dbname, password=self.password
+        )
 
     def get_connection(self) -> PoolProxiedConnection:
         """Get a connection from the pool."""

@@ -24,8 +24,8 @@ class UserController:
                 "email": user.email,
                 "status": 201,
             }
-            # return jsonify(response), 201
-            return jsonify({"status": 501, "message": "Not Implemented"}), 501
+            return jsonify(response), 201
+            # return jsonify({"status": 501, "message": "Not Implemented"}), 501
         except Exception as err:
             log_original_error(err)
             return jsonify({"status": 501, "message": "Not Implemented"}), 501
