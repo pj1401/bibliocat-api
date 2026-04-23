@@ -5,6 +5,13 @@ module: main.py
 
 from typing import cast
 from flask import Flask
+from src.config.logger_config import (
+    add_logger_handler,
+    get_logger_formatter,
+    remove_logger_handler,
+    set_logger_env,
+)
+from src.hooks.logging import setup_logging_hooks
 from src.hooks.exception_handlers import setup_exception_handlers
 from src.hooks.database import setup_database_hooks
 from src.config.db_config import DbConfig
@@ -51,7 +58,11 @@ def register_exception_handlers(app: Flask) -> None:
 
 def configure_logger(app: Flask) -> None:
     """Configure loggers."""
-    pass
+    set_logger_env(app)
+    formatter = get_logger_formatter()
+    remove_logger_handler(app)
+    add_logger_handler(app, formatter)
+    setup_logging_hooks(app)
 
 
 if __name__ == "__main__":
