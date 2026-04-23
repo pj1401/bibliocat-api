@@ -4,9 +4,9 @@ COPY --from=ghcr.io/astral-sh/uv:0.10.5 /uv /uvx /bin/
 
 WORKDIR /app
 
-COPY server/requirements.txt .
-COPY server/uv.lock .
-COPY server/pyproject.toml .
+COPY api/requirements.txt .
+COPY api/uv.lock .
+COPY api/pyproject.toml .
 
 RUN apk update && apk add --no-cache \
     postgresql-dev \
@@ -19,7 +19,7 @@ RUN apk update && apk add --no-cache \
 
 RUN uv sync --frozen --no-dev
 
-COPY server/main.py .
-COPY server/ .
+COPY api/main.py .
+COPY api/ .
 
 CMD ["uv", "run", "python", "main.py"]
