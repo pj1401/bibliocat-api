@@ -5,6 +5,7 @@ module: main.py
 
 from typing import cast
 from flask import Flask
+from src.hooks.exception_handlers import setup_exception_handlers
 from src.hooks.database import setup_database_hooks
 from src.config.db_config import DbConfig
 from src.db.connection_manager import DatabaseConnectionManager
@@ -18,6 +19,8 @@ def create_app() -> Flask:
     load_config(app)
     register_db_manager(app)
     register_blueprints(app)
+    register_exception_handlers(app)
+    configure_logger(app)
 
     return app
 
@@ -39,6 +42,16 @@ def register_db_manager(app: Flask) -> None:
 def register_blueprints(app: Flask) -> None:
     """Register Flask blueprints."""
     app.register_blueprint(router_bp)
+
+
+def register_exception_handlers(app: Flask) -> None:
+    """Register exception handlers."""
+    setup_exception_handlers(app)
+
+
+def configure_logger(app: Flask) -> None:
+    """Configure loggers."""
+    pass
 
 
 if __name__ == "__main__":
