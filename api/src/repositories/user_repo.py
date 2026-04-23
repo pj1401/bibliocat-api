@@ -25,7 +25,6 @@ class UserRepository:
             session.add(user)
             session.commit()
             session.refresh(user)
-            print(user)
             return user
         except Exception as err:
             if session is not None:
