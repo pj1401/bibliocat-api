@@ -3,34 +3,18 @@ DatabaseConnectionManager class.
 module: src/db/connection_manager.py
 """
 
-from typing import Callable
-import sqlalchemy.pool as pool
-from sqlalchemy import PoolProxiedConnection
-from sqlalchemy.engine.interfaces import DBAPIConnection
-import psycopg2
+from sqlalchemy import create_engine
+from sqlalchemy.orm import Session, sessionmaker
 from src.config.db_config import DbConfig
 
 
 class DatabaseConnectionManager:
     def __init__(self, db_config: DbConfig):
         """
-        Construct the connection pool.
-        :see: https://docs.sqlalchemy.org/en/21/core/pooling.html#constructing-a-pool
+        Initialise the engine.
         """
-        self.dbname = db_config.dbname
-        self.host = db_config.host
-        self.user = db_config.user
-        self.password = db_config.password
-        self.connection_pool = pool.QueuePool(
-            self._get_connection_creator, max_overflow=10, pool_size=5
-        )
+        self.engine = create_engine(db_config.uri, pool_pre_ping=True)
+        self.session_factory = sessionmaker(bind=self.engine)
 
-    def _get_connection_creator(self) -> psycopg2.extensions.connection:
-        """Get a creator function."""
-        return psycopg2.connect(
-            user=self.user, host=self.host, dbname=self.dbname, password=self.password
-        )
-
-    def get_connection(self) -> PoolProxiedConnection:
-        """Get a connection from the pool."""
-        return self.connection_pool.connect()
+    def get_session(self) -> Session:
+        return self.session_factory()

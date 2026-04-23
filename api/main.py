@@ -36,6 +36,7 @@ def register_db_manager(app: Flask) -> None:
             cast(str, app.config["DB_USER"]),
             cast(str, app.config["DB_PASSWORD"]),
             cast(int, app.config["DB_PORT"]),
+            cast(str, app.config["SQL_URI"]),
         )
     )
     setup_database_hooks(app, db_manager)
