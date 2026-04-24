@@ -22,3 +22,8 @@ def before_request():
 @users_bp.route("/register", methods=["POST"])
 def create_user():
     return g.user_controller.create_user()
+
+
+@users_bp.route("/login", methods=["POST"])
+def login_user():
+    return g.user_controller.login()
