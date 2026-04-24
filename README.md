@@ -64,6 +64,12 @@ docker-compose down -v # Removes volumes (data)
 
 ## Run dev
 
+**Prerequisites**:
+- docker-compose [Docker Compose installation instructions](https://docs.docker.com/compose/install/)
+- uv [uv installation instructions](https://docs.astral.sh/uv/getting-started/installation/)
+
+### Set up env
+
 ```python
 # Get a random string for FLASK_SECRET_KEY in .env
 >>> import os
@@ -71,11 +77,20 @@ docker-compose down -v # Removes volumes (data)
 'aacddd29dfe77708800856e643ef2426'
 ```
 
-### Instructions
+The app uses ECDSA for JWT signing.  
+To generate the key pair:
 
-**Prerequisites**:
-- docker-compose [Docker Compose installation instructions](https://docs.docker.com/compose/install/)
-- uv [uv installation instructions](https://docs.astral.sh/uv/getting-started/installation/)
+```bash
+# Generate private key
+openssl ecparam -name secp521r1 -genkey -noout -out bibliocat-api-jwt.pem
+
+# Extract public key
+openssl ec -in bibliocat-api-jwt.pem -pubout -out bibliocat-api-jwt.public.pem
+```
+
+Copy the contents of the key pair files to the `.env` file.
+
+### Instructions
 
 ```powershell
 # Change to the api directory
