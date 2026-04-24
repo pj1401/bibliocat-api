@@ -38,7 +38,7 @@ class UserController:
             user = self.service.login(UserLogin(**data))
             access_token: str = create_access_token(
                 identity={
-                    "user_id": user.user_id,
+                    "user_id": user.id,
                     "username": user.username,
                     "permission_level": user.permission_level,
                 }

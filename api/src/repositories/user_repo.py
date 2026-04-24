@@ -50,6 +50,10 @@ class UserRepository:
                 select(User).where(User.username == username)
             ).first()
             session.commit()
+
+            # Expire and refresh attributes on the user object.
+            session.refresh(user)
+
             return user
         except Exception as err:
             if session is not None:

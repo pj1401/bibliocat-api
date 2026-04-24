@@ -64,6 +64,7 @@ def convert_to_http_error(err: Exception) -> HttpError:
 
 
 errorHttpStatusMap = {
+    "BadRequest": 400,
     "UniqueViolationError": 400,
     "ValidationError": 400,
     "InvalidCredentialsError": 401,
