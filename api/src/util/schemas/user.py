@@ -25,6 +25,13 @@ class NewUser(User):
     password_hash: str
 
 
+class UserLogin(BaseModel):
+    """Login arguments."""
+
+    username: str = Field(..., min_length=3)
+    password: str = Field(..., min_length=8)
+
+
 class UserModel(BaseModel):
     """The database User model."""
 
