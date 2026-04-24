@@ -19,6 +19,9 @@ class TypedConfig(Config):
     SQL_URI: str
     FLASK_DEBUG: str
     SECRET_KEY: str
+    JWT_PRIVATE_KEY: str
+    JWT_PUBLIC_KEY: str
+    JWT_ALGORITHM: str
 
 
 def load_config(app: Flask) -> None:
@@ -33,5 +36,8 @@ def load_config(app: Flask) -> None:
             "SQL_URI": os.getenv("SQL_URI"),
             "FLASK_DEBUG": os.getenv("FLASK_DEBUG", "True"),
             "SECRET_KEY": os.getenv("FLASK_SECRET_KEY"),
+            "JWT_PRIVATE_KEY": os.getenv("JWT_PRIVATE_KEY"),
+            "JWT_PUBLIC_KEY": os.getenv("JWT_PUBLIC_KEY"),
+            "JWT_ALGORITHM": "ES512",
         }
     )

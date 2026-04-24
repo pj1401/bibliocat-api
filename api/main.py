@@ -5,6 +5,7 @@ module: main.py
 
 from typing import cast
 from flask import Flask
+from flask_jwt_extended import JWTManager
 from src.config.logger_config import configure_logger
 from src.hooks.logging import setup_logging_hooks
 from src.hooks.exception_handlers import setup_exception_handlers
@@ -22,6 +23,7 @@ def create_app() -> Flask:
     register_db_manager(app)
     register_blueprints(app)
     register_exception_handlers(app)
+    init_jwt_manager(app)
     set_up_logger(app)
 
     return app
@@ -50,6 +52,11 @@ def register_blueprints(app: Flask) -> None:
 def register_exception_handlers(app: Flask) -> None:
     """Register exception handlers."""
     setup_exception_handlers(app)
+
+
+def init_jwt_manager(app: Flask) -> None:
+    """Initialise JWT manager."""
+    jwt = JWTManager(app)
 
 
 def set_up_logger(app: Flask) -> None:
