@@ -25,6 +25,15 @@ class UniqueViolationError(CustomError):
         super().__init__(err, message)
 
 
+class InvalidCredentialsError(CustomError):
+    def __init__(
+        self,
+        err: Exception | None = None,
+        message: str = "Credentials invalid or not provided.",
+    ):
+        super().__init__(err, message)
+
+
 class HttpError(CustomError):
     """An error with an HTTP status and message."""
 

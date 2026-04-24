@@ -5,6 +5,7 @@ module: src/controllers/user_controller.py
 
 from typing import cast
 from flask import jsonify, request
+from flask_jwt_extended import create_access_token
 from src.util.schemas.user import UserArguments, UserLogin
 from src.util.errors.error import convert_to_http_error, log_original_error
 from src.services.user_service import UserService
