@@ -2,6 +2,16 @@
 
 Bibliotekskatalog API
 
+## Contents
+
+- [Development](#development)
+  - [File Structure](#file-structure)
+  - [Seed database](#seed-database)
+    - [Instructions](#instructions)
+  - [Run dev](#run-dev)
+    - [Set up env](#set-up-env)
+    - [Instructions](#instructions-1)
+
 ## Development
 
 ### File Structure
