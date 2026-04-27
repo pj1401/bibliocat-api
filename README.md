@@ -2,7 +2,69 @@
 
 Bibliotekskatalog API
 
-## Seed database
+## Contents
+
+- [Development](#development)
+  - [File Structure](#file-structure)
+  - [Seed database](#seed-database)
+    - [Instructions](#instructions)
+  - [Run dev](#run-dev)
+    - [Set up env](#set-up-env)
+    - [Instructions](#instructions-1)
+
+## Development
+
+### File Structure
+```
+bibliocat-api
+├── api/                        # Main project directory
+│  ├── src/
+│  │   ├── blueprints/          # Flask blueprints
+│  │   │   ├── api/
+│  │   │   │   └── v1/          # API v1 routes
+│  │   │   │       ├── users/
+|  |   |   |       |   └── routes.py
+|  |   |   |       └── router.py
+│  │   │   └── router.py
+│  │   ├── config/
+│  │   ├── controllers/         # API controllers
+│  │   │   └── user_controller.py
+│  │   ├── db/                  # Database connection manager
+│  │   ├── hooks/               # Functions to run before and after requests
+│  │   ├── repositories/        # Database interactions
+│  │   │   └── user_repo.py
+│  │   ├── services/            # Business logic
+│  │   │   └── user_service.py
+│  │   └── util/
+│  │       ├── errors/
+│  │       ├── models/          # SQL Alchemy models
+│  │       └── schemas/         # Pydantic models
+│  ├── Dockerfile
+│  ├── main.py
+│  ├── pyproject.toml
+│  ├── requirements.txt
+│  └── uv.lock
+├── setup/
+│  ├── data/                    # Dataset for loading database
+│  ├── data-subset/
+│  ├── src/
+│  │   ├── database_loader.py
+│  │   ├── extractor.py
+│  │   ├── models.py            # SQL Alchemy models
+│  │   └── transformer.py
+│  ├── Dockerfile
+│  ├── main.py
+│  ├── pyproject.toml
+│  ├── requirements.txt
+│  └── uv.lock
+├── .dockerignore
+├── .example.env
+├── .gitignore
+├── docker-compose.yml
+└── README.md
+```
+
+### Seed database
 
 Dataset: [Google Books Dataset](https://www.kaggle.com/datasets/bilalyussef/google-books-dataset)  
 A subset of the dataset is included in `setup/data-subset/`.
@@ -24,11 +86,11 @@ COPY setup/main.py .
 COPY setup/data/ ./data
 ```
 
-### Instructions
+#### Instructions
 
 **Prerequisites**:
-- docker-compose [Docker Compose installation instructions](https://docs.docker.com/compose/install/)
-- uv [uv installation instructions](https://docs.astral.sh/uv/getting-started/installation/)
+- docker-compose, [Docker Compose installation instructions](https://docs.docker.com/compose/install/)
+- uv, [uv installation instructions](https://docs.astral.sh/uv/getting-started/installation/)
   - only needed for debug
 
 ```powershell
@@ -62,13 +124,15 @@ docker-compose down
 docker-compose down -v # Removes volumes (data)
 ```
 
-## Run dev
+### Run dev
 
 **Prerequisites**:
-- docker-compose [Docker Compose installation instructions](https://docs.docker.com/compose/install/)
-- uv [uv installation instructions](https://docs.astral.sh/uv/getting-started/installation/)
+- docker-compose, [Docker Compose installation instructions](https://docs.docker.com/compose/install/)
+- uv, [uv installation instructions](https://docs.astral.sh/uv/getting-started/installation/)
 
-### Set up env
+#### Set up env
+
+Python can be used to generate a random string for the `FLASK_SECRET_KEY` env variable:
 
 ```python
 # Get a random string for FLASK_SECRET_KEY in .env
@@ -76,6 +140,8 @@ docker-compose down -v # Removes volumes (data)
 >>> os.urandom(16).hex()
 'aacddd29dfe77708800856e643ef2426'
 ```
+
+Any random string should work.
 
 The app uses ECDSA for JWT signing.  
 To generate the key pair:
@@ -90,7 +156,7 @@ openssl ec -in bibliocat-api-jwt.pem -pubout -out bibliocat-api-jwt.public.pem
 
 Copy the contents of the key pair files to the `.env` file.
 
-### Instructions
+#### Instructions
 
 ```powershell
 # Change to the api directory
