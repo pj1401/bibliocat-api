@@ -2,7 +2,59 @@
 
 Bibliotekskatalog API
 
-## Seed database
+## Development
+
+### File Structure
+```
+bibliocat-api
+├── api/                        # Main project directory
+│  ├── src/
+│  │   ├── blueprints/          # Flask blueprints
+│  │   │   ├── api/
+│  │   │   │   └── v1/          # API v1 routes
+│  │   │   │       ├── users/
+|  |   |   |       |   └── routes.py
+|  |   |   |       └── router.py
+│  │   │   └── router.py
+│  │   ├── config/
+│  │   ├── controllers/         # API controllers
+│  │   │   └── user_controller.py
+│  │   ├── db/                  # Database connection manager
+│  │   ├── hooks/               # Functions to run before and after requests
+│  │   ├── repositories/        # Database interactions
+│  │   │   └── user_repo.py
+│  │   ├── services/            # Business logic
+│  │   │   └── user_service.py
+│  │   └── util/
+│  │       ├── errors/
+│  │       ├── models/          # SQL Alchemy models
+│  │       └── schemas/         # Pydantic models
+│  ├── Dockerfile
+│  ├── main.py
+│  ├── pyproject.toml
+│  ├── requirements.txt
+│  └── uv.lock
+├── setup/
+│  ├── data/                    # Dataset for loading database
+│  ├── data-subset/
+│  ├── src/
+│  │   ├── database_loader.py
+│  │   ├── extractor.py
+│  │   ├── models.py            # SQL Alchemy models
+│  │   └── transformer.py
+│  ├── Dockerfile
+│  ├── main.py
+│  ├── pyproject.toml
+│  ├── requirements.txt
+│  └── uv.lock
+├── .dockerignore
+├── .example.env
+├── .gitignore
+├── docker-compose.yml
+└── README.md
+```
+
+### Seed database
 
 Dataset: [Google Books Dataset](https://www.kaggle.com/datasets/bilalyussef/google-books-dataset)  
 A subset of the dataset is included in `setup/data-subset/`.
@@ -24,7 +76,7 @@ COPY setup/main.py .
 COPY setup/data/ ./data
 ```
 
-### Instructions
+#### Instructions
 
 **Prerequisites**:
 - docker-compose [Docker Compose installation instructions](https://docs.docker.com/compose/install/)
@@ -62,13 +114,15 @@ docker-compose down
 docker-compose down -v # Removes volumes (data)
 ```
 
-## Run dev
+### Run dev
 
 **Prerequisites**:
 - docker-compose [Docker Compose installation instructions](https://docs.docker.com/compose/install/)
 - uv [uv installation instructions](https://docs.astral.sh/uv/getting-started/installation/)
 
-### Set up env
+#### Set up env
+
+For the `FLASK_SECRET_KEY` env variable, python can be used to generate a random string:
 
 ```python
 # Get a random string for FLASK_SECRET_KEY in .env
@@ -90,7 +144,7 @@ openssl ec -in bibliocat-api-jwt.pem -pubout -out bibliocat-api-jwt.public.pem
 
 Copy the contents of the key pair files to the `.env` file.
 
-### Instructions
+#### Instructions
 
 ```powershell
 # Change to the api directory
