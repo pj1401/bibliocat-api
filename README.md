@@ -89,8 +89,8 @@ COPY setup/data/ ./data
 #### Instructions
 
 **Prerequisites**:
-- docker-compose [Docker Compose installation instructions](https://docs.docker.com/compose/install/)
-- uv [uv installation instructions](https://docs.astral.sh/uv/getting-started/installation/)
+- docker-compose, [Docker Compose installation instructions](https://docs.docker.com/compose/install/)
+- uv, [uv installation instructions](https://docs.astral.sh/uv/getting-started/installation/)
   - only needed for debug
 
 ```powershell
@@ -127,12 +127,12 @@ docker-compose down -v # Removes volumes (data)
 ### Run dev
 
 **Prerequisites**:
-- docker-compose [Docker Compose installation instructions](https://docs.docker.com/compose/install/)
-- uv [uv installation instructions](https://docs.astral.sh/uv/getting-started/installation/)
+- docker-compose, [Docker Compose installation instructions](https://docs.docker.com/compose/install/)
+- uv, [uv installation instructions](https://docs.astral.sh/uv/getting-started/installation/)
 
 #### Set up env
 
-For the `FLASK_SECRET_KEY` env variable, python can be used to generate a random string:
+Python can be used to generate a random string for the `FLASK_SECRET_KEY` env variable:
 
 ```python
 # Get a random string for FLASK_SECRET_KEY in .env
@@ -140,6 +140,8 @@ For the `FLASK_SECRET_KEY` env variable, python can be used to generate a random
 >>> os.urandom(16).hex()
 'aacddd29dfe77708800856e643ef2426'
 ```
+
+Any random string should work.
 
 The app uses ECDSA for JWT signing.  
 To generate the key pair:
