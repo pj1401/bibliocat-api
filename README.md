@@ -8,11 +8,24 @@ Bibliotekskatalog API
   - [File Structure](#file-structure)
   - [Seed database](#seed-database)
     - [Instructions](#instructions)
-  - [Run dev](#run-dev)
+  - [Run API](#run-api)
     - [Set up env](#set-up-env)
     - [Instructions](#instructions-1)
 
+## Usage
+
+Link to production here.
+
+### Installation
+
+Move docker-compose instructions here?
+
 ## Development
+
+**Prerequisites:**
+- docker-compose, [Docker Compose installation instructions](https://docs.docker.com/compose/install/)
+- uv, [uv installation instructions](https://docs.astral.sh/uv/getting-started/installation/)
+  - only needed for debug
 
 ### File Structure
 ```
@@ -66,8 +79,8 @@ bibliocat-api
 
 ### Seed database
 
-Dataset: [Google Books Dataset](https://www.kaggle.com/datasets/bilalyussef/google-books-dataset)  
-A subset of the dataset is included in `setup/data-subset/`.
+A PostgreSQL database is used to store data. Before running the API book data has to be inserted into the database. A subset of the books dataset is included in `setup/data-subset/`.  
+The full dataset can be downloaded here (optional): [Google Books Dataset](https://www.kaggle.com/datasets/bilalyussef/google-books-dataset)  
 
 To use the full dataset:
  - Place the `google_books_1299.csv` file into the `setup/data` directory. (gitignored)
@@ -88,10 +101,7 @@ COPY setup/data/ ./data
 
 #### Instructions
 
-**Prerequisites**:
-- docker-compose, [Docker Compose installation instructions](https://docs.docker.com/compose/install/)
-- uv, [uv installation instructions](https://docs.astral.sh/uv/getting-started/installation/)
-  - only needed for debug
+**Run setup:**
 
 ```powershell
 # Copy from .example.env to .env
@@ -100,9 +110,15 @@ cp .example.env .env
 # Build image
 docker-compose build --no-cache
 
-# Start database and run setup
-docker-compose up db setup
+# Start database and run setup in detached mode
+docker-compose up db setup -d
+```
 
+**For debugging:**
+
+If making changes to the setup script.
+
+```powershell
 # For debugging, start only database in detached mode
 docker-compose up db -d
 
@@ -119,16 +135,21 @@ uv pip install -r pyproject.toml
 # Run setup script
 uv run main.py
 
-# Stop container
+# To stop the container
 docker-compose down
 docker-compose down -v # Removes volumes (data)
 ```
 
-### Run dev
+### Run API
 
-**Prerequisites**:
-- docker-compose, [Docker Compose installation instructions](https://docs.docker.com/compose/install/)
-- uv, [uv installation instructions](https://docs.astral.sh/uv/getting-started/installation/)
+After seeding the database the API service can be started using docker-compose.
+
+```powershell
+# Start the api service in detached mode
+docker-compose up api -d
+```
+
+**For debugging:**
 
 #### Set up env
 
@@ -178,3 +199,8 @@ uv run -- flask --app main run --debug
 # Stop the database when done
 docker-compose down
 ```
+
+## Acknowledgements
+
+- [Flask application factory](https://github.com/cookiecutter-flask/cookiecutter-flask/blob/master/%7B%7Bcookiecutter.app_name%7D%7D/%7B%7Bcookiecutter.app_name%7D%7D/app.py): used as a template for [api/main.py](./api/main.py)
+- [README template](https://gist.github.com/ramantehlan/602ad8525699486e097092e4158c5bf1)
