@@ -4,13 +4,12 @@ Bibliotekskatalog API
 
 ## Contents
 
+- [Usage](#usage)
+  - [Installation](#installation)
 - [Development](#development)
+  - [Setting up the environment](#setting-up-the-environment)
+  - [Instructions](#instructions)
   - [File Structure](#file-structure)
-  - [Seed database](#seed-database)
-    - [Instructions](#instructions)
-  - [Run API](#run-api)
-    - [Set up env](#set-up-env)
-    - [Instructions](#instructions-1)
 
 ## Usage
 
@@ -18,14 +17,157 @@ Link to production here.
 
 ### Installation
 
-Move docker-compose instructions here?
+The API can be run in a docker container.
+
+**Prerequisites:**
+- docker-compose, [Docker Compose installation instructions](https://docs.docker.com/compose/install/)
+
+**Run setup:**
+
+```powershell
+# Copy from .example.env to .env
+cp .example.env .env
+
+# Build image
+docker-compose build --no-cache
+
+# Start database and run setup in detached mode
+docker-compose up db setup -d
+```
+
+**Start API:**
+
+The API service can be started after seeding the database.
+
+```powershell
+# Start the api service in detached mode
+docker-compose up api -d
+```
+
+The API can be accessed here: [127.0.0.1:5000](http://127.0.0.1:5000/)
 
 ## Development
 
 **Prerequisites:**
 - docker-compose, [Docker Compose installation instructions](https://docs.docker.com/compose/install/)
 - uv, [uv installation instructions](https://docs.astral.sh/uv/getting-started/installation/)
-  - only needed for debug
+
+### Setting up the environment
+
+If you haven't already set up an `.env` file:
+
+```powershell
+# Copy from .example.env to .env
+cp .example.env .env
+```
+
+A PostgreSQL database is used to store data. Book data has to be inserted into the database before running the API. A subset of the books dataset is included in `setup/data-subset/`.
+
+**Use full dataset (optional):**
+
+The full dataset can be downloaded here: [Google Books Dataset](https://www.kaggle.com/datasets/bilalyussef/google-books-dataset)  
+
+To use the full dataset:
+ - Place the `google_books_1299.csv` file into the `setup/data` directory. (gitignored)
+ - The `CSV_PATH` variable in the `docker-compose.yml` has to be updated.
+ - Update the `dockerfile` in the `setup` directory, so the correct data is copied.
+
+docker-compose.yml:
+
+```docker-compose.yml
+environment:
+  CSV_PATH: data/google_books_1299.csv
+```
+
+dockerfile:
+
+```dockerfile
+# Copy the src directory and main.py
+COPY setup/src ./src
+COPY setup/main.py .
+# COPY setup/data-subset/ ./data-subset
+COPY setup/data/ ./data
+```
+
+**Generating keys for the API:**
+
+Any random string should work for the `FLASK_SECRET_KEY` environment variable. One way is to generate a random string using Python:
+
+```python
+# Get a random string for FLASK_SECRET_KEY in .env
+>>> import os
+>>> os.urandom(16).hex()
+'aacddd29dfe77708800856e643ef2426'
+```
+
+The app uses ECDSA for JWT signing.  
+To generate the key pair:
+
+```bash
+# Generate private key
+openssl ecparam -name secp521r1 -genkey -noout -out bibliocat-api-jwt.pem
+
+# Extract public key
+openssl ec -in bibliocat-api-jwt.pem -pubout -out bibliocat-api-jwt.public.pem
+```
+
+Copy the contents of the key pair files to the `.env` file.
+
+### Instructions
+
+**Run setup:**
+
+```powershell
+# Build image
+docker-compose build --no-cache
+
+# Start database and run setup in detached mode
+docker-compose up db setup -d
+```
+
+**Start API:**
+
+```powershell
+# Change to the api directory
+cd api/
+
+# Start the database if it's not running
+docker-compose up db -d
+
+# Create a virtual environment and activate it. See: https://docs.astral.sh/uv/pip/environments/
+uv venv
+.venv\Scripts\activate # Activates venv (Windows)
+
+# Install dependencies
+uv pip install -r pyproject.toml
+
+# Start the app in debug mode
+uv run -- flask --app main run --debug
+
+# To stop the container
+docker-compose down
+docker-compose down -v # Removes volumes (data)
+```
+
+**For debugging setup:**
+
+```powershell
+# Change to setup directory
+cd setup
+
+# Create a virtual environment and activate it. See: https://docs.astral.sh/uv/pip/environments/
+uv venv
+.venv\Scripts\activate # Windows
+
+# Install dependencies
+uv pip install -r pyproject.toml
+
+# Start database in detached mode
+docker-compose up db -d
+
+# Run setup script
+uv run main.py
+```
 
 ### File Structure
 ```
@@ -75,129 +217,6 @@ bibliocat-api
 ├── .gitignore
 ├── docker-compose.yml
 └── README.md
-```
-
-### Seed database
-
-A PostgreSQL database is used to store data. Before running the API book data has to be inserted into the database. A subset of the books dataset is included in `setup/data-subset/`.  
-The full dataset can be downloaded here (optional): [Google Books Dataset](https://www.kaggle.com/datasets/bilalyussef/google-books-dataset)  
-
-To use the full dataset:
- - Place the `google_books_1299.csv` file into the `setup/data` directory. (gitignored)
- - The `CSV_PATH` variable in the `.env` file has to be updated.
- - Update the `dockerfile` in the `setup` directory, so the correct data is copied.
-
-```
-CSV_PATH=data/google_books_1299.csv
-```
-
-```dockerfile
-# Copy the src directory and main.py
-COPY setup/src ./src
-COPY setup/main.py .
-# COPY setup/data-subset/ ./data-subset
-COPY setup/data/ ./data
-```
-
-#### Instructions
-
-**Run setup:**
-
-```powershell
-# Copy from .example.env to .env
-cp .example.env .env
-
-# Build image
-docker-compose build --no-cache
-
-# Start database and run setup in detached mode
-docker-compose up db setup -d
-```
-
-**For debugging:**
-
-If making changes to the setup script.
-
-```powershell
-# For debugging, start only database in detached mode
-docker-compose up db -d
-
-# Change to setup directory
-cd setup
-
-# Create a virtual environment and activate it. See: https://docs.astral.sh/uv/pip/environments/
-uv venv
-.venv\Scripts\activate # Windows
-
-# Install dependencies
-uv pip install -r pyproject.toml
-
-# Run setup script
-uv run main.py
-
-# To stop the container
-docker-compose down
-docker-compose down -v # Removes volumes (data)
-```
-
-### Run API
-
-After seeding the database the API service can be started using docker-compose.
-
-```powershell
-# Start the api service in detached mode
-docker-compose up api -d
-```
-
-**For debugging:**
-
-#### Set up env
-
-Python can be used to generate a random string for the `FLASK_SECRET_KEY` env variable:
-
-```python
-# Get a random string for FLASK_SECRET_KEY in .env
->>> import os
->>> os.urandom(16).hex()
-'aacddd29dfe77708800856e643ef2426'
-```
-
-Any random string should work.
-
-The app uses ECDSA for JWT signing.  
-To generate the key pair:
-
-```bash
-# Generate private key
-openssl ecparam -name secp521r1 -genkey -noout -out bibliocat-api-jwt.pem
-
-# Extract public key
-openssl ec -in bibliocat-api-jwt.pem -pubout -out bibliocat-api-jwt.public.pem
-```
-
-Copy the contents of the key pair files to the `.env` file.
-
-#### Instructions
-
-```powershell
-# Change to the api directory
-cd api/
-
-# Start the database
-docker-compose up db -d
-
-# Create a virtual environment and activate it. See: https://docs.astral.sh/uv/pip/environments/
-uv venv
-.venv\Scripts\activate # Activates venv (Windows)
-
-# Install dependencies
-uv pip install -r pyproject.toml
-
-# Start the app in debug mode
-uv run -- flask --app main run --debug
-
-# Stop the database when done
-docker-compose down
 ```
 
 ## Acknowledgements
