@@ -67,4 +67,6 @@ def set_up_logger(app: Flask) -> None:
 
 if __name__ == "__main__":
     app = create_app()
-    app.run()
+    host = cast(str, app.config["FLASK_HOST"])
+    port = cast(int, app.config["FLASK_PORT"])
+    app.run(host=host, port=port)

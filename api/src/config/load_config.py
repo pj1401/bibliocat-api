@@ -18,6 +18,8 @@ class TypedConfig(Config):
     DB_PORT: int
     SQL_URI: str
     FLASK_DEBUG: str
+    FLASK_HOST: str
+    FLASK_PORT: int
     SECRET_KEY: str
     JWT_PRIVATE_KEY: str
     JWT_PUBLIC_KEY: str
@@ -35,6 +37,8 @@ def load_config(app: Flask) -> None:
             "DB_PORT": int(os.getenv("POSTGRES_PORT", "5432")),
             "SQL_URI": os.getenv("SQL_URI"),
             "FLASK_DEBUG": os.getenv("FLASK_DEBUG", "True"),
+            "FLASK_HOST": os.getenv("FLASK_HOST", "127.0.0.1"),
+            "FLASK_PORT": os.getenv("FLASK_PORT", 5000),
             "SECRET_KEY": os.getenv("FLASK_SECRET_KEY"),
             "JWT_PRIVATE_KEY": os.getenv("JWT_PRIVATE_KEY"),
             "JWT_PUBLIC_KEY": os.getenv("JWT_PUBLIC_KEY"),
