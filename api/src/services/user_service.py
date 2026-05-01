@@ -11,10 +11,33 @@ from src.repositories.user_repo import UserRepository
 
 
 class UserService:
+    """
+    Business logic for user registration and authentication.
+
+    Sits between the controllers and the repository: handles password
+    hashing on registration and credential verification on login, so
+    neither the HTTP layer nor the data layer needs to know about
+    bcrypt.
+    """
     def __init__(self, user_repo: UserRepository):
+        """
+        Initialize the service with its repository dependency.
+
+        :param user_repo: Repository used to persist and retrieve users.
+        :type user_repo: UserRepository
+        """
         self.repository = user_repo
 
     def create_user(self, user_arguments: UserArguments):
+        """
+        Register a new user, hashing the supplied plaintext password.
+
+        :param user_arguments: Validated registration input containing a
+            plaintext password that has not yet been hashed.
+        :type user_arguments: UserArguments
+        :return: The persisted user as returned by the repository.
+        :rtype: User
+        """
         try:
             password_hash = bcrypt.hashpw(
                 user_arguments.password.encode("utf-8"), bcrypt.gensalt()
@@ -30,6 +53,22 @@ class UserService:
             raise err
 
     def login(self, user_login: UserLogin) -> User:
+        """
+        Verify a username/password pair and return the matching user.
+
+        Looks up the user by username and uses bcrypt to compare the
+        supplied password against the stored hash. The same
+        :class:`InvalidCredentialsError` is raised whether the user is
+        missing or the password is wrong, so callers cannot use the
+        error to probe which usernames exist.
+
+        :param user_login: The submitted login credentials.
+        :type user_login: UserLogin
+        :raises InvalidCredentialsError: If no such user exists or the
+            password does not match.
+        :return: The authenticated user.
+        :rtype: User
+        """
         try:
             user = self.repository.get_user_by_username(user_login.username)
             if user is None:

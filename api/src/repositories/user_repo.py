@@ -12,11 +12,39 @@ from src.db.connection_manager import DatabaseConnectionManager
 
 
 class UserRepository:
+    """
+    Data-access layer for :class:`User` records.
+
+    Encapsulates all SQLAlchemy interactions for users so that the rest
+    of the application can work with plain domain objects without dealing
+    with sessions, transactions or ORM-specific exceptions.
+    """
     def __init__(self, db_manager: DatabaseConnectionManager):
+        """
+        Initialize the repository with a database connection manager.
+
+        :param db_manager: Provides scoped SQLAlchemy sessions backed by
+            the application's configured database engine.
+        :type db_manager: DatabaseConnectionManager
+        """
         self.db_manager = db_manager
 
     def create_user(self, new_user: NewUser) -> User:
-        """Insert a new user."""
+        """
+        Persist a new user to the database.
+
+        Opens a session, inserts a :class:`User` row built from
+        ``new_user``, commits, and returns the refreshed object so the
+        caller sees server-generated fields such as the primary key.
+
+        :param new_user: The validated, ready-to-persist user data
+            (username, email, and already-hashed password).
+        :type new_user: NewUser
+        :raises UniqueViolationError: If the username or email collides
+            with an existing record.
+        :return: The persisted user, refreshed from the database.
+        :rtype: User
+        """
         session: Session | None = None
         try:
             session = self.db_manager.get_session()
@@ -42,7 +70,15 @@ class UserRepository:
                 session.close()
 
     def get_user_by_username(self, username: str) -> User | None:
-        """Get a user by username."""
+        """
+        Look up a single user by their unique username.
+
+        :param username: The exact username to match (case-sensitive).
+        :type username: str
+        :return: The matching user, or ``None`` if no user exists with
+            that username.
+        :rtype: User | None
+        """
         session: Session | None = None
         try:
             session = self.db_manager.get_session()
