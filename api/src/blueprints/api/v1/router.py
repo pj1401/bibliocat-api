@@ -1,5 +1,6 @@
 """
 API version 1 router. Registers API endpoints.
+module: src/blueprints/api/v1/router.py
 """
 
 from flask import Blueprint
