@@ -19,6 +19,7 @@ class UserService:
     neither the HTTP layer nor the data layer needs to know about
     bcrypt.
     """
+
     def __init__(self, user_repo: UserRepository):
         """
         Initialize the service with its repository dependency.

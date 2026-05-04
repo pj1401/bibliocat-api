@@ -19,6 +19,7 @@ class UserRepository:
     of the application can work with plain domain objects without dealing
     with sessions, transactions or ORM-specific exceptions.
     """
+
     def __init__(self, db_manager: DatabaseConnectionManager):
         """
         Initialize the repository with a database connection manager.

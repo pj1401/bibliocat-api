@@ -19,6 +19,7 @@ class UserController:
     serializes the resulting domain objects (or errors) back into JSON
     responses with appropriate HTTP status codes.
     """
+
     def __init__(self, user_service: UserService):
         """
         Initialize the controller with its service dependency.
