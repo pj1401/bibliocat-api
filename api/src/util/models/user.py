@@ -5,14 +5,11 @@ module: src/util/models/user.py
 
 from datetime import datetime, timezone
 from sqlalchemy import DateTime, Column, Integer, String
-from sqlalchemy.orm import declarative_base
-
-Base = declarative_base()
+from src.util.models.base import BaseModel
 
 
-class User(Base):
+class User(BaseModel):
     __tablename__ = "users"
-    id = Column(Integer, primary_key=True)
     username = Column(String(255), nullable=False, unique=True)
     email = Column(String(255), nullable=False, unique=True)
     password_hash = Column(String(255), nullable=False)

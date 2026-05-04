@@ -3,12 +3,14 @@ The BaseRepository class.
 module: src/repositories/base_repo.py
 """
 
-from typing import Generic, List, TypeVar
+from typing import Generic, TypeVar
+
+from sqlalchemy import select
 from api.src.db.connection_manager import DatabaseConnectionManager
 from sqlalchemy.orm import Session
-from src.util.models.base import Base
+from src.util.models.base import BaseModel
 
-TModel = TypeVar("TModel", bound=Base)
+TModel = TypeVar("TModel", bound=BaseModel)
 
 
 class BaseRepository(Generic[TModel]):
@@ -20,7 +22,7 @@ class BaseRepository(Generic[TModel]):
         self.db_manager = db_manager
         self.model = model
 
-    def get(self, limit: int) -> List[TModel]:
+    def get(self, limit: int):
         pass
 
     def get_by_id(self, id: int | str) -> TModel | None:

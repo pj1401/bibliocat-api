@@ -13,13 +13,13 @@ from sqlalchemy import (
     Date,
     Numeric,
 )
-from sqlalchemy.orm import declarative_base, relationship
+from sqlalchemy.orm import relationship
 
-Base = declarative_base()
+from src.util.models.base import BaseModel
 
-class Book(Base):
+
+class Book(BaseModel):
     __tablename__ = "books"
-    id = Column(Integer, primary_key=True)
     title = Column(String, nullable=False)
     isbn = Column(String(20), unique=True)
     published_date = Column(Date)
