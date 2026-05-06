@@ -4,6 +4,7 @@ module: src/util/models/base.py
 """
 
 from datetime import datetime, timezone
+from decimal import Decimal
 from sqlalchemy import Column, DateTime, Integer
 from sqlalchemy.orm import declarative_base
 
@@ -25,7 +26,7 @@ class BaseModel(Base):
         onupdate=lambda: datetime.now(timezone.utc),
     )
 
-    def to_dict(self) -> dict[str, int | str]:
+    def to_dict(self) -> dict[str, int | float | str]:
         """
         Get a dictionary that represents the database object.
         see: https://stackoverflow.com/a/11884806
@@ -33,4 +34,10 @@ class BaseModel(Base):
         :return: A dictionary representing the object.
         :rtype: dict[str, int | str]
         """
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        # Convert Decimal to float.
+        return {
+            c.name: getattr(self, c.name)
+            if not isinstance(getattr(self, c.name), Decimal)
+            else float(getattr(self, c.name))
+            for c in self.__table__.columns
+        }
