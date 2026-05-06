@@ -26,6 +26,7 @@ class BaseService(Generic[TRepository]):
             if model is None:
                 raise NotFoundError()
             data = self.repository.model_to_dict(model)
-            return self.schema.model_validate(data)
+            self.schema.model_validate(data)
+            return data
         except Exception as err:
             raise err

@@ -81,7 +81,7 @@ class BaseRepository(Generic[TModel]):
             related_objects = getattr(model, rel.key, None)
             if related_objects is None:
                 continue
-            data.update(self._get_relationship_dict_item(rel, related_objects))
+            data.update(self._get_relationship_dict_item(rel.key, related_objects))
         return data
 
     def _get_relationship_dict_item(
