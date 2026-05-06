@@ -5,7 +5,7 @@ module: src/util/models/publisher.py
 
 from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
-from src.util.models.base import BaseModel
+from .base import BaseModel
 
 
 class Publisher(BaseModel):

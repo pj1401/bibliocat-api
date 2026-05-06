@@ -13,7 +13,7 @@ from sqlalchemy import (
     Numeric,
 )
 from sqlalchemy.orm import relationship
-from src.util.models.base import BaseModel
+from .base import BaseModel
 
 
 class Book(BaseModel):
@@ -27,7 +27,10 @@ class Book(BaseModel):
     rating = Column(Numeric(precision=2, scale=1), default=0)
     voters = Column(Integer, default=0)  # Number of reviewers
     publisher_id = Column(Integer, ForeignKey("publishers.id"))
-    categories = relationship("Category", secondary="categories_books", backref="books")
+    authors = relationship("Author", secondary="authors_books", back_populates="books")
+    categories = relationship(
+        "Category", secondary="categories_books", back_populates="books"
+    )
 
 
 categories_books_table = Table(

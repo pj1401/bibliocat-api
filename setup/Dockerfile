@@ -24,6 +24,11 @@ RUN uv sync --frozen --no-dev
 # Copy the src directory and main.py
 COPY setup/src ./src
 COPY setup/main.py .
+
+# Copy models from api directory
+COPY api/src/util/models/ ./src/models/
+
+# Copy dataset
 COPY setup/data-subset/ ./data-subset
 # COPY setup/data/ ./data
 
