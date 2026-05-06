@@ -3,7 +3,7 @@
 #   timestamp: 2026-05-06T14:51:53+00:00
 
 from __future__ import annotations
-
+from datetime import date, datetime
 from pydantic import BaseModel, Field
 
 
@@ -11,14 +11,14 @@ class BookSchema(BaseModel):
     id: int
     title: str
     isbn: str
-    published_date: str | None = None
+    published_date: date | None = None
     description: str | None = None
     language: str | None = None
     page_count: int
     rating: float = Field(..., ge=0.0, le=5.0)
     voters: int = Field(..., ge=0)
-    created_at: str
-    updated_at: str
+    created_at: datetime
+    updated_at: datetime
     authors_ids: list[int]
     categories_ids: list[int] | None = None
     publisher_id: int
