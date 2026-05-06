@@ -92,9 +92,7 @@ environment:
 dockerfile:
 
 ```dockerfile
-# Copy the src directory and main.py
-COPY setup/src ./src
-COPY setup/main.py .
+# Copy dataset
 # COPY setup/data-subset/ ./data-subset
 COPY setup/data/ ./data
 ```
