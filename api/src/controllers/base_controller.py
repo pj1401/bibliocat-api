@@ -20,7 +20,12 @@ class BaseController(Generic[TService]):
 
     def get_by_id(self, id: int | str):
         try:
-            return self.service.get_by_id(id)
+            fetched = self.service.get_by_id(id)
+            response: dict[str, int | Any | None] = {
+                "status": 200,
+                "data": fetched,
+            }
+            return jsonify(response), 200
         except Exception as err:
             log_original_error(err)
             http_err = convert_to_http_error(err)

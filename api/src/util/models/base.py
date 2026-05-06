@@ -24,3 +24,13 @@ class BaseModel(Base):
         default=lambda: datetime.now(timezone.utc),
         onupdate=lambda: datetime.now(timezone.utc),
     )
+
+    def to_dict(self) -> dict[str, int | str]:
+        """
+        Get a dictionary that represents the database object.
+        see: https://stackoverflow.com/a/11884806
+
+        :return: A dictionary representing the object.
+        :rtype: dict[str, int | str]
+        """
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
