@@ -4,7 +4,7 @@ module: src/util/models/user.py
 """
 
 from sqlalchemy import Column, Integer, String
-from src.util.models.base import BaseModel
+from .base import BaseModel
 
 
 class User(BaseModel):
