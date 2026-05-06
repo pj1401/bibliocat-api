@@ -4,7 +4,7 @@ module: src/services/base_service.py
 """
 
 from typing import Any, Generic, TypeVar
-from api.src.repositories.base_repo import BaseRepository
+from src.repositories.base_repo import BaseRepository
 
 TRepository = TypeVar("TRepository", bound=BaseRepository[Any])
 

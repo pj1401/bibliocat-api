@@ -3,9 +3,9 @@ The BookRepository class.
 module: src/repositories/book_repo.py
 """
 
-from api.src.db.connection_manager import DatabaseConnectionManager
-from api.src.repositories.base_repo import BaseRepository
-from api.src.util.models.book import Book
+from src.db.connection_manager import DatabaseConnectionManager
+from src.repositories.base_repo import BaseRepository
+from src.util.models.book import Book
 
 
 class BookRepository(BaseRepository[Book]):

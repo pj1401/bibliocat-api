@@ -12,9 +12,8 @@ TService = TypeVar("TService", bound=BaseService[Any])
 
 
 class BaseController(Generic[TService]):
-    def __init__(self, service: TService, resource_name: str):
+    def __init__(self, service: TService):
         self.service = service
-        self.resource_name = resource_name
 
     def get(self):
         pass

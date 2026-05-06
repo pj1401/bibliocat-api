@@ -6,7 +6,7 @@ module: src/repositories/base_repo.py
 from typing import Generic, TypeVar
 
 from sqlalchemy import select
-from api.src.db.connection_manager import DatabaseConnectionManager
+from src.db.connection_manager import DatabaseConnectionManager
 from sqlalchemy.orm import Session
 from src.util.models.base import BaseModel
 

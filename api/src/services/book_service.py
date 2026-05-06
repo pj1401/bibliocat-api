@@ -3,8 +3,8 @@ The BookService class.
 module: src/services/book_service.py
 """
 
-from api.src.repositories.book_repo import BookRepository
-from api.src.services.base_service import BaseService
+from src.repositories.book_repo import BookRepository
+from src.services.base_service import BaseService
 
 
 class BookService(BaseService[BookRepository]):
