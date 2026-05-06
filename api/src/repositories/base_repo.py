@@ -3,10 +3,10 @@ The BaseRepository class.
 module: src/repositories/base_repo.py
 """
 
-from typing import Generic, TypeVar
-from sqlalchemy import select
+from typing import Any, Dict, Generic, TypeVar
+from sqlalchemy import inspect, select
 from src.db.connection_manager import DatabaseConnectionManager
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload, Mapper
 from src.util.models.base import BaseModel
 
 TModel = TypeVar("TModel", bound=BaseModel)
@@ -47,9 +47,16 @@ class BaseRepository(Generic[TModel]):
         session: Session | None = None
         try:
             session = self.db_manager.get_session()
-            result = session.scalars(
-                select(self.model).where(self.model.id == id)
-            ).first()
+
+            # Inspect the model class to get its relationships
+            mapper: Mapper = inspect(self.model)
+            relationships = [rel.key for rel in mapper.relationships]
+
+            stmt = select(self.model).where(self.model.id == id)
+            for rel_name in relationships:
+                stmt = stmt.options(selectinload(getattr(self.model, rel_name)))
+
+            result = session.scalars(stmt).first()
 
             session.commit()
 
@@ -65,3 +72,25 @@ class BaseRepository(Generic[TModel]):
         finally:
             if session is not None:
                 session.close()
+
+    def model_to_dict(self, model: BaseModel) -> Dict[str, Any]:
+        """Get a dictionary representing the model."""
+        data = model.to_dict()
+        mapper: Mapper = inspect(self.model)
+        for rel in mapper.relationships:
+            related_objects = getattr(model, rel.key, None)
+            if related_objects is None:
+                continue
+            data.update(self._get_relationship_dict_item(rel, related_objects))
+        return data
+
+    def _get_relationship_dict_item(
+        self, rel_name: str, related_objects
+    ) -> Dict[str, Any]:
+        """Get a dictionary item that represents the relationship."""
+        dict_item = {}
+        if isinstance(related_objects, list):
+            dict_item[f"{rel_name}_ids"] = [obj.id for obj in related_objects]
+        else:
+            dict_item[f"{rel_name}_id"] = related_objects.id
+        return dict_item
