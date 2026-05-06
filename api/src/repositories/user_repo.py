@@ -5,13 +5,14 @@ module: src/repositories/user_repo.py
 
 from sqlalchemy import exc, select
 from sqlalchemy.orm import Session
+from src.repositories.base_repo import BaseRepository
 from src.util.errors.error import UniqueViolationError
 from src.util.models.user import User
 from src.util.schemas.user import NewUser
 from src.db.connection_manager import DatabaseConnectionManager
 
 
-class UserRepository:
+class UserRepository(BaseRepository[User]):
     """
     Data-access layer for :class:`User` records.
 
@@ -28,7 +29,7 @@ class UserRepository:
             the application's configured database engine.
         :type db_manager: DatabaseConnectionManager
         """
-        self.db_manager = db_manager
+        super().__init__(db_manager, User)
 
     def create_user(self, new_user: NewUser) -> User:
         """

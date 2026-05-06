@@ -34,6 +34,15 @@ class InvalidCredentialsError(CustomError):
         super().__init__(err, message)
 
 
+class NotFoundError(CustomError):
+    def __init__(
+        self,
+        err: Exception | None = None,
+        message: str = "The requested resource was not found.",
+    ):
+        super().__init__(err, message)
+
+
 class HttpError(CustomError):
     """An error with an HTTP status and message."""
 
@@ -68,11 +77,13 @@ errorHttpStatusMap = {
     "UniqueViolationError": 400,
     "ValidationError": 400,
     "InvalidCredentialsError": 401,
+    "NotFoundError": 404,
 }
 
 httpStatusReasonMap = {
     400: "The request cannot or will not be processed due to something that is perceived to be a client error (for example validation error).",
     401: "Credentials invalid or not provided.",
+    404: "The requested resource was not found.",
     500: "The server encountered an unexpected condition that prevented it from fulfilling the request.",
 }
 

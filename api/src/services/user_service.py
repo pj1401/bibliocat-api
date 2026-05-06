@@ -4,13 +4,14 @@ module: src/services/user_service.py
 """
 
 import bcrypt
+from src.services.base_service import BaseService
 from src.util.models.user import User
 from src.util.errors.error import InvalidCredentialsError
 from src.util.schemas.user import NewUser, UserArguments, UserLogin
 from src.repositories.user_repo import UserRepository
 
 
-class UserService:
+class UserService(BaseService[UserRepository]):
     """
     Business logic for user registration and authentication.
 
@@ -27,7 +28,7 @@ class UserService:
         :param user_repo: Repository used to persist and retrieve users.
         :type user_repo: UserRepository
         """
-        self.repository = user_repo
+        super().__init__(user_repo)
 
     def create_user(self, user_arguments: UserArguments):
         """
