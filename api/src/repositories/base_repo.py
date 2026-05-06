@@ -4,7 +4,6 @@ module: src/repositories/base_repo.py
 """
 
 from typing import Generic, TypeVar
-
 from sqlalchemy import select
 from src.db.connection_manager import DatabaseConnectionManager
 from sqlalchemy.orm import Session

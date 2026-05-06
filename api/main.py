@@ -6,6 +6,7 @@ module: main.py
 from typing import cast
 from flask import Flask
 from flask_jwt_extended import JWTManager
+from src.util.models.base import BaseModel
 from src.config.logger_config import configure_logger
 from src.hooks.logging import setup_logging_hooks
 from src.hooks.exception_handlers import setup_exception_handlers
@@ -39,7 +40,8 @@ def register_db_manager(app: Flask) -> None:
             cast(str, app.config["DB_PASSWORD"]),
             cast(int, app.config["DB_PORT"]),
             cast(str, app.config["SQL_URI"]),
-        )
+        ),
+        BaseModel,
     )
     setup_database_hooks(app, db_manager)
 
