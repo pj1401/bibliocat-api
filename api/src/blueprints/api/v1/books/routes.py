@@ -18,6 +18,7 @@ def before_request():
     g.book_service = BookService(g.book_repo)
     g.book_controller = BookController(g.book_service)
 
+
 @books_bp.route("/<int:id>", methods=["GET"])
 def get_book(id: int):
     return g.book_controller.get_by_id(id)
