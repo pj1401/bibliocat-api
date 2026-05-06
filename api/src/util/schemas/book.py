@@ -7,7 +7,7 @@ from __future__ import annotations
 from pydantic import BaseModel, Field
 
 
-class Model(BaseModel):
+class BookSchema(BaseModel):
     id: int
     title: str
     isbn: str
@@ -19,6 +19,6 @@ class Model(BaseModel):
     voters: int = Field(..., ge=0)
     created_at: str
     updated_at: str
-    author_ids: list[int]
-    category_ids: list[int] | None = None
+    authors_ids: list[int]
+    categories_ids: list[int] | None = None
     publisher_id: int
