@@ -3,7 +3,7 @@ The BaseRepository class.
 module: src/repositories/base_repo.py
 """
 
-from typing import Any, Dict, Generic, TypeVar
+from typing import Any, Dict, Generic, List, TypeVar, Union
 from sqlalchemy import inspect, select
 from src.db.connection_manager import DatabaseConnectionManager
 from sqlalchemy.orm import Session, selectinload, Mapper
@@ -49,7 +49,7 @@ class BaseRepository(Generic[TModel]):
             session = self.db_manager.get_session()
 
             # Inspect the model class to get its relationships
-            mapper: Mapper = inspect(self.model)
+            mapper: Mapper[TModel] = inspect(self.model)
             relationships = [rel.key for rel in mapper.relationships]
 
             stmt = select(self.model).where(self.model.id == id)
@@ -76,8 +76,8 @@ class BaseRepository(Generic[TModel]):
     def model_to_dict(self, model: BaseModel) -> Dict[str, Any]:
         """Get a dictionary representing the model."""
         data = model.to_dict()
-        mapper: Mapper = inspect(self.model)
-        for rel in mapper.relationships:
+        mapper: Mapper[TModel] = inspect(self.model)
+        for rel in mapper.relationships.values():
             related_objects = getattr(model, rel.key, None)
             if related_objects is None:
                 continue
@@ -85,10 +85,10 @@ class BaseRepository(Generic[TModel]):
         return data
 
     def _get_relationship_dict_item(
-        self, rel_name: str, related_objects
+        self, rel_name: str, related_objects: Union[List[BaseModel], BaseModel]
     ) -> Dict[str, Any]:
         """Get a dictionary item that represents the relationship."""
-        dict_item = {}
+        dict_item: Dict[str, Any] = {}
         if isinstance(related_objects, list):
             dict_item[f"{rel_name}_ids"] = [obj.id for obj in related_objects]
         else:
