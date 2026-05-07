@@ -19,11 +19,15 @@ SQL_URI = str(os.getenv("SQL_URI"))
 
 
 def main():
-    csv_data = extract_data(CSV_PATH, CHUNK_SIZE)
     db_loader = DatabaseLoader(SQL_URI, BaseModel)
-    for chunk in csv_data:
-        transformed_dfs = transform_data(chunk)
-        db_loader.seed_database(transformed_dfs)
+    if not db_loader.database_is_populated():
+        csv_data = extract_data(CSV_PATH, CHUNK_SIZE)
+        for chunk in csv_data:
+            transformed_dfs = transform_data(chunk)
+            db_loader.seed_database(transformed_dfs)
+    else:
+        print("Database already populated. Skipping seed.")
+    return
 
 
 def extract_data(file_path: str, chunk_size: int):
