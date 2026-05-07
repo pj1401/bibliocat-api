@@ -23,39 +23,29 @@ The API can be run in a docker container.
 **Prerequisites:**
 - docker-compose, [Docker Compose installation instructions](https://docs.docker.com/compose/install/)
 
-**Run setup:**
-
-```powershell
-# Start database and run setup in detached mode
-docker compose up db setup -d
-```
-
 **Start API:**
 
-The API service can be started after seeding the database.
-
 ```powershell
-# Start the api service in detached mode
-docker compose up api -d
+# Start the services in detached mode
+docker compose up -d
 ```
 
 The API can be accessed here: [127.0.0.1:5000](http://127.0.0.1:5000/)
 
-**Stop container:**
+**To stop containers:**
 
 ```powershell
 docker compose down
+docker-compose down -v # Removes volumes (data)
 ```
 
-**Restart API:**
+**Rebuild images:**
 
-Don't start the setup service after initial setup:
+To build images after code changes:
 
 ```powershell
-docker compose up db api -d
+docker compose up -d --build
 ```
-
-If volumes are removed with `docker compose down -v` the setup service has to run before starting the API again.
 
 ## Development
 
@@ -127,9 +117,6 @@ Copy the contents of the key pair files to the `.env` file.
 **Run setup:**
 
 ```powershell
-# Build image
-docker-compose build --no-cache
-
 # Start database and run setup in detached mode
 docker-compose up db setup -d
 ```
