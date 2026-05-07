@@ -28,6 +28,7 @@ services:
         condition: service_healthy
     volumes:
       - ./setup/data:/app/data
+    restart: "no"
 
   api:
     build:
@@ -45,6 +46,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      setup:
+        condition: service_completed_successfully
     ports:
       - "5000:5000"
 
