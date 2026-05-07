@@ -10,10 +10,11 @@ Bibliotekskatalog API
   - [Setting up the environment](#setting-up-the-environment)
   - [Instructions](#instructions)
   - [File Structure](#file-structure)
+- [Acknowledgements](#acknowledgements)
 
 ## Usage
 
-Link to production here.
+The API is running on: [https://patriciaj.se/bibliocat-api](https://patriciaj.se/bibliocat-api)
 
 ### Installation
 

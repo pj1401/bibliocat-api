@@ -9,5 +9,5 @@ from src.util.models.book import Book
 
 
 class BookRepository(BaseRepository[Book]):
-    def __init__(self, db_manager: DatabaseConnectionManager):
-        super().__init__(db_manager, Book)
+    def __init__(self, db_manager: DatabaseConnectionManager, book_model: type[Book]):
+        super().__init__(db_manager, book_model)

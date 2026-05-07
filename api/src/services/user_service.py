@@ -3,11 +3,13 @@ The UserService class.
 module: src/services/user_service.py
 """
 
+from typing import Type
+
 import bcrypt
 from src.services.base_service import BaseService
 from src.util.models.user import User
 from src.util.errors.error import InvalidCredentialsError
-from src.util.schemas.user import NewUser, UserArguments, UserLogin
+from src.util.schemas.user import NewUser, UserArguments, UserLogin, UserModel
 from src.repositories.user_repo import UserRepository
 
 
@@ -21,14 +23,14 @@ class UserService(BaseService[UserRepository]):
     bcrypt.
     """
 
-    def __init__(self, user_repo: UserRepository):
+    def __init__(self, user_repo: UserRepository, user_schema: Type[UserModel]):
         """
         Initialize the service with its repository dependency.
 
         :param user_repo: Repository used to persist and retrieve users.
         :type user_repo: UserRepository
         """
-        super().__init__(user_repo)
+        super().__init__(user_repo, user_schema)
 
     def create_user(self, user_arguments: UserArguments):
         """

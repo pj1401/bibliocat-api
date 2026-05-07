@@ -3,7 +3,7 @@ The BaseRepository class.
 module: src/repositories/base_repo.py
 """
 
-from typing import Any, Dict, Generic, TypeVar
+from typing import Any, Dict, Generic, List, TypeVar, Union, cast
 from sqlalchemy import inspect, select
 from src.db.connection_manager import DatabaseConnectionManager
 from sqlalchemy.orm import Session, selectinload, Mapper
@@ -28,6 +28,8 @@ class BaseRepository(Generic[TModel]):
         :param db_manager: Provides scoped SQLAlchemy sessions backed by
             the application's configured database engine.
         :type db_manager: DatabaseConnectionManager
+        :param model: The SQLAlchemy model used for data-access.
+        :type model: type[TModel]
         """
         self.db_manager = db_manager
         self.model = model
@@ -49,12 +51,13 @@ class BaseRepository(Generic[TModel]):
             session = self.db_manager.get_session()
 
             # Inspect the model class to get its relationships
-            mapper: Mapper = inspect(self.model)
-            relationships = [rel.key for rel in mapper.relationships]
+            mapper: Mapper[TModel] = inspect(self.model)
 
             stmt = select(self.model).where(self.model.id == id)
-            for rel_name in relationships:
-                stmt = stmt.options(selectinload(getattr(self.model, rel_name)))
+
+            # Add relationships to the statement
+            for rel in mapper.relationships.values():
+                stmt = stmt.options(selectinload(getattr(self.model, rel.key)))
 
             result = session.scalars(stmt).first()
 
@@ -74,10 +77,17 @@ class BaseRepository(Generic[TModel]):
                 session.close()
 
     def model_to_dict(self, model: BaseModel) -> Dict[str, Any]:
-        """Get a dictionary representing the model."""
+        """
+        Get a dictionary representing the model.
+
+        :param model: The model for the object.
+        :type model: BaseModel
+        :return: A dictionary representing the model.
+        :rtype: Dict[str, Any]
+        """
         data = model.to_dict()
-        mapper: Mapper = inspect(self.model)
-        for rel in mapper.relationships:
+        mapper: Mapper[TModel] = inspect(self.model)
+        for rel in mapper.relationships.values():
             related_objects = getattr(model, rel.key, None)
             if related_objects is None:
                 continue
@@ -85,12 +95,22 @@ class BaseRepository(Generic[TModel]):
         return data
 
     def _get_relationship_dict_item(
-        self, rel_name: str, related_objects
+        self, rel_name: str, related_objects: Union[List[BaseModel], BaseModel]
     ) -> Dict[str, Any]:
-        """Get a dictionary item that represents the relationship."""
-        dict_item = {}
+        """
+        Get a dictionary item that represents the relationship.
+
+        :param rel_name: The name of the related table.
+        :type rel_name: str
+        :param related_objects: A list of related objects.
+        :type related_objects: Union[List[BaseModel], BaseModel]
+        :return: A dictionary with a relationship that has one id or a list of ids.
+        :rtype: Dict[str, Any]
+        """
+        dict_item: Dict[str, Any] = {}
         if isinstance(related_objects, list):
-            dict_item[f"{rel_name}_ids"] = [obj.id for obj in related_objects]
+            related_list = cast(List[BaseModel], related_objects)
+            dict_item[f"{rel_name}_ids"] = [obj.id for obj in related_list]
         else:
             dict_item[f"{rel_name}_id"] = related_objects.id
         return dict_item

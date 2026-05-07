@@ -12,13 +12,31 @@ TService = TypeVar("TService", bound=BaseService[Any])
 
 
 class BaseController(Generic[TService]):
+    """
+    BaseController for HTTP routes.
+    """
+
     def __init__(self, service: TService):
+        """
+        Initialise the controller with its service dependency.
+
+        :param service: The service that performs business logic.
+        :type service: TService
+        """
         self.service = service
 
     def get(self):
         pass
 
     def get_by_id(self, id: int | str):
+        """
+        Fetch one record's data by matching ID.
+
+        :param id: The id of the record.
+        :type id: int | str
+        :return: A response in JSON.
+        :rtype: tuple[Response, Literal[200]] | tuple[Response, int]
+        """
         try:
             fetched = self.service.get_by_id(id)
             response: dict[str, int | Any | None] = {
