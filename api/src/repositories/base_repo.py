@@ -28,6 +28,8 @@ class BaseRepository(Generic[TModel]):
         :param db_manager: Provides scoped SQLAlchemy sessions backed by
             the application's configured database engine.
         :type db_manager: DatabaseConnectionManager
+        :param model: The SQLAlchemy model used for data-access.
+        :type model: type[TModel]
         """
         self.db_manager = db_manager
         self.model = model
