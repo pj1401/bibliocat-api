@@ -1,3 +1,5 @@
+image: python:3.12-alpine3.22
+
 build-job:
   stage: build
   script:
