@@ -29,6 +29,23 @@ class DatabaseLoader:
         base_model.metadata.create_all(self.engine)
         self.session_factory = sessionmaker(bind=self.engine)
 
+    def database_is_populated(self) -> bool:
+        """
+        Check if the database already has data.
+
+        :return: True if there is data in the database.
+        :rtype: bool
+        """
+        session = self.session_factory()
+        try:
+            # Check if any table has data (e.g., books)
+            book_count = session.query(Book).count()
+            return book_count > 0
+        except Exception:
+            return False
+        finally:
+            session.close()
+
     def seed_database(
         self, data: tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]
     ) -> None:

@@ -19,14 +19,33 @@ SQL_URI = str(os.getenv("SQL_URI"))
 
 
 def main():
-    csv_data = extract_data(CSV_PATH, CHUNK_SIZE)
+    """
+    The starting point for the seed script.
+    """
     db_loader = DatabaseLoader(SQL_URI, BaseModel)
-    for chunk in csv_data:
-        transformed_dfs = transform_data(chunk)
-        db_loader.seed_database(transformed_dfs)
+
+    # Check if data already exists.
+    if not db_loader.database_is_populated():
+        csv_data = extract_data(CSV_PATH, CHUNK_SIZE)
+        for chunk in csv_data:
+            transformed_dfs = transform_data(chunk)
+            db_loader.seed_database(transformed_dfs)
+    else:
+        print("Database already populated. Skipping seed.")
+    return
 
 
 def extract_data(file_path: str, chunk_size: int):
+    """
+    Docstring for extract_data
+
+    :param file_path: The path to the csv file.
+    :type file_path: str
+    :param chunk_size: The number of rows to extract.
+    :type chunk_size: int
+    :return: An iterator with pandas DataFrames.
+    :rtype: Iterator[DataFrame]
+    """
     return read_csv_data(
         file_path,
         chunk_size,
