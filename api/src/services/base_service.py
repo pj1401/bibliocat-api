@@ -30,7 +30,12 @@ class BaseService(Generic[TRepository]):
         self.schema = schema
 
     def get(self, limit: int):
-        pass
+        """Get a list of records."""
+        try:
+            fetched = self.repository.get(limit)
+            return [row.to_dict() for row in fetched]
+        except Exception as err:
+            raise err
 
     def get_by_id(self, id: int | str) -> Dict[str, Any]:
         """
