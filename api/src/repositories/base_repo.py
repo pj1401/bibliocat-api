@@ -4,7 +4,7 @@ module: src/repositories/base_repo.py
 """
 
 from typing import Any, Dict, Generic, List, TypeVar, Union, cast
-from sqlalchemy import inspect, select
+from sqlalchemy import Sequence, inspect, select
 from src.db.connection_manager import DatabaseConnectionManager
 from sqlalchemy.orm import Session, selectinload, Mapper
 from src.util.models.base import BaseModel
@@ -34,18 +34,21 @@ class BaseRepository(Generic[TModel]):
         self.db_manager = db_manager
         self.model = model
 
-    def get(self, limit: int) -> List[TModel]:
+    def get(self, limit: int) -> Sequence[TModel]:
         """Fetch a list of records."""
         session: Session | None = None
         try:
             session = self.db_manager.get_session()
-            result = session.scalars(select(self.model))
+
+            stmt = select(self.model)
+            result = session.scalars(stmt).fetchmany(limit)
 
             session.commit()
 
             # Expire and refresh attributes on the object.
             if result:
-                session.refresh(result)
+                for row in result:
+                    session.refresh(row)
 
             return result
         except Exception as err:

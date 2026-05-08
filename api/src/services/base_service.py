@@ -33,7 +33,7 @@ class BaseService(Generic[TRepository]):
         """Get a list of records."""
         try:
             fetched = self.repository.get(limit)
-            return [row.__dict__ for row in fetched]
+            return [row.to_dict() for row in fetched]
         except Exception as err:
             raise err
 
