@@ -72,3 +72,5 @@ if __name__ == "__main__":
     host = cast(str, app.config["FLASK_HOST"])
     port = cast(int, app.config["FLASK_PORT"])
     app.run(host=host, port=port)
+
+app = create_app()
