@@ -15,11 +15,12 @@ RUN apk update && apk add --no-cache \
     musl-dev \
     libffi-dev \
     openssl-dev \
-    libstdc++
+    libstdc++ \
+    curl
 
 RUN uv sync --frozen --no-dev
 
 COPY api/main.py .
 COPY api/ .
 
-CMD ["uv", "run", "python", "main.py"]
+CMD ["uv", "run", "gunicorn", "--bind", "0.0.0.0:5000", "--workers", "2", "main:app"]
