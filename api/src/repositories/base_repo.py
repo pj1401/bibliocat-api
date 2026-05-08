@@ -34,8 +34,27 @@ class BaseRepository(Generic[TModel]):
         self.db_manager = db_manager
         self.model = model
 
-    def get(self, limit: int):
-        pass
+    def get(self, limit: int) -> List[TModel]:
+        """Fetch a list of records."""
+        session: Session | None = None
+        try:
+            session = self.db_manager.get_session()
+            result = session.scalars(select(self.model))
+
+            session.commit()
+
+            # Expire and refresh attributes on the object.
+            if result:
+                session.refresh(result)
+
+            return result
+        except Exception as err:
+            if session is not None:
+                session.rollback()
+            raise err
+        finally:
+            if session is not None:
+                session.close()
 
     def get_by_id(self, id: int | str) -> TModel | None:
         """
