@@ -1,13 +1,30 @@
-image: python:3.12-alpine3.22
+image: docker:24
 
-build-job:
-  stage: build
+services:
+  - docker:24-dind
+
+variables:
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_TLS_CERTDIR: ""
+  DOCKER_DRIVER: overlay2
+
+stages:
+  - test
+  - deploy
+
+test-services:
+  stage: test
   script:
-    - echo "Hello, $GITLAB_USER_LOGIN!"
     - docker compose up -d --build --wait
+    # Wait for DB to be ready (using healthcheck)
+    - docker compose exec -T db pg_isready -U library_dev_user -d library_postgres -h localhost
+    # Check if API is responding
+    - docker compose exec -T api curl -sSf http://localhost:5000/api/v1/ || exit 1
+    # Stop and remove containers
+    - docker compose down
   rules:
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'  # Run for all changes to a merge request's source branch
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH       # Run for all changes to the default branch
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
 test-job1:
   stage: test
