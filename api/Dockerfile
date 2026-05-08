@@ -15,7 +15,8 @@ RUN apk update && apk add --no-cache \
     musl-dev \
     libffi-dev \
     openssl-dev \
-    libstdc++
+    libstdc++ \
+    curl
 
 RUN uv sync --frozen --no-dev
 
