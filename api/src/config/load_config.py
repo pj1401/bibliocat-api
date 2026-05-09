@@ -16,7 +16,6 @@ class TypedConfig(Config):
     DB_USER: str
     DB_PASSWORD: str
     DB_PORT: int
-    SQL_URI: str
     FLASK_DEBUG: str
     FLASK_HOST: str
     FLASK_PORT: int
@@ -25,7 +24,10 @@ class TypedConfig(Config):
     JWT_PUBLIC_KEY: str
     JWT_ALGORITHM: str
 
-def _get_env_or_secret(env_var: str, default: str | int | None = None) -> str | int | None:
+
+def _get_env_or_secret(
+    env_var: str, default: str | int | None = None
+) -> str | int | None:
     """
     Get the value of an environment variable or read it from a file if it ends with _FILE.
 
@@ -37,13 +39,16 @@ def _get_env_or_secret(env_var: str, default: str | int | None = None) -> str | 
     :rtype: str | int | None
     """
     file_var = f"{env_var}_FILE"
+    value = None
     if file_var in os.environ:
         # Read from file
         with open(os.environ[file_var], "r") as f:
-            return f.read().strip()
+            value = f.read().strip()
     else:
         # Read from environment variable
-        return os.getenv(env_var, default)
+        value = os.getenv(env_var, default)
+    return value
+
 
 def load_config(app: Flask) -> None:
     """Load the config."""
@@ -54,7 +59,6 @@ def load_config(app: Flask) -> None:
             "DB_USER": _get_env_or_secret("POSTGRES_USER"),
             "DB_PASSWORD": _get_env_or_secret("POSTGRES_PASSWORD"),
             "DB_PORT": _get_env_or_secret("POSTGRES_PORT", "5432"),
-            "SQL_URI": _get_env_or_secret("SQL_URI"),
             "FLASK_DEBUG": _get_env_or_secret("FLASK_DEBUG", "True"),
             "FLASK_HOST": _get_env_or_secret("FLASK_HOST", "127.0.0.1"),
             "FLASK_PORT": _get_env_or_secret("FLASK_PORT", 5000),
