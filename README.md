@@ -30,6 +30,7 @@ Set up secrets for docker compose. The secrets are stored in the `secrets` direc
 ```powershell
 mkdir secrets
 cp .example.env.db .env.db
+echo "library-postgres" > secrets/db_name.txt
 echo "username" > secrets/db_user.txt
 echo "password" > secrets/db_password.txt
 echo "random-string" > secrets/flask_secret_key.txt

@@ -43,9 +43,9 @@ def get_db_uri() -> str:
     """
     POSTGRES_USER = _get_env_or_secret("POSTGRES_USER")
     POSTGRES_PASSWORD = _get_env_or_secret("POSTGRES_PASSWORD")
-    POSTGRES_HOST = os.getenv("POSTGRES_HOST")
-    POSTGRES_PORT = os.getenv("POSTGRES_PORT", "5432")
-    POSTGRES_DB = os.getenv("POSTGRES_DB")
+    POSTGRES_HOST = _get_env_or_secret("POSTGRES_HOST")
+    POSTGRES_PORT = _get_env_or_secret("POSTGRES_PORT", "5432")
+    POSTGRES_DB = _get_env_or_secret("POSTGRES_DB")
     return f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
 
 

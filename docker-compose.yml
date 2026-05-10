@@ -18,14 +18,15 @@ services:
       context: .
       dockerfile: setup/Dockerfile
     environment:
+      POSTGRES_DB_FILE: /run/secrets/db_name
       POSTGRES_USER_FILE: /run/secrets/db_user
       POSTGRES_PASSWORD_FILE: /run/secrets/db_password
-      POSTGRES_DB: library-postgres
       POSTGRES_HOST: db
       POSTGRES_PORT: 5432
       CSV_PATH: data-subset/google-books-subset.csv
       CHUNK_SIZE: 5000
     secrets:
+      - db_name
       - db_user
       - db_password
     depends_on:
@@ -42,15 +43,16 @@ services:
     environment:
       FLASK_HOST: 0.0.0.0
       FLASK_PORT: 5000
-      POSTGRES_DB: library-postgres
       POSTGRES_HOST: db
       POSTGRES_PORT: 5432
+      POSTGRES_DB_FILE: /run/secrets/db_name
       POSTGRES_USER_FILE: /run/secrets/db_user
       POSTGRES_PASSWORD_FILE: /run/secrets/db_password
       FLASK_SECRET_KEY_FILE: /run/secrets/flask_secret_key
       JWT_PRIVATE_KEY_FILE: /run/secrets/jwt_private_key
       JWT_PUBLIC_KEY_FILE: /run/secrets/jwt_public_key
     secrets:
+      - db_name
       - db_user
       - db_password
       - flask_secret_key
@@ -72,6 +74,8 @@ services:
     restart: unless-stopped
 
 secrets:
+  db_name:
+    file: ./secrets/db_name.txt
   db_user:
     file: ./secrets/db_user.txt
   db_password:
