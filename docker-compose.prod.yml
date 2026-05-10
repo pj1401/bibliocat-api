@@ -20,9 +20,7 @@ services:
       retries: 5
 
   setup:
-    build:
-      context: .
-      dockerfile: setup/Dockerfile
+    image: bibliocat-setup:prod
     environment:
       POSTGRES_DB_FILE: /run/secrets/db_name
       POSTGRES_USER_FILE: /run/secrets/db_user
@@ -41,9 +39,7 @@ services:
       - ./setup/data:/app/data
 
   api:
-    build:
-      context: .
-      dockerfile: api/Dockerfile
+    image: bibliocat-api:prod
     environment:
       FLASK_HOST: 0.0.0.0
       FLASK_PORT: 5000
