@@ -35,11 +35,10 @@ def register_db_manager(app: Flask) -> None:
     db_manager = DatabaseConnectionManager(
         DbConfig(
             cast(str, app.config["DB_HOST"]),
+            cast(int, app.config["DB_PORT"]),
             cast(str, app.config["DB_NAME"]),
             cast(str, app.config["DB_USER"]),
             cast(str, app.config["DB_PASSWORD"]),
-            cast(int, app.config["DB_PORT"]),
-            cast(str, app.config["SQL_URI"]),
         ),
         BaseModel,
     )

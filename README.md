@@ -23,6 +23,43 @@ The API can be run in a docker container.
 **Prerequisites:**
 - docker-compose, [Docker Compose installation instructions](https://docs.docker.com/compose/install/)
 
+**Set up secrets:**
+
+Set up secrets for docker compose. The secrets are stored in the `secrets` directory which is not version controlled.
+
+```powershell
+mkdir secrets
+cp .example.env.db .env.db
+echo "library-postgres" > secrets/db_name.txt
+echo "username" > secrets/db_user.txt
+echo "password" > secrets/db_password.txt
+echo "random-string" > secrets/flask_secret_key.txt
+```
+
+`db_user` and `db_password` must have the same values as `POSTGRES_USER` and `POSTGRES_PASSWORD` in `.env.db`
+
+Any random string should work for the `FLASK_SECRET_KEY` environment variable. One way is to generate a random string using Python:
+
+```python
+>>> import os
+>>> os.urandom(16).hex()
+'aacddd29dfe77708800856e643ef2426'
+```
+
+The app uses ECDSA for JWT signing.  
+To generate the key pair:
+
+```bash
+# Generate private key
+openssl ecparam -name secp521r1 -genkey -noout -out secrets/bibliocat-api-jwt-key
+
+# Extract public key
+openssl ec -in secrets/bibliocat-api-jwt-key -pubout -out secrets/bibliocat-api-jwt-key.pub
+```
+
+`POSTGRES_USER` and `POSTGRES_PASSWORD` are visible inside the container.  
+TODO: Use Docker Swarm for production. 
+
 **Start API:**
 
 ```powershell
@@ -36,7 +73,7 @@ The API can be accessed here: [127.0.0.1:5000](http://127.0.0.1:5000/)
 
 ```powershell
 docker compose down
-docker-compose down -v # Removes volumes (data)
+docker compose down -v # Removes volumes (data)
 ```
 
 **Rebuild images:**
@@ -118,7 +155,7 @@ Copy the contents of the key pair files to the `.env` file.
 
 ```powershell
 # Start database and run setup in detached mode
-docker-compose up db setup -d
+docker compose up db setup -d
 ```
 
 **Start API:**
@@ -128,7 +165,7 @@ docker-compose up db setup -d
 cd api/
 
 # Start the database if it's not running
-docker-compose up db -d
+docker compose up db -d
 
 # Create a virtual environment and activate it. See: https://docs.astral.sh/uv/pip/environments/
 uv venv
@@ -141,8 +178,8 @@ uv pip install -r pyproject.toml
 uv run -- flask --app main run --debug
 
 # To stop the container
-docker-compose down
-docker-compose down -v # Removes volumes (data)
+docker compose down
+docker compose down -v # Removes volumes (data)
 ```
 
 **For debugging setup:**
@@ -159,7 +196,7 @@ uv venv
 uv pip install -r pyproject.toml
 
 # Start database in detached mode
-docker-compose up db -d
+docker compose up db -d
 
 # Run setup script
 uv run main.py
