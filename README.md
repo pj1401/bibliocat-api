@@ -27,16 +27,15 @@ The API can be run in a docker container.
 
 Set up secrets for docker compose. The secrets are stored in the `secrets` directory which is not version controlled.
 
-```powershell
+```bash
 mkdir secrets
-cp .example.env.db .env.db
-echo "library-postgres" > secrets/db_name.txt
-echo "username" > secrets/db_user.txt
-echo "password" > secrets/db_password.txt
+echo -n "library-postgres" > secrets/db_name.txt
+echo -n "username" > secrets/db_user.txt
+echo -n "password" > secrets/db_password.txt
 echo "random-string" > secrets/flask_secret_key.txt
 ```
 
-`db_user` and `db_password` must have the same values as `POSTGRES_USER` and `POSTGRES_PASSWORD` in `.env.db`
+There can't be any trailing new lines in `secrets/db_name.txt`, `secrets/db_user.txt` or `secrets/db_password.txt`. The database initialisation won't work if there is. Use `echo -n` to suppress the trailing newline.
 
 Any random string should work for the `FLASK_SECRET_KEY` environment variable. One way is to generate a random string using Python:
 
@@ -56,9 +55,6 @@ openssl ecparam -name secp521r1 -genkey -noout -out secrets/bibliocat-api-jwt-ke
 # Extract public key
 openssl ec -in secrets/bibliocat-api-jwt-key -pubout -out secrets/bibliocat-api-jwt-key.pub
 ```
-
-`POSTGRES_USER` and `POSTGRES_PASSWORD` are visible inside the container.  
-TODO: Use Docker Swarm for production. 
 
 **Start API:**
 
