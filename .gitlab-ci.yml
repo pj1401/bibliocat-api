@@ -1,71 +1,55 @@
-image: docker:stable
+# https://gitlab.lnu.se/1dv027/content/examples/restfulgo/-/blob/main/.gitlab-ci.yml
 
-services:
-  - name: docker:dind
-    command: ["--tls=false"]
+.before_script_ssh_setup: &before_script_ssh_setup
+  # Ensure ssh-agent is installed and started, essential for managing SSH keys.
+  # (Change apt-get to yum if using an RPM-based image)
+  # debug to see what env variables we have
+  - env | grep REMOTE
 
-variables:
-  DOCKER_HOST: tcp://docker:2375
-  DOCKER_TLS_CERTDIR: ""
+  - command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )
+
+  # Start the ssh-agent in the background.
+  - eval $(ssh-agent -s)
+
+
+  # Add the SSH private key stored in the SSH_PRIVATE_KEY variable to the ssh-agent.
+  # Using 'tr' to remove carriage return characters for compatibility with ed25519 keys.
+  - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+
+  # Create the .ssh directory and set the correct permissions.
+  - mkdir -p ~/.ssh
+  - chmod 700 ~/.ssh
+
+  # Add the remote server's SSH key to the known_hosts file. see: https://docs.gitlab.com/ci/jobs/ssh_keys/#verifying-the-ssh-host-keys
+  - echo "$SSH_PRIVATE_KEY" | base64 -d > ~/.ssh/known_hosts
+  - cat ~/.ssh/known_hosts
+  - chmod 644 ~/.ssh/known_hosts
+  # testing
+  - docker context use default
+  # - echo $DOCKER_HOST
+  - docker context ls
+
+
+image: docker:29-cli
 
 stages:
-  - test
   - deploy
-  - teardown
 
-test-services:
-  stage: test
-  script:
-    - |
-      for i in {1..10}; do
-        if docker info > /dev/null 2>&1; then
-          echo "Docker daemon is ready"
-          break
-        fi
-        echo "Waiting for Docker daemon..."
-        sleep 5
-      done
-    - docker compose build
-    - docker compose up -d
-    - docker compose exec -e POSTGRES_USER=$POSTGRES_USER -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD -e POSTGRES_DB=$POSTGRES_DB db setup
-    - docker compose down
-  rules:
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-
-test-job1:
-  stage: test
-  needs: ["test-services"]
-  script:
-    - echo "This job tests something"
-  rules:
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-
-test-job2:
-  stage: test
-  needs: ["test-services"]
-  script:
-    - echo "This job tests something, but takes more time than test-job1."
-    - sleep 20
-  rules:
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-
-deploy-prod:
+# Job to deploy to the production environment.
+deploy_production_job:
   stage: deploy
-  needs: ["test-job1", "test-job2"]
+  environment:
+    name: production
+    url: http://$REMOTE_HOST
+  variables:
+    REMOTE_HOST: $REMOTE_HOST       # Set the REMOTE_HOST variable for production.
+    DOCKER_HOST: ssh://$REMOTE_USER@$REMOTE_HOST  # Docker connection via SSH.
+    API_HOST: "rest_api"
+  before_script: *before_script_ssh_setup  # Reuse SSH setup steps.
   script:
-    - echo "This job deploys something from the $CI_COMMIT_BRANCH branch."
+    - echo "Deploying to production..."
+    # lets see if this works instead
+    - docker compose -f docker-compose.prod.yml up -d --build
+    # - docker -H ssh://$REMOTE_USER@$REMOTE_HOST compose -f docker-compose.yaml up --build -d
   rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-  environment: production
-
-teardown:
-  stage: teardown
-  needs: ["test-services", "test-job1", "test-job2"]
-  script:
-    - docker compose down
-  rules:
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: '$CI_COMMIT_BRANCH == "main"'  # Only run on main branch
