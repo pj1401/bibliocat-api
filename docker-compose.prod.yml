@@ -35,6 +35,7 @@ services:
       - db_password
     depends_on:
       - db
+    command: ["/bin/sh", "-c", "while ! pg_isready -h db -U $$(cat /run/secrets/db_user) -d $$(cat /run/secrets/db_name); do sleep 2; done; exec /app/setup-script.sh"]
     volumes:
       - ./setup/data:/app/data
 
@@ -59,7 +60,9 @@ services:
       - jwt_private_key
       - jwt_public_key
     depends_on:
-      - db
+        - db
+        - setup
+    command: ["/bin/sh", "-c", "while ! pg_isready -h db -U $$(cat /run/secrets/db_user) -d $$(cat /run/secrets/db_name); do sleep 2; done; exec gunicorn --bind 0.0.0.0:5000 --workers 2 main:app"]
     ports:
       - "5000:5000"
     healthcheck:
