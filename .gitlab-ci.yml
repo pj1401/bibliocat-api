@@ -10,28 +10,19 @@ variables:
   DOCKER_BUILDKIT: 1
 
 stages:
-  - build
   - test
   - deploy
   - teardown
 
-build-services:
-  stage: build
-  script:
-    - docker compose build
-  rules:
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-
 test-services:
   stage: test
-  needs: ["build-services"]
+  before_script:
+    - apk add ansible openssh-client wget envsubst
+    - echo "$JWT_PRIVATE_KEY" | base64 -d > /tmp/jwt_private_key
+    - chmod u=rwX,go-rwx /tmp/jwt_private_key
   script:
-    - docker compose up -d --wait
-    # Wait for DB to be ready (using healthcheck)
-    - docker compose exec -T db pg_isready -U library_dev_user -d library_postgres -h localhost
-    # Check if API is responding
-    - docker compose exec -T api curl -sSf http://localhost:5000/api/v1/ || exit 1
+    - docker compose up -d --build --wait
+    - docker compose exec -T api sh -c "export POSTGRES_USER=$POSTGRES_USER && export POSTGRES_PASSWORD=$POSTGRES_PASSWORD && export POSTGRES_DB=$POSTGRES_DB && pytest"
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
