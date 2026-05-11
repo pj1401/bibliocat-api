@@ -35,7 +35,7 @@ echo -n "password" > secrets/db_password.txt
 echo "random-string" > secrets/flask_secret_key.txt
 ```
 
-There can't be any trailing new lines in `secrets/db_name.txt`, `secrets/db_user.txt` or `secrets/db_password.txt`. The database initialisation won't work if there is. Use `echo -n` to suppress the trailing newline.
+**There can't be any trailing newlines in `secrets/db_name.txt`, `secrets/db_user.txt` or `secrets/db_password.txt`. The database initialisation won't work if there is. Use `echo -n` to suppress the trailing newline.**
 
 Any random string should work for the `FLASK_SECRET_KEY` environment variable. One way is to generate a random string using Python:
 
