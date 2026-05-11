@@ -66,7 +66,7 @@ deploy-prod:
 
 teardown:
   stage: teardown
-  needs: ["test-services", "test-job1", "test-job2", "deploy-prod"]
+  needs: ["test-services", "test-job1", "test-job2"]
   script:
     - docker compose down
   rules:
