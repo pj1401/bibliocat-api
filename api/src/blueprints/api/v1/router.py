@@ -16,3 +16,9 @@ router_v1_bp.register_blueprint(users_bp, url_prefix="/users")
 def get():
     response = {"message": "Welcome to version 1 of BiblioCat API!"}
     return jsonify(response)
+
+
+@router_v1_bp.route("/health", methods=["GET"])
+def health():
+    response: dict[str, int | str] = {"status": 200, "message": "OK"}
+    return jsonify(response)
