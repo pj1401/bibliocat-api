@@ -103,22 +103,19 @@ The full dataset can be downloaded here: [Google Books Dataset](https://www.kagg
 
 To use the full dataset:
  - Place the `google_books_1299.csv` file into the `setup/data` directory. (gitignored)
- - The `CSV_PATH` variable in the `docker-compose.yml` has to be updated.
- - Update the `dockerfile` in the `setup` directory, so the correct data is copied.
+ - Use `docker-compose.prod.yml` when building with docker compose.
 
-docker-compose.yml:
+Start all services:
 
-```docker-compose.yml
-environment:
-  CSV_PATH: data/google_books_1299.csv
+```powershell
+docker compose -f docker-compose.prod.yml up -d
 ```
 
-dockerfile:
+Or start only the database and setup:
 
-```dockerfile
-# Copy dataset
-# COPY setup/data-subset/ ./data-subset
-COPY setup/data/ ./data
+```powershell
+# Start database and run setup
+docker compose -f docker-compose.prod.yml up db setup -d
 ```
 
 **Generating keys for the API:**
@@ -250,5 +247,6 @@ bibliocat-api
 
 ## Acknowledgements
 
+- Full dataset: [Google Books Dataset](https://www.kaggle.com/datasets/bilalyussef/google-books-dataset)
 - [Flask application factory](https://github.com/cookiecutter-flask/cookiecutter-flask/blob/master/%7B%7Bcookiecutter.app_name%7D%7D/%7B%7Bcookiecutter.app_name%7D%7D/app.py): used as a template for [api/main.py](./api/main.py)
 - [README template](https://gist.github.com/ramantehlan/602ad8525699486e097092e4158c5bf1)
