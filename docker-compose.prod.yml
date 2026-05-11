@@ -22,14 +22,14 @@ services:
   setup:
     build:
       context: .
-      dockerfile: setup/Dockerfile
+      dockerfile: setup/prod.dockerfile
     environment:
       POSTGRES_DB_FILE: /run/secrets/db_name
       POSTGRES_USER_FILE: /run/secrets/db_user
       POSTGRES_PASSWORD_FILE: /run/secrets/db_password
       POSTGRES_HOST: db
       POSTGRES_PORT: 5432
-      CSV_PATH: data-subset/google-books-subset.csv
+      CSV_PATH: data/google_books_1299.csv
       CHUNK_SIZE: 5000
     secrets:
       - db_name

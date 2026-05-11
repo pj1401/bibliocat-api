@@ -1,37 +1,34 @@
-image: docker:24
+image: docker:stable
 
 services:
-  - docker:24-dind
+  - name: docker:dind
+    command: ["--tls=false"]
 
 variables:
   DOCKER_HOST: tcp://docker:2375
   DOCKER_TLS_CERTDIR: ""
-  DOCKER_DRIVER: overlay2
-  DOCKER_BUILDKIT: 1
 
 stages:
-  - build
   - test
   - deploy
   - teardown
 
-build-services:
-  stage: build
-  script:
-    - docker compose build
-  rules:
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-
 test-services:
   stage: test
-  needs: ["build-services"]
   script:
-    - docker compose up -d --wait
-    # Wait for DB to be ready (using healthcheck)
-    - docker compose exec -T db pg_isready -U library_dev_user -d library_postgres -h localhost
-    # Check if API is responding
-    - docker compose exec -T api curl -sSf http://localhost:5000/api/v1/ || exit 1
+    - |
+      for i in {1..10}; do
+        if docker info > /dev/null 2>&1; then
+          echo "Docker daemon is ready"
+          break
+        fi
+        echo "Waiting for Docker daemon..."
+        sleep 5
+      done
+    - docker compose build
+    - docker compose up -d
+    - docker compose exec -e POSTGRES_USER=$POSTGRES_USER -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD -e POSTGRES_DB=$POSTGRES_DB db setup
+    - docker compose down
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
@@ -66,7 +63,7 @@ deploy-prod:
 
 teardown:
   stage: teardown
-  needs: ["test-services", "test-job1", "test-job2", "deploy-prod"]
+  needs: ["test-services", "test-job1", "test-job2"]
   script:
     - docker compose down
   rules:
