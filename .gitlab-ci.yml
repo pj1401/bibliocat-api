@@ -16,10 +16,6 @@ stages:
 
 test-services:
   stage: test
-  before_script:
-    - apk add ansible openssh-client wget envsubst
-    - echo "$JWT_PRIVATE_KEY" | base64 -d > /tmp/jwt_private_key
-    - chmod u=rwX,go-rwx /tmp/jwt_private_key
   script:
     - docker compose up -d --build --wait
     - docker compose exec -T api sh -c "export POSTGRES_USER=$POSTGRES_USER && export POSTGRES_PASSWORD=$POSTGRES_PASSWORD && export POSTGRES_DB=$POSTGRES_DB && pytest"
