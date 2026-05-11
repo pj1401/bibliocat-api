@@ -17,8 +17,8 @@ stages:
 test-services:
   stage: test
   script:
-    - docker compose up -d --build --wait
-    - docker compose exec -T api sh -c "export POSTGRES_USER=$POSTGRES_USER && export POSTGRES_PASSWORD=$POSTGRES_PASSWORD && export POSTGRES_DB=$POSTGRES_DB && pytest"
+    - docker compose build
+    - docker compose run db setup -d -e POSTGRES_USER=$POSTGRES_USER -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD -e POSTGRES_DB=$POSTGRES_DB
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
