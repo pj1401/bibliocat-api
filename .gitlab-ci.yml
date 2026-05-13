@@ -2,9 +2,6 @@ stages:
   - test
   - deploy
 
-variables:
-  COMPOSE_BAKE: "false"
-
 # --- Test ---
 
 api_tests:
@@ -12,14 +9,14 @@ api_tests:
   tags:
     - rpi
   script:
-    - echo "Running API tests..."
+    - echo "Building test images..."
     # --wait blocks until all healthchecks pass (including setup completing)
     - docker compose -f docker-compose.test.yml up -d --build --wait
 
+    - echo "Running API tests..."
     - apidog run --access-token $APIDOG_ACCESS_TOKEN
-                 -t 1776165
-                 -e 6000886
-                 -n 1
+                 --test-suite 1613
+                 -e 6039779
                  -r html,cli
                  --out-dir ./apidog-reports
 
