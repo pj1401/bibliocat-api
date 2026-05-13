@@ -1,71 +1,48 @@
-image: docker:stable
-
-services:
-  - name: docker:dind
-    command: ["--tls=false"]
-
-variables:
-  DOCKER_HOST: tcp://docker:2375
-  DOCKER_TLS_CERTDIR: ""
-
 stages:
   - test
   - deploy
-  - teardown
 
-test-services:
+# --- Test ---
+
+api_tests:
   stage: test
+  tags:
+    - rpi
   script:
-    - |
-      for i in {1..10}; do
-        if docker info > /dev/null 2>&1; then
-          echo "Docker daemon is ready"
-          break
-        fi
-        echo "Waiting for Docker daemon..."
-        sleep 5
-      done
-    - docker compose build
-    - docker compose up -d
-    - docker compose exec -e POSTGRES_USER=$POSTGRES_USER -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD -e POSTGRES_DB=$POSTGRES_DB db setup
-    - docker compose down
-  rules:
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - echo "Building test images..."
+    # --wait blocks until all healthchecks pass (including setup completing)
+    - docker compose -f docker-compose.test.yml up -d --build --wait
 
-test-job1:
-  stage: test
-  needs: ["test-services"]
-  script:
-    - echo "This job tests something"
-  rules:
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - echo "Running API tests..."
+    - apidog run ./tests/auth.apidog-cli.json -n 1 -r html,cli --out-dir ./apidog-reports/auth
+    - apidog run ./tests/books.apidog-cli.json -n 1 -r html,cli --out-dir ./apidog-reports/auth
 
-test-job2:
-  stage: test
-  needs: ["test-services"]
-  script:
-    - echo "This job tests something, but takes more time than test-job1."
-    - sleep 20
-  rules:
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  after_script:
+    # Always runs, even if tests fail — -v removes the test volume
+    - docker compose -f docker-compose.test.yml down -v
 
-deploy-prod:
+  artifacts:
+    when: always
+    reports:
+      junit: ./apidog-reports/*.xml
+    paths:
+      - ./apidog-reports/
+    expire_in: 1h
+
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"
+    - if: $CI_COMMIT_BRANCH == "main"
+
+# --- Deploy ---
+
+deploy:
   stage: deploy
-  needs: ["test-job1", "test-job2"]
+  tags:
+    - rpi
   script:
-    - echo "This job deploys something from the $CI_COMMIT_BRANCH branch."
+    - echo "Deploying to production..."
+    - docker compose -f docker-compose.prod.yml up -d --build
   rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-  environment: production
-
-teardown:
-  stage: teardown
-  needs: ["test-services", "test-job1", "test-job2"]
-  script:
-    - docker compose down
-  rules:
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH == "main"  # Only run on main branch
+  artifacts:
+    expire_in: 1h

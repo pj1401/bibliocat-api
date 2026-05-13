@@ -60,7 +60,7 @@ openssl ec -in secrets/bibliocat-api-jwt-key -pubout -out secrets/bibliocat-api-
 
 ```powershell
 # Start the services in detached mode
-docker compose up -d
+docker compose -f docker-compose.dev-subset.yml up -d
 ```
 
 The API can be accessed here: [127.0.0.1:5000](http://127.0.0.1:5000/)
@@ -77,7 +77,7 @@ docker compose down -v # Removes volumes (data)
 To build images after code changes:
 
 ```powershell
-docker compose up -d --build
+docker compose -f docker-compose.dev-subset.yml up -d --build
 ```
 
 ## Development
@@ -103,19 +103,19 @@ The full dataset can be downloaded here: [Google Books Dataset](https://www.kagg
 
 To use the full dataset:
  - Place the `google_books_1299.csv` file into the `setup/data` directory. (gitignored)
- - Use `docker-compose.prod.yml` when building with docker compose.
+ - Use `docker-compose.yml` when building with docker compose.
 
 Start all services:
 
 ```powershell
-docker compose -f docker-compose.prod.yml up -d
+docker compose up -d
 ```
 
 Or start only the database and setup:
 
 ```powershell
 # Start database and run setup
-docker compose -f docker-compose.prod.yml up db setup -d
+docker compose up db setup -d
 ```
 
 **Generating keys for the API:**

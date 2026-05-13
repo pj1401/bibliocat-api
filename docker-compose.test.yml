@@ -10,9 +10,7 @@ services:
       - db_password
       - db_name
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
+      - postgres_test_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $$(cat /run/secrets/db_user) -d $$(cat /run/secrets/db_name)"]
       interval: 5s
@@ -39,7 +37,7 @@ services:
       db:
         condition: service_healthy
     volumes:
-      - ./setup/data:/app/data
+      - /srv/bibliocat-api/data:/app/data
     restart: "no"
 
   api:
@@ -70,28 +68,28 @@ services:
       setup:
         condition: service_completed_successfully
     ports:
-      - "5000:5000"
+      - "5001:5000"    # different external port from production
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5000/api/v1/health"]
       interval: 10s
       timeout: 5s
       retries: 3
       start_period: 10s
-    restart: unless-stopped
+    restart: "no"      # don't restart in CI
 
 secrets:
   db_name:
-    file: ./secrets/db_name.txt
+    file: /srv/bibliocat-api/secrets/db_name.txt
   db_user:
-    file: ./secrets/db_user.txt
+    file: /srv/bibliocat-api/secrets/db_user.txt
   db_password:
-    file: ./secrets/db_password.txt
+    file: /srv/bibliocat-api/secrets/db_password.txt
   flask_secret_key:
-    file: ./secrets/flask_secret_key.txt
+    file: /srv/bibliocat-api/secrets/flask_secret_key.txt
   jwt_private_key:
-    file: ./secrets/bibliocat-api-jwt-key
+    file: /srv/bibliocat-api/secrets/bibliocat-api-jwt-key
   jwt_public_key:
-    file: ./secrets/bibliocat-api-jwt-key.pub
+    file: /srv/bibliocat-api/secrets/bibliocat-api-jwt-key.pub
 
 volumes:
-  postgres_data:
+  postgres_test_data:
