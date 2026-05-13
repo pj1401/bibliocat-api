@@ -28,10 +28,6 @@ COPY setup/main.py .
 # Copy models from api directory
 COPY api/src/util/models/ ./src/models/
 
-# Copy dataset
-COPY setup/data-subset/ ./data-subset
-# COPY setup/data/ ./data
-
 # Set PYTHONPATH to include /app
 ENV PYTHONPATH=/app
 
