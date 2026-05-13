@@ -1,5 +1,42 @@
 stages:
+  - test
   - deploy
+
+# --- Test ---
+
+api_tests:
+  stage: test
+  tags:
+    - rpi
+  script:
+    - echo "Running API tests..."
+    # --wait blocks until all healthchecks pass (including setup completing)
+    - docker compose -f docker-compose.test.yml up -d --build --wait
+
+    - apidog run --access-token $APIDOG_ACCESS_TOKEN
+                 -t 1776165
+                 -e 6000886
+                 -n 1
+                 -r html,cli
+                 --out-dir ./apidog-reports
+
+  after_script:
+    # Always runs, even if tests fail — -v removes the test volume
+    - docker compose -f docker-compose.test.yml down -v
+
+  artifacts:
+    when: always
+    reports:
+      junit: ./apidog-reports/*.xml
+    paths:
+      - ./apidog-reports/
+    expire_in: 1 hr
+
+  rules:
+  - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"
+  - if: $CI_COMMIT_BRANCH == "main"
+
+# --- Deploy ---
 
 deploy:
   stage: deploy
@@ -9,4 +46,6 @@ deploy:
     - echo "Deploying to production..."
     - docker compose -f docker-compose.prod.yml up -d --build
   rules:
-    - if: '$CI_COMMIT_BRANCH == "main"'  # Only run on main branch
+    - if: $CI_COMMIT_BRANCH == "main"  # Only run on main branch
+  artifacts:
+    expire_in: 1 hr
