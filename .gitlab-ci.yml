@@ -2,6 +2,9 @@ stages:
   - test
   - deploy
 
+variables:
+  COMPOSE_BAKE: "false"
+
 # --- Test ---
 
 api_tests:
@@ -33,8 +36,8 @@ api_tests:
     expire_in: 1 hr
 
   rules:
-  - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"
-  - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"
+    - if: $CI_COMMIT_BRANCH == "main"
 
 # --- Deploy ---
 
