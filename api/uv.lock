@@ -101,6 +101,7 @@ dependencies = [
     { name = "dotenv" },
     { name = "flask" },
     { name = "flask-jwt-extended" },
+    { name = "flask-swagger-ui" },
     { name = "gunicorn" },
     { name = "psycopg2-binary" },
     { name = "pydantic", extra = ["email"] },
@@ -120,6 +121,7 @@ requires-dist = [
     { name = "dotenv", specifier = ">=0.9.9" },
     { name = "flask", specifier = ">=3.1.3" },
     { name = "flask-jwt-extended", specifier = ">=4.7.1" },
+    { name = "flask-swagger-ui", specifier = ">=5.32.5" },
     { name = "gunicorn", specifier = ">=26.0.0" },
     { name = "psycopg2-binary", specifier = ">=2.9.11" },
     { name = "pydantic", extras = ["email"], specifier = ">=2.13.3" },
@@ -387,6 +389,18 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/51/16/96b101f18cba17ecce3225ab07bc4c8f23e6befd8552dbbed87482e7c7fb/flask_jwt_extended-4.7.1.tar.gz", hash = "sha256:8085d6757505b6f3291a2638c84d207e8f0ad0de662d1f46aa2f77e658a0c976", size = 34411, upload-time = "2024-11-20T23:44:41.044Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/67/34/9a91da47b1565811ab4aa5fb134632c8d1757960bfa7d457f486947c4d75/Flask_JWT_Extended-4.7.1-py2.py3-none-any.whl", hash = "sha256:52f35bf0985354d7fb7b876e2eb0e0b141aaff865a22ff6cc33d9a18aa987978", size = 22588, upload-time = "2024-11-20T23:44:39.435Z" },
+]
+
+[[package]]
+name = "flask-swagger-ui"
+version = "5.32.5"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "flask" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/42/44/2a59d9b1b687415304d8f60f587f6f301548a01b7b1bc8239c538136f453/flask_swagger_ui-5.32.5.tar.gz", hash = "sha256:5785f18a43756b7f04c63fcb6cdd50187a352412df16a3d5a9afd60b7966fb97", size = 613331, upload-time = "2026-05-04T09:43:36.057Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/ef/70/1cb178b8a62699fb2ab899a93e71b19f1640c8c10845cecfe7ee9bada69c/flask_swagger_ui-5.32.5-py3-none-any.whl", hash = "sha256:b92404e4a18877ffcc5d16b768ebbe55f04533ff1a2acfd2481a9c17a2b37b29", size = 618354, upload-time = "2026-05-04T09:43:34.542Z" },
 ]
 
 [[package]]

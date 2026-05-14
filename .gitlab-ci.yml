@@ -28,7 +28,7 @@ api_tests:
   script:
     - echo "Building test images..."
     # --wait blocks until all healthchecks pass (including setup completing)
-    - docker compose -f docker-compose.test.yml up -d --build --wait
+    - docker compose -p bibliocat-test -f docker-compose.test.yml up -d --build --wait
 
     - echo "Running API tests..."
     - apidog run ./tests/auth.apidog-cli.json -n 1 -r html,cli --out-dir ./apidog-reports/auth
@@ -36,7 +36,7 @@ api_tests:
 
   after_script:
     # Always runs, even if tests fail — -v removes the test volume
-    - docker compose -f docker-compose.test.yml down -v
+    - docker compose -p bibliocat-test -f docker-compose.test.yml down -v
 
   artifacts:
     when: always
