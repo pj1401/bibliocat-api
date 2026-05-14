@@ -17,7 +17,7 @@ build:
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
   artifacts:
-    expire_in: 1h
+    expire_in: 1h10min
 
 # --- Test ---
 
@@ -44,7 +44,7 @@ api_tests:
       junit: ./apidog-reports/*.xml
     paths:
       - ./apidog-reports/
-    expire_in: 1h
+    expire_in: 1h10min
 
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"
@@ -66,4 +66,4 @@ deploy:
   rules:
     - if: $CI_COMMIT_BRANCH == "main"  # Only run on main branch
   artifacts:
-    expire_in: 1h
+    expire_in: 1h10min
