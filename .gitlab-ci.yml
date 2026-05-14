@@ -15,7 +15,7 @@ api_tests:
 
     - echo "Running API tests..."
     - apidog run ./tests/auth.apidog-cli.json -n 1 -r html,cli --out-dir ./apidog-reports/auth
-    - apidog run ./tests/books.apidog-cli.json -n 1 -r html,cli --out-dir ./apidog-reports/auth
+    - apidog run ./tests/books.apidog-cli.json -n 1 -r html,cli --out-dir ./apidog-reports/books
 
   after_script:
     # Always runs, even if tests fail — -v removes the test volume
