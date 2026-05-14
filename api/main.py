@@ -6,6 +6,7 @@ module: main.py
 from typing import cast
 from flask import Flask
 from flask_jwt_extended import JWTManager
+from src.config.reverse_proxied import ReverseProxied
 from src.util.models.base import BaseModel
 from src.config.logger_config import configure_logger
 from src.hooks.logging import setup_logging_hooks
@@ -22,6 +23,7 @@ def create_app() -> Flask:
     app = Flask(__name__)
     load_config(app)
     register_db_manager(app)
+    register_reverse_proxy(app)
     register_blueprints(app)
     register_exception_handlers(app)
     init_jwt_manager(app)
@@ -43,6 +45,10 @@ def register_db_manager(app: Flask) -> None:
         BaseModel,
     )
     setup_database_hooks(app, db_manager)
+
+
+def register_reverse_proxy(app: Flask):
+    app.wsgi_app = ReverseProxied(app.wsgi_app)
 
 
 def register_blueprints(app: Flask) -> None:

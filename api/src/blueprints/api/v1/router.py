@@ -20,7 +20,7 @@ def get():
     base_url = cast(str, current_app.config["BASE_URL"])
     response = {
         "message": "Welcome to version 1 of BiblioCat API!",
-        "docs": f"{base_url}/api/v1/docs"
+        "docs": f"{base_url}/api/v1/docs",
     }
     return jsonify(response)
 
