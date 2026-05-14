@@ -4,9 +4,9 @@ module: src/blueprints/api/v1/router.py
 """
 
 from flask import Blueprint, jsonify
-from src.blueprints.api.v1.books.routes import books_bp
+from .books.routes import books_bp
 from .docs.routes import docs_bp
-from src.blueprints.api.v1.users.routes import users_bp
+from .users.routes import users_bp
 
 router_v1_bp = Blueprint("/", __name__)
 router_v1_bp.register_blueprint(books_bp, url_prefix="/books")
