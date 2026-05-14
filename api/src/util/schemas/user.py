@@ -9,7 +9,7 @@ from pydantic import BaseModel, EmailStr, Field
 class User(BaseModel):
     """User base model."""
 
-    username: str = Field(..., min_length=3, max_length=20)
+    username: str = Field(..., min_length=3, max_length=255)
     email: EmailStr
 
 

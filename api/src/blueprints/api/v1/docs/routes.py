@@ -8,7 +8,7 @@ from flask_swagger_ui import get_swaggerui_blueprint
 
 PATH_PREFIX = os.environ.get("PATH_PREFIX", "")
 SWAGGER_URL = f"{PATH_PREFIX}/api/v1/docs"
-API_URL = "/static/BiblioCat API v1.openapi.json"
+API_URL = f"{PATH_PREFIX}/static/BiblioCat API v1.openapi.json"
 docs_bp = get_swaggerui_blueprint(
     SWAGGER_URL,
     API_URL,
