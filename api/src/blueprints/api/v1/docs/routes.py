@@ -16,5 +16,6 @@ docs_bp = get_swaggerui_blueprint(
         "app_name": "BiblioCat API v1",
         "docExpansion": "none",
         "persistAuthorization": True,
+        "validatorUrl": "none",
     },
 )
