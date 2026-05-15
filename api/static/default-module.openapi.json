@@ -35,7 +35,10 @@
                   "password"
                 ]
               },
-              "examples": {}
+              "example": {
+                "username": "en999zz",
+                "password": "M1IKDd68aZje6SJ"
+              }
             }
           },
           "required": true
@@ -117,7 +120,11 @@
                   "password"
                 ]
               },
-              "examples": {}
+              "example": {
+                "username": "en999zz",
+                "email": "en999zz2@student.lnu.se",
+                "password": "M1IKDd68aZje6SJ"
+              }
             }
           },
           "required": true
