@@ -5,7 +5,7 @@ module: src/services/book_service.py
 
 from typing import Type
 
-from src.util.schemas.book import BookSchema
+from src.util.schemas.books.book import BookSchema
 from src.repositories.book_repo import BookRepository
 from src.services.base_service import BaseService
 

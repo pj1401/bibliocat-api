@@ -5,7 +5,7 @@ module: src/blueprints/api/v1/books/routes.py
 
 from flask import Blueprint, g
 from src.util.models.book import Book
-from src.util.schemas.book import BookSchema
+from src.util.schemas.books.book import BookSchema
 from src.controllers.book_controller import BookController
 from src.repositories.book_repo import BookRepository
 from src.services.book_service import BookService
