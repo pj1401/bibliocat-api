@@ -1,18 +1,27 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Default module",
+    "title": "BiblioCat API v1",
     "description": "",
     "version": "1.0.0"
   },
-  "tags": [],
+  "tags": [
+    {
+      "name": "auth"
+    },
+    {
+      "name": "books"
+    }
+  ],
   "paths": {
     "/users/login": {
       "post": {
         "summary": "login",
         "deprecated": false,
         "description": "",
-        "tags": [],
+        "tags": [
+          "auth"
+        ],
         "parameters": [],
         "requestBody": {
           "content": {
@@ -93,7 +102,9 @@
         "summary": "register",
         "deprecated": false,
         "description": "",
-        "tags": [],
+        "tags": [
+          "auth"
+        ],
         "parameters": [],
         "requestBody": {
           "content": {
@@ -186,7 +197,9 @@
         "summary": "Find book by ID",
         "deprecated": false,
         "description": "",
-        "tags": [],
+        "tags": [
+          "books"
+        ],
         "parameters": [
           {
             "name": "id",
@@ -236,35 +249,42 @@
         "security": []
       }
     },
-    "/books/": {
+    "/books": {
       "get": {
         "summary": "Find books",
         "deprecated": false,
         "description": "",
-        "tags": [],
+        "tags": [
+          "books"
+        ],
         "parameters": [
           {
             "name": "limit",
             "in": "query",
-            "description": "",
+            "description": "Specifies the maximum number of items to return.",
             "required": false,
             "schema": {
-              "type": "integer"
+              "type": "integer",
+              "default": 25,
+              "maximum": 25,
+              "minimum": 1
             }
           },
           {
-            "name": "page",
+            "name": "offset",
             "in": "query",
-            "description": "",
+            "description": "Specifies the starting index of the data.",
             "required": false,
             "schema": {
-              "type": "integer"
+              "type": "integer",
+              "default": 0,
+              "minimum": 0
             }
           },
           {
             "name": "category",
             "in": "query",
-            "description": "group",
+            "description": "",
             "required": false,
             "schema": {
               "type": "string"
@@ -272,6 +292,42 @@
           },
           {
             "name": "title",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "isbn",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "author",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "publisher",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "language",
             "in": "query",
             "description": "",
             "required": false,
