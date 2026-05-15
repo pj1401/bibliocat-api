@@ -29,7 +29,6 @@ class BaseController(Generic[TService]):
     def get(self):
         try:
             params = BaseQueryParams(**request.args)
-            print(params)
             fetched = self.service.get(params.limit, params.offset)
             return jsonify({"status": 200, "data": fetched}), 200
         except Exception as err:

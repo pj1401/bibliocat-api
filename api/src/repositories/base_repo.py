@@ -34,7 +34,9 @@ class BaseRepository(Generic[TModel]):
         self.db_manager = db_manager
         self.model = model
 
-    def get(self, limit: int, offset: int, filters: list | None = None) -> Sequence[TModel]:
+    def get(
+        self, limit: int, offset: int, filters: list | None = None
+    ) -> Sequence[TModel]:
         session: Session | None = None
         try:
             session = self.db_manager.get_session()

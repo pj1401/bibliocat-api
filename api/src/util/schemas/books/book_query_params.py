@@ -21,7 +21,9 @@ class BookQueryParams(BaseQueryParams):
 
     @model_validator(mode="before")
     @classmethod
-    def strip_strings(cls, values: dict[str, str | int | float]) -> dict[str, str | int | float]:
+    def strip_strings(
+        cls, values: dict[str, str | int | float]
+    ) -> dict[str, str | int | float]:
         """
         Remove whitespaces from field values.
 
@@ -30,7 +32,4 @@ class BookQueryParams(BaseQueryParams):
         :return: The key, value pair. If value is a string, whitespaces are removed.
         :rtype: dict[str, str | int | float]
         """
-        return {
-            k: v.strip() if isinstance(v, str) else v
-            for k, v in values.items()
-        }
+        return {k: v.strip() if isinstance(v, str) else v for k, v in values.items()}

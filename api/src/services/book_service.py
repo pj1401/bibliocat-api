@@ -4,7 +4,7 @@ module: src/services/book_service.py
 """
 
 from typing import Type
-
+from src.util.schemas.books.book_query_params import BookQueryParams
 from src.util.schemas.books.book import BookSchema
 from src.repositories.book_repo import BookRepository
 from src.services.base_service import BaseService
@@ -13,3 +13,11 @@ from src.services.base_service import BaseService
 class BookService(BaseService[BookRepository]):
     def __init__(self, book_repo: BookRepository, book_schema: Type[BookSchema]):
         super().__init__(book_repo, book_schema)
+
+    def get(self, params: BookQueryParams):
+        """Get a list of records."""
+        try:
+            fetched = self.repository.get(params.limit, params.offset)
+            return [row.to_dict() for row in fetched]
+        except Exception as err:
+            raise err
