@@ -3,7 +3,7 @@ The BookController class.
 module: src/controllers/book_controller.py
 """
 
-from flask import jsonify
+from flask import jsonify, request
 from src.util.errors.error import convert_to_http_error, log_original_error
 from src.util.schemas.books.book_query_params import BookQueryParams
 from src.controllers.base_controller import BaseController
