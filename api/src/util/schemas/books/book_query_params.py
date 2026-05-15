@@ -1,12 +1,13 @@
 """
 BookQueryParams schema.
-module: src/util/schemas/books/query_params.py
+module: src/util/schemas/books/book_query_params.py
 """
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import Field, model_validator
+from src.util.schemas.query_params import BaseQueryParams
 
 
-class BookQueryParams(BaseModel):
+class BookQueryParams(BaseQueryParams):
     limit: int = Field(20, ge=1, le=25)
     offset: int = Field(0, ge=0)
     category: str | None = None

@@ -29,10 +29,10 @@ class BaseService(Generic[TRepository]):
         self.repository = repository
         self.schema = schema
 
-    def get(self, limit: int):
+    def get(self, limit: int, offset: int, filters: list | None = None):
         """Get a list of records."""
         try:
-            fetched = self.repository.get(limit)
+            fetched = self.repository.get(limit, offset)
             return [row.to_dict() for row in fetched]
         except Exception as err:
             raise err

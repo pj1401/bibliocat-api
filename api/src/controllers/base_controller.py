@@ -5,6 +5,7 @@ module: src/controllers/base_controller.py
 
 from typing import Any, Generic, TypeVar
 from flask import jsonify, request
+from src.util.schemas.query_params import BaseQueryParams
 from src.services.base_service import BaseService
 from src.util.errors.error import convert_to_http_error, log_original_error
 
@@ -27,14 +28,10 @@ class BaseController(Generic[TService]):
 
     def get(self):
         try:
-            offset = request.args.get("offset", 0, type=int)
-            limit = request.args.get("limit", 20, type=int)
-            fetched = self.service.get(limit)
-            response: dict[str, int | str | list[list[str | int]]] = {
-                "status": 200,
-                "data": fetched,
-            }
-            return jsonify(response), 200
+            params = BaseQueryParams(**request.args)
+            print(params)
+            fetched = self.service.get(params.limit, params.offset)
+            return jsonify({"status": 200, "data": fetched}), 200
         except Exception as err:
             log_original_error(err)
             http_err = convert_to_http_error(err)
