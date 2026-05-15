@@ -5,14 +5,106 @@
     "description": "",
     "version": "1.0.0"
   },
-  "tags": [],
+  "tags": [
+    {
+      "name": "auth"
+    },
+    {
+      "name": "books"
+    }
+  ],
   "paths": {
+    "/users/login": {
+      "post": {
+        "summary": "login",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "auth"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "minLength": 3,
+                    "maxLength": 255
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 8
+                  }
+                },
+                "required": [
+                  "username",
+                  "password"
+                ]
+              },
+              "example": {
+                "username": "en999zz",
+                "password": "M1IKDd68aZje6SJ"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "description": "HTTP status code",
+                      "default": 200,
+                      "minimum": 0,
+                      "maximum": 999
+                    },
+                    "access_token": {
+                      "type": "string",
+                      "description": "JWT"
+                    }
+                  },
+                  "required": [
+                    "status",
+                    "access_token"
+                  ]
+                },
+                "example": {
+                  "status": 200,
+                  "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.ey..."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized",
+            "description": ""
+          },
+          "500": {
+            "$ref": "#/components/responses/Internal Server Error",
+            "description": ""
+          }
+        },
+        "security": []
+      }
+    },
     "/users/register": {
       "post": {
         "summary": "register",
         "deprecated": false,
         "description": "",
-        "tags": [],
+        "tags": [
+          "auth"
+        ],
         "parameters": [],
         "requestBody": {
           "content": {
@@ -39,7 +131,11 @@
                   "password"
                 ]
               },
-              "examples": {}
+              "example": {
+                "username": "en999zz",
+                "email": "en999zz2@student.lnu.se",
+                "password": "M1IKDd68aZje6SJ"
+              }
             }
           },
           "required": true
@@ -96,39 +192,26 @@
         "security": []
       }
     },
-    "/users/login": {
-      "post": {
-        "summary": "login",
+    "/books/{id}": {
+      "get": {
+        "summary": "Find book by ID",
         "deprecated": false,
         "description": "",
-        "tags": [],
-        "parameters": [],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "username": {
-                    "type": "string",
-                    "minLength": 3,
-                    "maxLength": 255
-                  },
-                  "password": {
-                    "type": "string",
-                    "minLength": 8
-                  }
-                },
-                "required": [
-                  "username",
-                  "password"
-                ]
-              },
-              "examples": {}
+        "tags": [
+          "books"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": 159,
+            "schema": {
+              "type": "integer"
             }
-          },
-          "required": true
-        },
+          }
+        ],
         "responses": {
           "200": {
             "description": "",
@@ -139,31 +222,23 @@
                   "properties": {
                     "status": {
                       "type": "integer",
-                      "description": "HTTP status code",
-                      "default": 200,
-                      "minimum": 0,
-                      "maximum": 999
+                      "description": "HTTP status code"
                     },
-                    "access_token": {
-                      "type": "string",
-                      "description": "JWT"
+                    "data": {
+                      "$ref": "#/components/schemas/Book"
                     }
                   },
                   "required": [
                     "status",
-                    "access_token"
+                    "data"
                   ]
-                },
-                "example": {
-                  "status": 200,
-                  "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.ey..."
                 }
               }
             },
             "headers": {}
           },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized",
+          "404": {
+            "$ref": "#/components/responses/Not Found",
             "description": ""
           },
           "500": {
@@ -179,30 +254,37 @@
         "summary": "Find books",
         "deprecated": false,
         "description": "",
-        "tags": [],
+        "tags": [
+          "books"
+        ],
         "parameters": [
           {
             "name": "limit",
             "in": "query",
-            "description": "",
+            "description": "Specifies the maximum number of items to return.",
             "required": false,
             "schema": {
-              "type": "integer"
+              "type": "integer",
+              "default": 25,
+              "maximum": 25,
+              "minimum": 1
             }
           },
           {
-            "name": "page",
+            "name": "offset",
             "in": "query",
-            "description": "",
+            "description": "Specifies the starting index of the data.",
             "required": false,
             "schema": {
-              "type": "integer"
+              "type": "integer",
+              "default": 0,
+              "minimum": 0
             }
           },
           {
             "name": "category",
             "in": "query",
-            "description": "group",
+            "description": "",
             "required": false,
             "schema": {
               "type": "string"
@@ -210,6 +292,42 @@
           },
           {
             "name": "title",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "isbn",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "author",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "publisher",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "language",
             "in": "query",
             "description": "",
             "required": false,
@@ -258,23 +376,13 @@
         "security": []
       }
     },
-    "/books/{id}": {
+    "/health": {
       "get": {
-        "summary": "Find book by ID",
+        "summary": "health",
         "deprecated": false,
         "description": "",
         "tags": [],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "",
@@ -285,28 +393,47 @@
                   "properties": {
                     "status": {
                       "type": "integer",
-                      "description": "HTTP status code"
+                      "description": "HTTP status code",
+                      "default": 200
                     },
-                    "data": {
-                      "$ref": "#/components/schemas/Book"
+                    "message": {
+                      "type": "string",
+                      "description": "Description",
+                      "title": "",
+                      "default": "OK"
                     }
                   },
                   "required": [
-                    "status",
-                    "data"
+                    "message",
+                    "status"
                   ]
                 }
               }
             },
             "headers": {}
-          },
-          "404": {
-            "$ref": "#/components/responses/Not Found",
-            "description": ""
-          },
-          "500": {
-            "$ref": "#/components/responses/Internal Server Error",
-            "description": ""
+          }
+        },
+        "security": []
+      }
+    },
+    "/docs": {
+      "get": {
+        "summary": "Swagger UI",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
           }
         },
         "security": []
@@ -422,43 +549,6 @@
           }
         }
       },
-      "Internal Server Error": {
-        "description": "",
-        "content": {
-          "application/json": {
-            "schema": {
-              "title": "",
-              "type": "object",
-              "properties": {
-                "status": {
-                  "type": "integer",
-                  "description": "HTTP status code",
-                  "default": 500,
-                  "minimum": 0,
-                  "maximum": 999
-                },
-                "message": {
-                  "type": "string",
-                  "description": "Description"
-                }
-              },
-              "required": [
-                "status",
-                "message"
-              ]
-            },
-            "examples": {
-              "Default": {
-                "summary": "Default",
-                "value": {
-                  "status": 500,
-                  "message": "The server encountered an unexpected condition that prevented it from fulfilling the request."
-                }
-              }
-            }
-          }
-        }
-      },
       "Unauthorized": {
         "description": "",
         "content": {
@@ -491,6 +581,43 @@
                 "value": {
                   "status": 401,
                   "message": "Credentials invalid or not provided."
+                }
+              }
+            }
+          }
+        }
+      },
+      "Internal Server Error": {
+        "description": "",
+        "content": {
+          "application/json": {
+            "schema": {
+              "title": "",
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "integer",
+                  "description": "HTTP status code",
+                  "default": 500,
+                  "minimum": 0,
+                  "maximum": 999
+                },
+                "message": {
+                  "type": "string",
+                  "description": "Description"
+                }
+              },
+              "required": [
+                "status",
+                "message"
+              ]
+            },
+            "examples": {
+              "Default": {
+                "summary": "Default",
+                "value": {
+                  "status": 500,
+                  "message": "The server encountered an unexpected condition that prevented it from fulfilling the request."
                 }
               }
             }
@@ -539,14 +666,6 @@
     "securitySchemes": {}
   },
   "servers": [
-    {
-      "url": "http://127.0.0.1:5000/api/v1",
-      "description": "Develop Env"
-    },
-    {
-      "url": "http://127.0.0.1:5000/api/v1",
-      "description": "Docker Env"
-    },
     {
       "url": "https://patriciaj.se/bibliocat-api/api/v1",
       "description": "Prod Env"
