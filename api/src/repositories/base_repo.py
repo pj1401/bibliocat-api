@@ -34,22 +34,18 @@ class BaseRepository(Generic[TModel]):
         self.db_manager = db_manager
         self.model = model
 
-    def get(self, limit: int) -> Sequence[TModel]:
-        """Fetch a list of records."""
+    def get(self, limit: int, filters: list | None = None) -> Sequence[TModel]:
         session: Session | None = None
         try:
             session = self.db_manager.get_session()
-
             stmt = select(self.model)
+            if filters:
+                stmt = stmt.where(*filters)
             result = session.scalars(stmt).fetchmany(limit)
-
             session.commit()
-
-            # Expire and refresh attributes on the object.
             if result:
                 for row in result:
                     session.refresh(row)
-
             return result
         except Exception as err:
             if session is not None:

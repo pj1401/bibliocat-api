@@ -27,7 +27,7 @@ class BaseController(Generic[TService]):
 
     def get(self):
         try:
-            page = request.args.get("page", 1, type=int)
+            offset = request.args.get("offset", 0, type=int)
             limit = request.args.get("limit", 20, type=int)
             fetched = self.service.get(limit)
             response: dict[str, int | str | list[list[str | int]]] = {
