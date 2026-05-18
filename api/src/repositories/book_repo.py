@@ -4,11 +4,10 @@ module: src/repositories/book_repo.py
 """
 
 from typing import Any, Dict
-
 from sqlalchemy import Select, func, select
 from sqlalchemy.orm import Session, selectinload
 from src.util.filters.book_filters import BookFilters
-from src.util.models import Author, Book, Category
+from src.util.models import Author, Book, Category, Publisher
 from src.db.connection_manager import DatabaseConnectionManager
 from src.repositories.base_repo import BaseRepository
 
@@ -23,12 +22,15 @@ class BookRepository(BaseRepository[Book]):
         session: Session | None = None
         try:
             session = self.db_manager.get_session()
+
+            # Use Select IN eager loading for relationships. see: https://docs.sqlalchemy.org/en/21/orm/queryguide/relationships.html#select-in-loading
             stmt = select(Book).options(
                 selectinload(Book.authors),
                 selectinload(Book.categories),
+                selectinload(Book.publisher),
             )
-            stmt = self._get_filtered_stmt(stmt, filters)
 
+            stmt = self._get_filtered_stmt(stmt, filters)
             result = session.scalars(stmt.offset(offset)).fetchmany(limit)
             dicts = [self.model_to_dict(row) for row in result]
             session.commit()
@@ -66,6 +68,8 @@ class BookRepository(BaseRepository[Book]):
             stmt = self._get_min_rating_filtered_stmt(stmt, filters.min_rating)
         if filters.max_rating is not None:
             stmt = self._get_max_rating_filtered_stmt(stmt, filters.max_rating)
+        if filters.publisher:
+            stmt = self._get_publisher_filtered_stmt(stmt, filters.publisher)
         if filters.title:
             stmt = self._get_title_filtered_stmt(stmt, filters.title)
 
@@ -101,6 +105,13 @@ class BookRepository(BaseRepository[Book]):
     ) -> Select[Any]:
         return stmt.where(Book.rating <= max_rating)
 
+    def _get_publisher_filtered_stmt(
+        self, stmt: Select[Any], publisher: str
+    ) -> Select[Any]:
+        return stmt.where(
+            Book.publisher.has(func.lower(Publisher.name) == func.lower(publisher))
+        )
+
     def _get_title_filtered_stmt(self, stmt: Select[Any], title: str) -> Select[Any]:
         return stmt.where(func.lower(Book.title).contains(title.lower()))
 
@@ -108,5 +119,5 @@ class BookRepository(BaseRepository[Book]):
         data = model.to_dict()
         data["authors_ids"] = [a.id for a in model.authors]
         data["categories_ids"] = [c.id for c in model.categories]
-        data["publisher_id"] = model.publisher.id
+        data["publisher_id"] = model.publisher.id if model.publisher else None
         return data
