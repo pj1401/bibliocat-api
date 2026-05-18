@@ -58,17 +58,51 @@ class BookRepository(BaseRepository[Book]):
             stmt = self._get_author_filtered_stmt(stmt, filters.author)
         if filters.category:
             stmt = self._get_category_filtered_stmt(stmt, filters.category)
+        if filters.isbn:
+            stmt = self._get_isbn_filtered_stmt(stmt, filters.isbn)
+        if filters.language:
+            stmt = self._get_language_filtered_stmt(stmt, filters.language)
+        if filters.min_rating is not None:
+            stmt = self._get_min_rating_filtered_stmt(stmt, filters.min_rating)
+        if filters.max_rating is not None:
+            stmt = self._get_max_rating_filtered_stmt(stmt, filters.max_rating)
+        if filters.title:
+            stmt = self._get_title_filtered_stmt(stmt, filters.title)
+
         return stmt
 
-    def _get_author_filtered_stmt(self, stmt: Select[Any], author: str):
+    def _get_author_filtered_stmt(self, stmt: Select[Any], author: str) -> Select[Any]:
         return stmt.where(
             Book.authors.any(func.lower(Author.name).contains(author.lower()))
         )
 
-    def _get_category_filtered_stmt(self, stmt: Select[Any], category: str):
+    def _get_category_filtered_stmt(
+        self, stmt: Select[Any], category: str
+    ) -> Select[Any]:
         return stmt.where(
             Book.categories.any(func.lower(Category.name) == func.lower(category))
         )
+
+    def _get_isbn_filtered_stmt(self, stmt: Select[Any], isbn: str) -> Select[Any]:
+        return stmt.where(Book.isbn == isbn)
+
+    def _get_language_filtered_stmt(
+        self, stmt: Select[Any], language: str
+    ) -> Select[Any]:
+        return stmt.where(func.lower(Book.language) == func.lower(language))
+
+    def _get_min_rating_filtered_stmt(
+        self, stmt: Select[Any], min_rating: float
+    ) -> Select[Any]:
+        return stmt.where(Book.rating >= min_rating)
+
+    def _get_max_rating_filtered_stmt(
+        self, stmt: Select[Any], max_rating: float
+    ) -> Select[Any]:
+        return stmt.where(Book.rating <= max_rating)
+
+    def _get_title_filtered_stmt(self, stmt: Select[Any], title: str) -> Select[Any]:
+        return stmt.where(func.lower(Book.title).contains(title.lower()))
 
     def model_to_dict(self, model: Book) -> Dict[str, Any]:
         data = model.to_dict()
