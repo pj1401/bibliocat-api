@@ -26,6 +26,6 @@ def get_book_by_id(id: int):
     return g.book_controller.get_by_id(id)
 
 
-@books_bp.route("/", methods=["GET"])
+@books_bp.route("", methods=["GET"])
 def get_books():
     return g.book_controller.get()
