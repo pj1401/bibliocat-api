@@ -8,8 +8,6 @@ from src.util.schemas.query_params import BaseQueryParams
 
 
 class BookQueryParams(BaseQueryParams):
-    limit: int = Field(20, ge=1, le=25)
-    offset: int = Field(0, ge=0)
     category: str | None = None
     title: str | None = None
     isbn: str | None = None

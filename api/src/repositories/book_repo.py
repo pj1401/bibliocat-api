@@ -20,7 +20,7 @@ class BookRepository(BaseRepository[Book]):
     def __init__(self, db_manager: DatabaseConnectionManager, book_model: type[Book]):
         super().__init__(db_manager, book_model)
 
-    def get(self, limit: int, offset: int, filters: BookFilters) -> Sequence[Book]:
+    def get(self, limit: int, offset: int, filters: BookFilters) -> list[Dict[str, Any]]:
         session: Session | None = None
         try:
             session = self.db_manager.get_session()
@@ -37,8 +37,9 @@ class BookRepository(BaseRepository[Book]):
                 )
 
             result = session.scalars(stmt.offset(offset)).fetchmany(limit)
+            dicts = [self.model_to_dict(row) for row in result]
             session.commit()
-            return result
+            return dicts
         except Exception as err:
             if session is not None:
                 session.rollback()
@@ -53,33 +54,3 @@ class BookRepository(BaseRepository[Book]):
         data["categories_ids"] = [c.id for c in model.categories]
         data["publisher_id"] = model.publisher.id
         return data
-
-    def get_by_category(self, category_name: str, limit: int) -> Sequence[Book]:
-        session: Session | None = None
-        try:
-            session = self.db_manager.get_session()
-            stmt = (
-                select(Book)
-                .where(
-                    Book.categories.any(
-                        func.lower(Category.name) == func.lower(category_name)
-                    )
-                )
-                .options(
-                    selectinload(Book.authors),
-                    selectinload(Book.categories),
-                )
-            )
-            result = session.scalars(stmt).fetchmany(limit)
-            session.commit()
-            if result:
-                for row in result:
-                    session.refresh(row)
-            return result
-        except Exception as err:
-            if session is not None:
-                session.rollback()
-            raise err
-        finally:
-            if session is not None:
-                session.close()

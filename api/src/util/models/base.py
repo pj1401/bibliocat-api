@@ -26,7 +26,7 @@ class BaseModel(Base):
         onupdate=lambda: datetime.now(timezone.utc),
     )
 
-    def to_dict(self) -> dict[str, int | float | str]:
+    def to_dict(self) -> dict[str, int | float | str | list[str | int]]:
         """
         Get a dictionary that represents the database object.
         see: https://stackoverflow.com/a/11884806

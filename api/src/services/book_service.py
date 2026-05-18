@@ -28,7 +28,6 @@ class BookService(BaseService[BookRepository]):
                 min_rating=params.min_rating,
                 max_rating=params.max_rating,
             )
-            fetched = self.repository.get(params.limit, params.offset, filters)
-            return [self.repository.model_to_dict(row) for row in fetched]
+            return self.repository.get(params.limit, params.offset, filters)
         except Exception as err:
             raise err
