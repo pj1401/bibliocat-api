@@ -8,7 +8,7 @@ stages:
 build:
   stage: build
   tags:
-    - rpi
+    - patriciaj-rpi
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - echo "Building production images..."
@@ -24,7 +24,7 @@ build:
 api_tests:
   stage: test
   tags:
-    - rpi
+    - patriciaj-rpi
   script:
     - echo "Building test images..."
     # --wait blocks until all healthchecks pass (including setup completing)
@@ -56,7 +56,7 @@ api_tests:
 deploy:
   stage: deploy
   tags:
-    - rpi
+    - patriciaj-rpi
   script:
     - echo "Deploying to production..."
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
