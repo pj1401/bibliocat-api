@@ -5,11 +5,13 @@ module: src/services/base_service.py
 
 from typing import Any, Dict, Generic, Type, TypeVar
 from pydantic import BaseModel as PydanticBaseModel, ValidationError
+from src.util.schemas.query_params import BaseQueryParams
 from src.util.errors.error import NotFoundError, log_original_error
 from src.repositories.base_repo import BaseRepository
 
 TRepository = TypeVar("TRepository", bound=BaseRepository[Any])
 TSchema = TypeVar("TSchema", bound=PydanticBaseModel)
+TQueryParams = TypeVar("TQueryParams", bound=BaseQueryParams)
 
 
 class BaseService(Generic[TRepository]):
@@ -29,11 +31,11 @@ class BaseService(Generic[TRepository]):
         self.repository = repository
         self.schema = schema
 
-    def get(self, limit: int, offset: int, filters: list | None = None):
+    def get(self, params: Type[TQueryParams]) -> list[Dict[str, Any]]:
         """Get a list of records."""
         try:
-            fetched = self.repository.get(limit, offset)
-            return [row.to_dict() for row in fetched]
+            fetched = self.repository.get(params.limit, params.offset, params)
+            return fetched
         except Exception as err:
             raise err
 
@@ -47,10 +49,7 @@ class BaseService(Generic[TRepository]):
         :rtype: Dict[str, Any]
         """
         try:
-            model = self.repository.get_by_id(id)
-            if model is None:
-                raise NotFoundError()
-            data = self.repository.model_to_dict(model)
+            data = self.repository.get_by_id(id)
             self.schema.model_validate(data)
             return data
         except Exception as err:

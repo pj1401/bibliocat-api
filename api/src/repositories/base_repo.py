@@ -3,9 +3,9 @@ The BaseRepository class.
 module: src/repositories/base_repo.py
 """
 
-from typing import Any, Dict, Generic, List, TypeVar, Union, cast
-from sqlalchemy import Sequence, inspect, select
-from sqlalchemy.orm import Session, selectinload, Mapper
+from typing import Any, Dict, Generic, TypeVar
+from sqlalchemy import select
+from sqlalchemy.orm import Session
 from src.db.connection_manager import DatabaseConnectionManager
 from src.util.errors.error import NotFoundError
 from src.util.models.base import BaseModel
@@ -37,19 +37,17 @@ class BaseRepository(Generic[TModel]):
 
     def get(
         self, limit: int, offset: int, filters: list | None = None
-    ) -> Sequence[TModel]:
+    ) -> list[Dict[str, Any]]:
         session: Session | None = None
         try:
             session = self.db_manager.get_session()
             stmt = select(self.model)
             if filters:
-                stmt = stmt.where(*filters).offset(offset)
-            result = session.scalars(stmt).fetchmany(limit)
+                stmt = stmt.where(*filters)
+            result = session.scalars(stmt.offset(offset)).fetchmany(limit)
+            dicts = [self.model_to_dict(row) for row in result]
             session.commit()
-            if result:
-                for row in result:
-                    session.refresh(row)
-            return result
+            return dicts
         except Exception as err:
             if session is not None:
                 session.rollback()
