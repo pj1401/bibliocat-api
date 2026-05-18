@@ -5,12 +5,10 @@ module: src/repositories/book_repo.py
 
 from typing import Any, Dict
 
-from sqlalchemy import Sequence, func, select
+from sqlalchemy import Select, func, select
 from sqlalchemy.orm import Session, selectinload
-
-# from src.util.models.author import Author
 from src.util.filters.book_filters import BookFilters
-from src.util.models.category import Category
+from src.util.models import Author, Category
 from src.db.connection_manager import DatabaseConnectionManager
 from src.repositories.base_repo import BaseRepository
 from src.util.models.book import Book
@@ -20,7 +18,9 @@ class BookRepository(BaseRepository[Book]):
     def __init__(self, db_manager: DatabaseConnectionManager, book_model: type[Book]):
         super().__init__(db_manager, book_model)
 
-    def get(self, limit: int, offset: int, filters: BookFilters) -> list[Dict[str, Any]]:
+    def get(
+        self, limit: int, offset: int, filters: BookFilters
+    ) -> list[Dict[str, Any]]:
         session: Session | None = None
         try:
             session = self.db_manager.get_session()
@@ -28,13 +28,7 @@ class BookRepository(BaseRepository[Book]):
                 selectinload(Book.authors),
                 selectinload(Book.categories),
             )
-
-            if filters.category:
-                stmt = stmt.where(
-                    Book.categories.any(
-                        func.lower(Category.name) == func.lower(filters.category)
-                    )
-                )
+            stmt = self._get_filtered_statement(stmt, filters)
 
             result = session.scalars(stmt.offset(offset)).fetchmany(limit)
             dicts = [self.model_to_dict(row) for row in result]
@@ -47,6 +41,33 @@ class BookRepository(BaseRepository[Book]):
         finally:
             if session is not None:
                 session.close()
+
+    def _get_filtered_statement(
+        self, stmt: Select[Any], filters: BookFilters
+    ) -> Select[Any]:
+        """
+        Get a statement using the filters.
+
+        :param stmt: The base statement.
+        :type stmt: Select[Any]
+        :param filters: The filters.
+        :type filters: BookFilters
+        :return: The statement using filters.
+        :rtype: Select[Any]
+        """
+        if filters.category:
+            stmt = stmt.where(
+                Book.categories.any(
+                    func.lower(Category.name) == func.lower(filters.category)
+                )
+            )
+        if filters.author:
+            stmt = stmt.where(
+                Book.authors.any(
+                    func.lower(Author.name).contains(filters.author.lower())
+                )
+            )
+        return stmt
 
     def model_to_dict(self, model: Book) -> Dict[str, Any]:
         data = model.to_dict()
