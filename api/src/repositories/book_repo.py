@@ -8,10 +8,9 @@ from typing import Any, Dict
 from sqlalchemy import Select, func, select
 from sqlalchemy.orm import Session, selectinload
 from src.util.filters.book_filters import BookFilters
-from src.util.models import Author, Category
+from src.util.models import Author, Book, Category
 from src.db.connection_manager import DatabaseConnectionManager
 from src.repositories.base_repo import BaseRepository
-from src.util.models.book import Book
 
 
 class BookRepository(BaseRepository[Book]):
@@ -28,7 +27,7 @@ class BookRepository(BaseRepository[Book]):
                 selectinload(Book.authors),
                 selectinload(Book.categories),
             )
-            stmt = self._get_filtered_statement(stmt, filters)
+            stmt = self._get_filtered_stmt(stmt, filters)
 
             result = session.scalars(stmt.offset(offset)).fetchmany(limit)
             dicts = [self.model_to_dict(row) for row in result]
@@ -42,7 +41,7 @@ class BookRepository(BaseRepository[Book]):
             if session is not None:
                 session.close()
 
-    def _get_filtered_statement(
+    def _get_filtered_stmt(
         self, stmt: Select[Any], filters: BookFilters
     ) -> Select[Any]:
         """
@@ -55,19 +54,21 @@ class BookRepository(BaseRepository[Book]):
         :return: The statement using filters.
         :rtype: Select[Any]
         """
-        if filters.category:
-            stmt = stmt.where(
-                Book.categories.any(
-                    func.lower(Category.name) == func.lower(filters.category)
-                )
-            )
         if filters.author:
-            stmt = stmt.where(
-                Book.authors.any(
-                    func.lower(Author.name).contains(filters.author.lower())
-                )
-            )
+            stmt = self._get_author_filtered_stmt(stmt, filters.author)
+        if filters.category:
+            stmt = self._get_category_filtered_stmt(stmt, filters.category)
         return stmt
+
+    def _get_author_filtered_stmt(self, stmt: Select[Any], author: str):
+        return stmt.where(
+            Book.authors.any(func.lower(Author.name).contains(author.lower()))
+        )
+
+    def _get_category_filtered_stmt(self, stmt: Select[Any], category: str):
+        return stmt.where(
+            Book.categories.any(func.lower(Category.name) == func.lower(category))
+        )
 
     def model_to_dict(self, model: Book) -> Dict[str, Any]:
         data = model.to_dict()
