@@ -5,16 +5,19 @@ module: src/services/base_service.py
 
 from typing import Any, Dict, Generic, Type, TypeVar
 from pydantic import BaseModel as PydanticBaseModel, ValidationError
+from src.util.filters.base_filters import BaseFilters
+from src.util.schemas.query_params import BaseQueryParams
 from src.util.errors.error import NotFoundError, log_original_error
 from src.repositories.base_repo import BaseRepository
 
-TRepository = TypeVar("TRepository", bound=BaseRepository[Any])
+TRepository = TypeVar("TRepository", bound=BaseRepository[Any, Any])
 TSchema = TypeVar("TSchema", bound=PydanticBaseModel)
+TQueryParams = TypeVar("TQueryParams", bound=BaseQueryParams)
 
 
-class BaseService(Generic[TRepository]):
+class BaseService(Generic[TRepository, TQueryParams]):
     """
-    BaseService for business logic layer.
+    BaseService encapsulates business logic.
     """
 
     def __init__(self, repository: TRepository, schema: Type[TSchema]):
@@ -29,11 +32,21 @@ class BaseService(Generic[TRepository]):
         self.repository = repository
         self.schema = schema
 
-    def get(self, limit: int):
-        """Get a list of records."""
+    def get(self, params: TQueryParams):
+        """
+        Get a list of records using optional query parameters.
+
+        :param params: The query parameters.
+        :type params: TQueryParams
+        :return: A list of dictionaries representing the records.
+        :rtype: list[Dict[str, Any]]
+        """
         try:
-            fetched = self.repository.get(limit)
-            return [row.to_dict() for row in fetched]
+            filters = BaseFilters(
+                limit=params.limit,
+                offset=params.offset,
+            )
+            return self.repository.get(filters)
         except Exception as err:
             raise err
 
@@ -47,10 +60,7 @@ class BaseService(Generic[TRepository]):
         :rtype: Dict[str, Any]
         """
         try:
-            model = self.repository.get_by_id(id)
-            if model is None:
-                raise NotFoundError()
-            data = self.repository.model_to_dict(model)
+            data = self.repository.get_by_id(id)
             self.schema.model_validate(data)
             return data
         except Exception as err:

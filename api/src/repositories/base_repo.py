@@ -3,18 +3,25 @@ The BaseRepository class.
 module: src/repositories/base_repo.py
 """
 
-from typing import Any, Dict, Generic, List, TypeVar, Union, cast
-from sqlalchemy import Sequence, inspect, select
+from typing import Any, Dict, Generic, TypeVar
+from sqlalchemy import select
+from sqlalchemy.orm import Session
+from src.util.filters.base_filters import BaseFilters
 from src.db.connection_manager import DatabaseConnectionManager
-from sqlalchemy.orm import Session, selectinload, Mapper
+from src.util.errors.error import NotFoundError
 from src.util.models.base import BaseModel
 
 TModel = TypeVar("TModel", bound=BaseModel)
+TFilters = TypeVar("TFilters", bound=BaseFilters)
 
 
-class BaseRepository(Generic[TModel]):
+class BaseRepository(Generic[TModel, TFilters]):
     """
-    Data-access layer using a generic model.
+    Data-access layer.
+
+    Encapsulates all SQLAlchemy interactions so that the rest
+    of the application can work with plain domain objects without dealing
+    with sessions, transactions or ORM-specific exceptions.
     """
 
     def __init__(
@@ -34,23 +41,25 @@ class BaseRepository(Generic[TModel]):
         self.db_manager = db_manager
         self.model = model
 
-    def get(self, limit: int) -> Sequence[TModel]:
-        """Fetch a list of records."""
+    def get(self, filters: TFilters) -> list[Dict[str, Any]]:
+        """
+        Get a list of records by using filters to match the result.
+
+        :param filters: The query parameters that have been converted to a BaseFilters like dataclass.
+        :type filters: TFilters
+        :return: A list of dictionaries representing the records.
+        :rtype: list[Dict[str, Any]]
+        """
         session: Session | None = None
         try:
             session = self.db_manager.get_session()
-
             stmt = select(self.model)
-            result = session.scalars(stmt).fetchmany(limit)
-
+            result = session.scalars(stmt.offset(filters.offset)).fetchmany(
+                filters.limit
+            )
+            dicts = [self.model_to_dict(row) for row in result]
             session.commit()
-
-            # Expire and refresh attributes on the object.
-            if result:
-                for row in result:
-                    session.refresh(row)
-
-            return result
+            return dicts
         except Exception as err:
             if session is not None:
                 session.rollback()
@@ -59,37 +68,28 @@ class BaseRepository(Generic[TModel]):
             if session is not None:
                 session.close()
 
-    def get_by_id(self, id: int | str) -> TModel | None:
+    def get_by_id(self, id: int | str) -> Dict[str, Any]:
         """
         Fetch one record by matching ID.
 
         :param id: The id of the record.
         :type id: int | str
-        :return: The matching record or None if no match is found.
-        :rtype: TModel | None
+        :return: The dictionary representing the record if a match is found.
+        :rtype: Dict[str, Any]
         """
         session: Session | None = None
         try:
             session = self.db_manager.get_session()
-
-            # Inspect the model class to get its relationships
-            mapper: Mapper[TModel] = inspect(self.model)
-
             stmt = select(self.model).where(self.model.id == id)
-
-            # Add relationships to the statement
-            for rel in mapper.relationships.values():
-                stmt = stmt.options(selectinload(getattr(self.model, rel.key)))
-
             result = session.scalars(stmt).first()
+            if result is None:
+                raise NotFoundError()
+
+            # Get a dictionary representing the fetched record.
+            dict = self.model_to_dict(result)
 
             session.commit()
-
-            # Expire and refresh attributes on the object.
-            if result:
-                session.refresh(result)
-
-            return result
+            return dict
         except Exception as err:
             if session is not None:
                 session.rollback()
@@ -98,41 +98,13 @@ class BaseRepository(Generic[TModel]):
             if session is not None:
                 session.close()
 
-    def model_to_dict(self, model: BaseModel) -> Dict[str, Any]:
+    def model_to_dict(self, model: TModel) -> Dict[str, Any]:
         """
         Get a dictionary representing the model.
 
         :param model: The model for the object.
-        :type model: BaseModel
+        :type model: TModel
         :return: A dictionary representing the model.
         :rtype: Dict[str, Any]
         """
-        data = model.to_dict()
-        mapper: Mapper[TModel] = inspect(self.model)
-        for rel in mapper.relationships.values():
-            related_objects = getattr(model, rel.key, None)
-            if related_objects is None:
-                continue
-            data.update(self._get_relationship_dict_item(rel.key, related_objects))
-        return data
-
-    def _get_relationship_dict_item(
-        self, rel_name: str, related_objects: Union[List[BaseModel], BaseModel]
-    ) -> Dict[str, Any]:
-        """
-        Get a dictionary item that represents the relationship.
-
-        :param rel_name: The name of the related table.
-        :type rel_name: str
-        :param related_objects: A list of related objects.
-        :type related_objects: Union[List[BaseModel], BaseModel]
-        :return: A dictionary with a relationship that has one id or a list of ids.
-        :rtype: Dict[str, Any]
-        """
-        dict_item: Dict[str, Any] = {}
-        if isinstance(related_objects, list):
-            related_list = cast(List[BaseModel], related_objects)
-            dict_item[f"{rel_name}_ids"] = [obj.id for obj in related_list]
-        else:
-            dict_item[f"{rel_name}_id"] = related_objects.id
-        return dict_item
+        return model.to_dict()

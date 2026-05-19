@@ -7,12 +7,13 @@ from sqlalchemy import exc, select
 from sqlalchemy.orm import Session
 from src.repositories.base_repo import BaseRepository
 from src.util.errors.error import UniqueViolationError
+from src.util.filters.base_filters import BaseFilters
 from src.util.models.user import User
 from src.util.schemas.user import NewUser
 from src.db.connection_manager import DatabaseConnectionManager
 
 
-class UserRepository(BaseRepository[User]):
+class UserRepository(BaseRepository[User, BaseFilters]):
     """
     Data-access layer for :class:`User` records.
 

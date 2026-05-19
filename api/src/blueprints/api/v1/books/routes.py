@@ -5,7 +5,7 @@ module: src/blueprints/api/v1/books/routes.py
 
 from flask import Blueprint, g
 from src.util.models.book import Book
-from src.util.schemas.book import BookSchema
+from src.util.schemas.books.book import BookSchema
 from src.controllers.book_controller import BookController
 from src.repositories.book_repo import BookRepository
 from src.services.book_service import BookService
@@ -26,6 +26,6 @@ def get_book_by_id(id: int):
     return g.book_controller.get_by_id(id)
 
 
-@books_bp.route("/", methods=["GET"])
+@books_bp.route("", methods=["GET"])
 def get_books():
     return g.book_controller.get()
