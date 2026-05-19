@@ -21,6 +21,7 @@ build:
     - docker compose -f docker-compose.prod.yml push
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_TAG
 
 # --- Test ---
 
@@ -53,6 +54,21 @@ api_tests:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"
     - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_TAG
+
+# --- Release ---
+
+release:
+  stage: release
+  image: registry.gitlab.com/gitlab-org/cli:latest
+  script:
+    - echo "Creating release $CI_COMMIT_TAG..."
+  release:
+    name: "Release $CI_COMMIT_TAG"
+    tag_name: $CI_COMMIT_TAG
+    description: "Release $CI_COMMIT_TAG"
+  rules:
+    - if: $CI_COMMIT_TAG
 
 # --- Deploy ---
 
@@ -61,11 +77,11 @@ deploy:
   tags:
     - patriciaj-rpi
   script:
-    - echo "Deploying to production..."
+    - echo "Deploying $CI_COMMIT_TAG to production..."
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
 
     # Pull images from the container registry and restart the containers with the new images.
     - docker compose -f docker-compose.prod.yml pull
     - docker compose -f docker-compose.prod.yml up -d
   rules:
-    - if: $CI_COMMIT_BRANCH == "main"  # Only run on main branch
+    - if: $CI_COMMIT_TAG  # Deploy only after a new tag.
