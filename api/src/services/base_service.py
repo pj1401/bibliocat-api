@@ -17,7 +17,7 @@ TQueryParams = TypeVar("TQueryParams", bound=BaseQueryParams)
 
 class BaseService(Generic[TRepository, TQueryParams]):
     """
-    BaseService for business logic layer.
+    BaseService encapsulates business logic.
     """
 
     def __init__(self, repository: TRepository, schema: Type[TSchema]):

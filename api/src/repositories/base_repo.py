@@ -17,7 +17,11 @@ TFilters = TypeVar("TFilters", bound=BaseFilters)
 
 class BaseRepository(Generic[TModel, TFilters]):
     """
-    Data-access layer using a generic model.
+    Data-access layer.
+
+    Encapsulates all SQLAlchemy interactions so that the rest
+    of the application can work with plain domain objects without dealing
+    with sessions, transactions or ORM-specific exceptions.
     """
 
     def __init__(
@@ -38,6 +42,14 @@ class BaseRepository(Generic[TModel, TFilters]):
         self.model = model
 
     def get(self, filters: TFilters) -> list[Dict[str, Any]]:
+        """
+        Get a list of records by using filters to match the result.
+
+        :param filters: The query parameters that have been converted to a BaseFilters like dataclass.
+        :type filters: TFilters
+        :return: A list of dictionaries representing the records.
+        :rtype: list[Dict[str, Any]]
+        """
         session: Session | None = None
         try:
             session = self.db_manager.get_session()

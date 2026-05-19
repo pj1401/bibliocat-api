@@ -12,11 +12,14 @@ from src.services.base_service import BaseService
 
 
 class BookService(BaseService[BookRepository, BookQueryParams]):
+    """
+    BookService encapsulates business logic for the book collection.
+    """
+
     def __init__(self, book_repo: BookRepository, book_schema: Type[BookSchema]):
         super().__init__(book_repo, book_schema)
 
     def get(self, params: BookQueryParams):
-        """Get a list of records."""
         try:
             filters = BookFilters(
                 limit=params.limit,

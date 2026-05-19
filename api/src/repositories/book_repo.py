@@ -13,6 +13,10 @@ from src.repositories.base_repo import BaseRepository
 
 
 class BookRepository(BaseRepository[Book, BookFilters]):
+    """
+    Data-access layer for the book collection.
+    """
+
     def __init__(self, db_manager: DatabaseConnectionManager, book_model: type[Book]):
         super().__init__(db_manager, book_model)
 

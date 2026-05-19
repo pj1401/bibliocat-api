@@ -10,6 +10,10 @@ from src.services.book_service import BookService
 
 
 class BookController(BaseController[BookService]):
+    """
+    BookController for handling the book endpoint.
+    """
+
     def __init__(self, book_service: BookService):
         super().__init__(book_service)
 
