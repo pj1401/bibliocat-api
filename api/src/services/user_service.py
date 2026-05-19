@@ -9,11 +9,12 @@ import bcrypt
 from src.services.base_service import BaseService
 from src.util.models.user import User
 from src.util.errors.error import InvalidCredentialsError
+from src.util.schemas.query_params import BaseQueryParams
 from src.util.schemas.user import NewUser, UserArguments, UserLogin, UserModel
 from src.repositories.user_repo import UserRepository
 
 
-class UserService(BaseService[UserRepository]):
+class UserService(BaseService[UserRepository, BaseQueryParams]):
     """
     Business logic for user registration and authentication.
 

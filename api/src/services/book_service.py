@@ -11,7 +11,7 @@ from src.repositories.book_repo import BookRepository
 from src.services.base_service import BaseService
 
 
-class BookService(BaseService[BookRepository]):
+class BookService(BaseService[BookRepository, BookQueryParams]):
     def __init__(self, book_repo: BookRepository, book_schema: Type[BookSchema]):
         super().__init__(book_repo, book_schema)
 
@@ -19,6 +19,8 @@ class BookService(BaseService[BookRepository]):
         """Get a list of records."""
         try:
             filters = BookFilters(
+                limit=params.limit,
+                offset=params.offset,
                 category=params.category,
                 title=params.title,
                 isbn=params.isbn,
@@ -28,6 +30,6 @@ class BookService(BaseService[BookRepository]):
                 min_rating=params.min_rating,
                 max_rating=params.max_rating,
             )
-            return self.repository.get(params.limit, params.offset, filters)
+            return self.repository.get(filters)
         except Exception as err:
             raise err

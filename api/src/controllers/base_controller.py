@@ -4,12 +4,11 @@ module: src/controllers/base_controller.py
 """
 
 from typing import Any, Generic, TypeVar
-from flask import jsonify, request
-from src.util.schemas.query_params import BaseQueryParams
+from flask import jsonify
 from src.services.base_service import BaseService
 from src.util.errors.error import convert_to_http_error, log_original_error
 
-TService = TypeVar("TService", bound=BaseService[Any])
+TService = TypeVar("TService", bound=BaseService[Any, Any])
 
 
 class BaseController(Generic[TService]):
@@ -25,16 +24,6 @@ class BaseController(Generic[TService]):
         :type service: TService
         """
         self.service = service
-
-    def get(self):
-        try:
-            params = BaseQueryParams(**request.args)
-            fetched = self.service.get(params)
-            return jsonify({"status": 200, "data": fetched}), 200
-        except Exception as err:
-            log_original_error(err)
-            http_err = convert_to_http_error(err)
-            return jsonify(http_err.to_dict()), http_err.status
 
     def get_by_id(self, id: int | str):
         """
@@ -53,6 +42,9 @@ class BaseController(Generic[TService]):
             }
             return jsonify(response), 200
         except Exception as err:
-            log_original_error(err)
-            http_err = convert_to_http_error(err)
-            return jsonify(http_err.to_dict()), http_err.status
+            self._error_response(err)
+
+    def _error_response(self, err: Exception):
+        log_original_error(err)
+        http_err = convert_to_http_error(err)
+        return jsonify(http_err.to_dict()), http_err.status

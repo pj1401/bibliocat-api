@@ -9,12 +9,12 @@ from src.util.schemas.query_params import BaseQueryParams
 from src.util.errors.error import NotFoundError, log_original_error
 from src.repositories.base_repo import BaseRepository
 
-TRepository = TypeVar("TRepository", bound=BaseRepository[Any])
+TRepository = TypeVar("TRepository", bound=BaseRepository[Any, Any])
 TSchema = TypeVar("TSchema", bound=PydanticBaseModel)
 TQueryParams = TypeVar("TQueryParams", bound=BaseQueryParams)
 
 
-class BaseService(Generic[TRepository]):
+class BaseService(Generic[TRepository, TQueryParams]):
     """
     BaseService for business logic layer.
     """
@@ -30,14 +30,6 @@ class BaseService(Generic[TRepository]):
         """
         self.repository = repository
         self.schema = schema
-
-    def get(self, params: Type[TQueryParams]) -> list[Dict[str, Any]]:
-        """Get a list of records."""
-        try:
-            fetched = self.repository.get(params.limit, params.offset, params)
-            return fetched
-        except Exception as err:
-            raise err
 
     def get_by_id(self, id: int | str) -> Dict[str, Any]:
         """
