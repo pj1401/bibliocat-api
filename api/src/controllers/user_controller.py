@@ -8,7 +8,6 @@ from flask import jsonify, request
 from flask_jwt_extended import create_access_token
 from src.controllers.base_controller import BaseController
 from src.util.schemas.user import UserArguments, UserLogin
-from src.util.errors.error import convert_to_http_error, log_original_error
 from src.services.user_service import UserService
 
 
@@ -57,9 +56,7 @@ class UserController(BaseController[UserService]):
             }
             return jsonify(response), 201
         except Exception as err:
-            log_original_error(err)
-            http_err = convert_to_http_error(err)
-            return jsonify(http_err.to_dict()), http_err.status
+            return self._error_response(err)
 
     def login(self):
         """
@@ -91,6 +88,4 @@ class UserController(BaseController[UserService]):
             }
             return jsonify(response), 200
         except Exception as err:
-            log_original_error(err)
-            http_err = convert_to_http_error(err)
-            return jsonify(http_err.to_dict()), http_err.status
+            return self._error_response(err)

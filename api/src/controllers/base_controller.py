@@ -42,7 +42,7 @@ class BaseController(Generic[TService]):
             }
             return jsonify(response), 200
         except Exception as err:
-            self._error_response(err)
+            return self._error_response(err)
 
     def _error_response(self, err: Exception):
         log_original_error(err)
