@@ -1,7 +1,12 @@
 stages:
   - build
   - test
+  - release
   - deploy
+
+default:
+  artifacts:
+    expire_in: 1h10min
 
 # --- Build ---
 
@@ -16,8 +21,6 @@ build:
     - docker compose -f docker-compose.prod.yml push
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
-  artifacts:
-    expire_in: 1h10min
 
 # --- Test ---
 
@@ -66,5 +69,3 @@ deploy:
     - docker compose -f docker-compose.prod.yml up -d
   rules:
     - if: $CI_COMMIT_BRANCH == "main"  # Only run on main branch
-  artifacts:
-    expire_in: 1h10min
