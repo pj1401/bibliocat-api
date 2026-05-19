@@ -10,40 +10,28 @@ default:
 
 # --- Build ---
 
-.kaniko_auth: &kaniko_auth
-  before_script:
-    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$(printf "%s:%s" "$CI_REGISTRY_USER" "$CI_REGISTRY_PASSWORD" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
-
 build-api:
   stage: build
-  image:
-    name: gcr.io/kaniko-project/executor:debug
-    entrypoint: [""]
-  <<: *kaniko_auth
+  tags:
+    - patriciaj-rpi
   script:
     - echo "Building API production image..."
-    - /kaniko/executor
-      --context $CI_PROJECT_DIR
-      --dockerfile $CI_PROJECT_DIR/api/dockerfile
-      --destination $CI_REGISTRY_IMAGE/api:latest
-      --custom-platform=linux/arm64
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker compose -f docker-compose.prod.yml build api
+    - docker compose -f docker-compose.prod.yml push api
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
     - if: $CI_COMMIT_TAG
 
 build-setup:
   stage: build
-  image:
-    name: gcr.io/kaniko-project/executor:debug
-    entrypoint: [""]
-  <<: *kaniko_auth
+  tags:
+    - patriciaj-rpi
   script:
     - echo "Building setup production image..."
-    - /kaniko/executor
-      --context $CI_PROJECT_DIR
-      --dockerfile $CI_PROJECT_DIR/setup/dockerfile
-      --destination $CI_REGISTRY_IMAGE/setup:latest
-      --custom-platform=linux/arm64
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker compose -f docker-compose.prod.yml build setup
+    - docker compose -f docker-compose.prod.yml push setup
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
     - if: $CI_COMMIT_TAG
