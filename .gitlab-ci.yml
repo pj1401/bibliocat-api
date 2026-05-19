@@ -10,17 +10,41 @@ default:
 
 # --- Build ---
 
-build:
+.kaniko_auth: &kaniko_auth
+  before_script:
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$(printf "%s:%s" "$CI_REGISTRY_USER" "$CI_REGISTRY_PASSWORD" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
+
+build-api:
   stage: build
-  tags:
-    - patriciaj-rpi
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  <<: *kaniko_auth
   script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - echo "Building production images..."
-    - docker compose -f docker-compose.prod.yml build
-    - docker compose -f docker-compose.prod.yml push
+    - echo "Building API production image..."
+    - /kaniko/executor
+      --context $CI_PROJECT_DIR
+      --dockerfile $CI_PROJECT_DIR/api/Dockerfile
+      --destination $CI_REGISTRY_IMAGE/api:latest
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_TAG
+
+build-setup:
+  stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  <<: *kaniko_auth
+  script:
+    - echo "Building API setup production image..."
+    - /kaniko/executor
+      --context $CI_PROJECT_DIR
+      --dockerfile $CI_PROJECT_DIR/setup/Dockerfile
+      --destination $CI_REGISTRY_IMAGE/setup:latest
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_TAG
 
 # --- Test ---
 
@@ -44,8 +68,6 @@ api_tests:
 
   artifacts:
     when: always
-    reports:
-      junit: ./apidog-reports/*.xml
     paths:
       - ./apidog-reports/
     expire_in: 1h10min
@@ -53,6 +75,21 @@ api_tests:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"
     - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_TAG
+
+# --- Release ---
+
+release:
+  stage: release
+  image: registry.gitlab.com/gitlab-org/cli:latest
+  script:
+    - echo "Creating release $CI_COMMIT_TAG..."
+  release:
+    name: "Release $CI_COMMIT_TAG"
+    tag_name: $CI_COMMIT_TAG
+    description: "Release $CI_COMMIT_TAG"
+  rules:
+    - if: $CI_COMMIT_TAG
 
 # --- Deploy ---
 
@@ -61,11 +98,11 @@ deploy:
   tags:
     - patriciaj-rpi
   script:
-    - echo "Deploying to production..."
+    - echo "Deploying $CI_COMMIT_TAG to production..."
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
 
     # Pull images from the container registry and restart the containers with the new images.
     - docker compose -f docker-compose.prod.yml pull
     - docker compose -f docker-compose.prod.yml up -d
   rules:
-    - if: $CI_COMMIT_BRANCH == "main"  # Only run on main branch
+    - if: $CI_COMMIT_TAG  # Deploy only after a new tag.
