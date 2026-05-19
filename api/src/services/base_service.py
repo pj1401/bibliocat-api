@@ -5,6 +5,7 @@ module: src/services/base_service.py
 
 from typing import Any, Dict, Generic, Type, TypeVar
 from pydantic import BaseModel as PydanticBaseModel, ValidationError
+from src.util.filters.base_filters import BaseFilters
 from src.util.schemas.query_params import BaseQueryParams
 from src.util.errors.error import NotFoundError, log_original_error
 from src.repositories.base_repo import BaseRepository
@@ -30,6 +31,24 @@ class BaseService(Generic[TRepository, TQueryParams]):
         """
         self.repository = repository
         self.schema = schema
+
+    def get(self, params: TQueryParams):
+        """
+        Get a list of records using optional query parameters.
+
+        :param params: The query parameters.
+        :type params: TQueryParams
+        :return: A list of dictionaries representing the records.
+        :rtype: list[Dict[str, Any]]
+        """
+        try:
+            filters = BaseFilters(
+                limit=params.limit,
+                offset=params.offset,
+            )
+            return self.repository.get(filters)
+        except Exception as err:
+            raise err
 
     def get_by_id(self, id: int | str) -> Dict[str, Any]:
         """
