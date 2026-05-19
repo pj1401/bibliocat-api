@@ -3,12 +3,12 @@
 #   timestamp: 2026-05-06T14:51:53+00:00
 
 from __future__ import annotations
-from datetime import date, datetime
-from pydantic import BaseModel, Field
+from datetime import date
+from pydantic import Field
+from schemas.base_resource import BaseResourceSchema
 
 
-class BookSchema(BaseModel):
-    id: int
+class BookSchema(BaseResourceSchema):
     title: str
     isbn: str
     published_date: date | None = None
@@ -17,8 +17,6 @@ class BookSchema(BaseModel):
     page_count: int
     rating: float = Field(..., ge=0.0, le=5.0)
     voters: int = Field(..., ge=0)
-    created_at: datetime
-    updated_at: datetime
     authors_ids: list[int]
     categories_ids: list[int] | None = None
     publisher_id: int

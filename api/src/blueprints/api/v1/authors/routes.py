@@ -4,6 +4,7 @@ module: src/blueprints/api/v1/authors/routes.py
 """
 
 from flask import Blueprint, g
+from src.util.schemas.authors.authors import AuthorSchema
 from src.util.models import Author
 from src.controllers.author_controller import AuthorController
 from src.repositories.author_repo import AuthorRepository
