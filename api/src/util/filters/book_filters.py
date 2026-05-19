@@ -4,10 +4,11 @@ module: src/util/filters/book_filters.py
 """
 
 from dataclasses import dataclass
+from .base_filters import BaseFilters
 
 
 @dataclass
-class BookFilters:
+class BookFilters(BaseFilters):
     category: str | None = None
     title: str | None = None
     isbn: str | None = None

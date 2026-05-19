@@ -6,14 +6,16 @@ module: src/repositories/base_repo.py
 from typing import Any, Dict, Generic, TypeVar
 from sqlalchemy import select
 from sqlalchemy.orm import Session
+from src.util.filters.base_filters import BaseFilters
 from src.db.connection_manager import DatabaseConnectionManager
 from src.util.errors.error import NotFoundError
 from src.util.models.base import BaseModel
 
 TModel = TypeVar("TModel", bound=BaseModel)
+TFilters = TypeVar("TFilters", bound=BaseFilters)
 
 
-class BaseRepository(Generic[TModel]):
+class BaseRepository(Generic[TModel, TFilters]):
     """
     Data-access layer using a generic model.
     """
@@ -35,16 +37,14 @@ class BaseRepository(Generic[TModel]):
         self.db_manager = db_manager
         self.model = model
 
-    def get(
-        self, limit: int, offset: int, filters: list | None = None
-    ) -> list[Dict[str, Any]]:
+    def get(self, filters: TFilters) -> list[Dict[str, Any]]:
         session: Session | None = None
         try:
             session = self.db_manager.get_session()
             stmt = select(self.model)
-            if filters:
-                stmt = stmt.where(*filters)
-            result = session.scalars(stmt.offset(offset)).fetchmany(limit)
+            result = session.scalars(stmt.offset(filters.offset)).fetchmany(
+                filters.limit
+            )
             dicts = [self.model_to_dict(row) for row in result]
             session.commit()
             return dicts

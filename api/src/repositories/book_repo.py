@@ -12,13 +12,11 @@ from src.db.connection_manager import DatabaseConnectionManager
 from src.repositories.base_repo import BaseRepository
 
 
-class BookRepository(BaseRepository[Book]):
+class BookRepository(BaseRepository[Book, BookFilters]):
     def __init__(self, db_manager: DatabaseConnectionManager, book_model: type[Book]):
         super().__init__(db_manager, book_model)
 
-    def get(
-        self, limit: int, offset: int, filters: BookFilters
-    ) -> list[Dict[str, Any]]:
+    def get(self, filters: BookFilters) -> list[Dict[str, Any]]:
         session: Session | None = None
         try:
             session = self.db_manager.get_session()
@@ -31,7 +29,9 @@ class BookRepository(BaseRepository[Book]):
             )
 
             stmt = self._get_filtered_stmt(stmt, filters)
-            result = session.scalars(stmt.offset(offset)).fetchmany(limit)
+            result = session.scalars(stmt.offset(filters.offset)).fetchmany(
+                filters.limit
+            )
             dicts = [self.model_to_dict(row) for row in result]
             session.commit()
             return dicts
