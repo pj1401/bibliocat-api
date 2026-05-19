@@ -52,8 +52,10 @@ api_tests:
   stage: test
   tags:
     - patriciaj-rpi
+  variables:
+    PATH: "$CI_PROJECT_DIR/node_modules/.bin:$PATH"
   before_script:
-    - npm install -g apidog-cli
+    - npm install apidog-cli
   script:
     - echo "Building test images..."
     # --wait blocks until all healthchecks pass (including setup completing)
