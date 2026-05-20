@@ -16,7 +16,7 @@ books_bp = Blueprint("books", __name__)
 @books_bp.before_request
 def before_request():
     """Create objects once per request."""
-    g.book_repo = BookRepository(g.db_manager, Book)
+    g.book_repo = BookRepository(g.db_manager, Book, g.base_url)
     g.book_service = BookService(g.book_repo, BookSchema)
     g.book_controller = BookController(g.book_service)
 

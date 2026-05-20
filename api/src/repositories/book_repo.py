@@ -17,8 +17,13 @@ class BookRepository(BaseRepository[Book, BookFilters]):
     Data-access layer for the book collection.
     """
 
-    def __init__(self, db_manager: DatabaseConnectionManager, book_model: type[Book]):
-        super().__init__(db_manager, book_model)
+    def __init__(
+        self,
+        db_manager: DatabaseConnectionManager,
+        book_model: type[Book],
+        base_url: str,
+    ):
+        super().__init__(db_manager, book_model, base_url)
 
     def get(self, filters: BookFilters) -> list[Dict[str, Any]]:
         session: Session | None = None
@@ -121,6 +126,7 @@ class BookRepository(BaseRepository[Book, BookFilters]):
 
     def model_to_dict(self, model: Book) -> Dict[str, Any]:
         data = model.to_dict()
+        data["href"] = f"{self.base_url}/api/v1/books/{model.id}"
         data["authors_ids"] = [a.id for a in model.authors]
         data["categories_ids"] = [c.id for c in model.categories]
         data["publisher_id"] = model.publisher.id if model.publisher else None

@@ -25,9 +25,7 @@ class BaseRepository(Generic[TModel, TFilters]):
     """
 
     def __init__(
-        self,
-        db_manager: DatabaseConnectionManager,
-        model: type[TModel],
+        self, db_manager: DatabaseConnectionManager, model: type[TModel], base_url: str
     ) -> None:
         """
         Initialise the repository with a database connection manager.
@@ -40,6 +38,7 @@ class BaseRepository(Generic[TModel, TFilters]):
         """
         self.db_manager = db_manager
         self.model = model
+        self.base_url = base_url
 
     def get(self, filters: TFilters) -> list[Dict[str, Any]]:
         """

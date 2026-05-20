@@ -33,6 +33,7 @@ class BookService(BaseService[BookRepository, BookQueryParams]):
                 min_rating=params.min_rating,
                 max_rating=params.max_rating,
             )
-            return self.repository.get(filters)
+            results = self.repository.get(filters)
+            return [self.schema.model_validate(item).model_dump() for item in results]
         except Exception as err:
             raise err
