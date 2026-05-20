@@ -30,8 +30,14 @@ class BaseService(Generic[TRepository, TQueryParams]):
         """
         self.repository = repository
         self.schema = schema
+    
+    def post(self, arguments: Type[TSchema]):
+        try:
+            return self.repository.post(arguments)
+        except Exception as err:
+            raise err
 
-    def get(self, params: TQueryParams):
+    def get(self, params: TQueryParams) -> list[Dict[str, Any]]:
         """
         Get a list of records using optional query parameters.
 
