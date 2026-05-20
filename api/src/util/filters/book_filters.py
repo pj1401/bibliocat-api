@@ -17,3 +17,4 @@ class BookFilters(BaseFilters):
     language: str | None = None
     min_rating: float | None = None
     max_rating: float | None = None
+    author_id: int | None = None

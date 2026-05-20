@@ -31,6 +31,7 @@ class BookService(BaseService[BookRepository, BookQueryParams]):
                 language=params.language,
                 min_rating=params.min_rating,
                 max_rating=params.max_rating,
+                author_id=params.author_id,
             )
             results = self.repository.get(filters)
             return [self.schema.model_validate(item).model_dump() for item in results]

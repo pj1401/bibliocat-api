@@ -67,6 +67,8 @@ class BookRepository(BaseRepository[Book, BookFilters]):
         """
         if filters.author:
             stmt = self._get_author_filtered_stmt(stmt, filters.author)
+        if filters.author_id:
+            stmt = self._get_author_id_filtered_stmt(stmt, filters.author_id)
         if filters.category:
             stmt = self._get_category_filtered_stmt(stmt, filters.category)
         if filters.isbn:
@@ -88,6 +90,11 @@ class BookRepository(BaseRepository[Book, BookFilters]):
         return stmt.where(
             Book.authors.any(func.lower(Author.name).contains(author.lower()))
         )
+
+    def _get_author_id_filtered_stmt(
+        self, stmt: Select[Any], author_id: int
+    ) -> Select[Any]:
+        return stmt.where(Book.authors.any(Author.id == author_id))
 
     def _get_category_filtered_stmt(
         self, stmt: Select[Any], category: str

@@ -16,3 +16,4 @@ class BookQueryParams(BaseQueryParams):
     language: str | None = None
     min_rating: float | None = Field(None, ge=0.0, le=5.0)
     max_rating: float | None = Field(None, ge=0.0, le=5.0)
+    author_id: int | None = None
