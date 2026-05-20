@@ -43,7 +43,7 @@ class BaseRepository(Generic[TModel, TFilters]):
         self.db_manager = db_manager
         self.model = model
         self.base_url = base_url
-    
+
     def post(self, arguments: Type[TSchema]):
         """
         Create a new resource
@@ -67,7 +67,7 @@ class BaseRepository(Generic[TModel, TFilters]):
         finally:
             if session is not None:
                 session.close()
-    
+
     def get_new_model(self, arguments: Type[TSchema]):
         """
         Map the arguments for the database model.

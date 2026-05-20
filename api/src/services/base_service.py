@@ -30,7 +30,7 @@ class BaseService(Generic[TRepository, TQueryParams]):
         """
         self.repository = repository
         self.schema = schema
-    
+
     def post(self, arguments: Type[TSchema]):
         try:
             return self.repository.post(arguments)

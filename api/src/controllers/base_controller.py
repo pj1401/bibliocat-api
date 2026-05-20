@@ -13,6 +13,7 @@ from src.util.errors.error import convert_to_http_error, log_original_error
 TService = TypeVar("TService", bound=BaseService[Any, Any])
 TSchema = TypeVar("TSchema", bound=PydanticBaseModel)
 
+
 class BaseController(Generic[TService]):
     """
     BaseController for HTTP routes.
@@ -36,12 +37,14 @@ class BaseController(Generic[TService]):
             return jsonify(response), 201
         except Exception as err:
             return self._error_response(err)
-    
+
     def get_post_arguments(self, data: Any) -> PydanticBaseModel:
         return PydanticBaseModel(**data)
-    
+
     def get_post_response(self, resource: Dict[str, Any]) -> Dict[str, Any]:
-        return resource | {"status": 201,}
+        return resource | {
+            "status": 201,
+        }
 
     def get(self):
         """

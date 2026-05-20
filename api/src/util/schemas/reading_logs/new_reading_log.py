@@ -6,8 +6,9 @@ module: src/util/schemas/reading_logs/new_reading_log.py
 from datetime import date, datetime
 from dataclasses import dataclass
 
+
 @dataclass
-class NewReadingLog():
+class NewReadingLog:
     started_at: date | datetime
     ended_at: date | datetime | None
     user_id: int
