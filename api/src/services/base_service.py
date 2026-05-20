@@ -4,10 +4,9 @@ module: src/services/base_service.py
 """
 
 from typing import Any, Dict, Generic, Type, TypeVar
-from pydantic import BaseModel as PydanticBaseModel, ValidationError
+from pydantic import BaseModel as PydanticBaseModel
 from src.util.filters.base_filters import BaseFilters
 from src.util.schemas.query_params import BaseQueryParams
-from src.util.errors.error import NotFoundError, log_original_error
 from src.repositories.base_repo import BaseRepository
 
 TRepository = TypeVar("TRepository", bound=BaseRepository[Any, Any])
@@ -46,7 +45,8 @@ class BaseService(Generic[TRepository, TQueryParams]):
                 limit=params.limit,
                 offset=params.offset,
             )
-            return self.repository.get(filters)
+            results = self.repository.get(filters)
+            return [self.schema.model_validate(item).model_dump() for item in results]
         except Exception as err:
             raise err
 
@@ -61,10 +61,6 @@ class BaseService(Generic[TRepository, TQueryParams]):
         """
         try:
             data = self.repository.get_by_id(id)
-            self.schema.model_validate(data)
-            return data
+            return self.schema.model_validate(data).model_dump()
         except Exception as err:
-            if isinstance(err, ValidationError):
-                log_original_error(err)
-                raise NotFoundError(err)
             raise err

@@ -22,7 +22,12 @@ class UserRepository(BaseRepository[User, BaseFilters]):
     with sessions, transactions or ORM-specific exceptions.
     """
 
-    def __init__(self, db_manager: DatabaseConnectionManager, user_model: type[User]):
+    def __init__(
+        self,
+        db_manager: DatabaseConnectionManager,
+        user_model: type[User],
+        base_url: str,
+    ):
         """
         Initialize the repository with a database connection manager.
 
@@ -30,7 +35,7 @@ class UserRepository(BaseRepository[User, BaseFilters]):
             the application's configured database engine.
         :type db_manager: DatabaseConnectionManager
         """
-        super().__init__(db_manager, user_model)
+        super().__init__(db_manager, user_model, base_url)
 
     def create_user(self, new_user: NewUser) -> User:
         """

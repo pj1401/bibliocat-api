@@ -25,9 +25,7 @@ class BaseRepository(Generic[TModel, TFilters]):
     """
 
     def __init__(
-        self,
-        db_manager: DatabaseConnectionManager,
-        model: type[TModel],
+        self, db_manager: DatabaseConnectionManager, model: type[TModel], base_url: str
     ) -> None:
         """
         Initialise the repository with a database connection manager.
@@ -37,9 +35,12 @@ class BaseRepository(Generic[TModel, TFilters]):
         :type db_manager: DatabaseConnectionManager
         :param model: The SQLAlchemy model used for data-access.
         :type model: type[TModel]
+        :param base_url: The base URL of the application.
+        :type base_url: str
         """
         self.db_manager = db_manager
         self.model = model
+        self.base_url = base_url
 
     def get(self, filters: TFilters) -> list[Dict[str, Any]]:
         """

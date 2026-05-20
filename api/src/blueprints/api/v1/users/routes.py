@@ -16,7 +16,7 @@ users_bp = Blueprint("users", __name__)
 @users_bp.before_request
 def before_request():
     """Create objects once per request."""
-    g.user_repo = UserRepository(g.db_manager, User)
+    g.user_repo = UserRepository(g.db_manager, User, g.base_url)
     g.user_service = UserService(g.user_repo, UserModel)
     g.user_controller = UserController(g.user_service)
 

@@ -5,8 +5,7 @@ module: src/services/book_service.py
 
 from typing import Type
 from src.util.filters.book_filters import BookFilters
-from src.util.schemas.books.book_query_params import BookQueryParams
-from src.util.schemas.books.book import BookSchema
+from src.util.schemas.books import BookSchema, BookQueryParams
 from src.repositories.book_repo import BookRepository
 from src.services.base_service import BaseService
 
@@ -33,6 +32,7 @@ class BookService(BaseService[BookRepository, BookQueryParams]):
                 min_rating=params.min_rating,
                 max_rating=params.max_rating,
             )
-            return self.repository.get(filters)
+            results = self.repository.get(filters)
+            return [self.schema.model_validate(item).model_dump() for item in results]
         except Exception as err:
             raise err
