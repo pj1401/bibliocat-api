@@ -41,14 +41,25 @@ class BaseService(Generic[TRepository, TQueryParams]):
         :rtype: list[Dict[str, Any]]
         """
         try:
-            filters = BaseFilters(
-                limit=params.limit,
-                offset=params.offset,
-            )
+            filters = self._get_filters(params)
             results = self.repository.get(filters)
             return [self.schema.model_validate(item).model_dump() for item in results]
         except Exception as err:
             raise err
+
+    def _get_filters(self, params: TQueryParams) -> BaseFilters:
+        """
+        Convert query parameters to filters.
+
+        :param params: The query parameters structured like a BaseQueryParams object.
+        :type params: TQueryParams
+        :return: The BaseFilters or similar object.
+        :rtype: BaseFilters
+        """
+        return BaseFilters(
+            limit=params.limit,
+            offset=params.offset,
+        )
 
     def get_by_id(self, id: int | str) -> Dict[str, Any]:
         """

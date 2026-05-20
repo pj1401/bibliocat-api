@@ -7,4 +7,5 @@ from src.util.schemas.query_params import BaseQueryParams
 
 
 class AuthorQueryParams(BaseQueryParams):
-    pass
+    name: str | None = None
+    book_id: int | None = None

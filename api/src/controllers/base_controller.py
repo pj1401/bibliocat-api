@@ -4,7 +4,7 @@ module: src/controllers/base_controller.py
 """
 
 from typing import Any, Generic, TypeVar
-from flask import jsonify, request
+from flask import Request, jsonify, request
 from src.services.base_service import BaseService
 from src.util.schemas.query_params import BaseQueryParams
 from src.util.errors.error import convert_to_http_error, log_original_error
@@ -34,13 +34,23 @@ class BaseController(Generic[TService]):
         :rtype: tuple[Response, Literal[200]] | tuple[Response, int]
         """
         try:
-            # Ignore type error since pydantic validates and coerces the types.
-            params = BaseQueryParams(**request.args)  # type: ignore
-
+            params = self._get_params(request)
             fetched = self.service.get(params)
             return jsonify({"status": 200, "data": fetched}), 200
         except Exception as err:
             return self._error_response(err)
+
+    def _get_params(self, request: Request) -> BaseQueryParams:
+        """
+        Get the parameters object.
+
+        :param request: The request object that contains the query parameters.
+        :type request: Request
+        :return: The parameters in the form of BaseQueryParams or similar object.
+        :rtype: BaseQueryParams
+        """
+        # Ignore type error since pydantic validates and coerces the types.
+        return BaseQueryParams(**request.args)  # type: ignore
 
     def get_by_id(self, id: int | str):
         """

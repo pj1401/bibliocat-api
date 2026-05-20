@@ -4,7 +4,7 @@ module: src/repositories/base_repo.py
 """
 
 from typing import Any, Dict, Generic, TypeVar
-from sqlalchemy import select
+from sqlalchemy import Select, select
 from sqlalchemy.orm import Session
 from src.util.filters.base_filters import BaseFilters
 from src.db.connection_manager import DatabaseConnectionManager
@@ -54,7 +54,7 @@ class BaseRepository(Generic[TModel, TFilters]):
         session: Session | None = None
         try:
             session = self.db_manager.get_session()
-            stmt = select(self.model)
+            stmt = self._get_stmt(filters)
             result = session.scalars(stmt.offset(filters.offset)).fetchmany(
                 filters.limit
             )
@@ -68,6 +68,30 @@ class BaseRepository(Generic[TModel, TFilters]):
         finally:
             if session is not None:
                 session.close()
+
+    def _get_stmt(self, filters: TFilters) -> Select[Any]:
+        """
+        Get the statement for the collection query.
+
+        :param filters: The BaseFilters or similar object.
+        :type filters: TFilters
+        :return: The statement using filters if any.
+        :rtype: Select[Any]
+        """
+        return select(self.model)
+
+    def _get_filtered_stmt(self, stmt: Select[Any], filters: TFilters) -> Select[Any]:
+        """
+        Get a statement using the filters.
+
+        :param stmt: The base statement.
+        :type stmt: Select[Any]
+        :param filters: The filters object.
+        :type filters: TFilters
+        :return: The statement using filters.
+        :rtype: Select[Any]
+        """
+        return stmt
 
     def get_by_id(self, id: int | str) -> Dict[str, Any]:
         """

@@ -5,7 +5,7 @@ module: src/repositories/book_repo.py
 
 from typing import Any, Dict
 from sqlalchemy import Select, func, select
-from sqlalchemy.orm import Session, selectinload
+from sqlalchemy.orm import selectinload
 from src.util.filters.book_filters import BookFilters
 from src.util.models import Author, Book, Category, Publisher
 from src.db.connection_manager import DatabaseConnectionManager
@@ -25,32 +25,13 @@ class BookRepository(BaseRepository[Book, BookFilters]):
     ):
         super().__init__(db_manager, book_model, base_url)
 
-    def get(self, filters: BookFilters) -> list[Dict[str, Any]]:
-        session: Session | None = None
-        try:
-            session = self.db_manager.get_session()
-
-            # Use Select IN eager loading for relationships. see: https://docs.sqlalchemy.org/en/21/orm/queryguide/relationships.html#select-in-loading
-            stmt = select(Book).options(
-                selectinload(Book.authors),
-                selectinload(Book.categories),
-                selectinload(Book.publisher),
-            )
-
-            stmt = self._get_filtered_stmt(stmt, filters)
-            result = session.scalars(stmt.offset(filters.offset)).fetchmany(
-                filters.limit
-            )
-            dicts = [self.model_to_dict(row) for row in result]
-            session.commit()
-            return dicts
-        except Exception as err:
-            if session is not None:
-                session.rollback()
-            raise err
-        finally:
-            if session is not None:
-                session.close()
+    def _get_stmt(self, filters: BookFilters) -> Select[Any]:
+        stmt = select(Book).options(
+            selectinload(Book.authors),
+            selectinload(Book.categories),
+            selectinload(Book.publisher),
+        )
+        return self._get_filtered_stmt(stmt, filters)
 
     def _get_filtered_stmt(
         self, stmt: Select[Any], filters: BookFilters
@@ -67,6 +48,8 @@ class BookRepository(BaseRepository[Book, BookFilters]):
         """
         if filters.author:
             stmt = self._get_author_filtered_stmt(stmt, filters.author)
+        if filters.author_id:
+            stmt = self._get_author_id_filtered_stmt(stmt, filters.author_id)
         if filters.category:
             stmt = self._get_category_filtered_stmt(stmt, filters.category)
         if filters.isbn:
@@ -88,6 +71,11 @@ class BookRepository(BaseRepository[Book, BookFilters]):
         return stmt.where(
             Book.authors.any(func.lower(Author.name).contains(author.lower()))
         )
+
+    def _get_author_id_filtered_stmt(
+        self, stmt: Select[Any], author_id: int
+    ) -> Select[Any]:
+        return stmt.where(Book.authors.any(Author.id == author_id))
 
     def _get_category_filtered_stmt(
         self, stmt: Select[Any], category: str
