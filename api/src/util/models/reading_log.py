@@ -12,3 +12,4 @@ class ReadingLog(BaseModel):
     started_at = Column(DateTime)
     ended_at = Column(DateTime)
     user_id = Column(Integer, ForeignKey("users.id"))
+    book_id = Column(Integer, ForeignKey("books.id"))
