@@ -35,6 +35,8 @@ class BaseRepository(Generic[TModel, TFilters]):
         :type db_manager: DatabaseConnectionManager
         :param model: The SQLAlchemy model used for data-access.
         :type model: type[TModel]
+        :param base_url: The base URL of the application.
+        :type base_url: str
         """
         self.db_manager = db_manager
         self.model = model
