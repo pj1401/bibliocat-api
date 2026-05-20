@@ -14,5 +14,9 @@ class ReadingLogService(BaseService[ReadingLogRepository, ReadingLogQueryParams]
     ReadingLogService encapsulates business logic for the book collection.
     """
 
-    def __init__(self, reading_log_repo: ReadingLogRepository, reading_log_schema: Type[ReadingLogSchema]):
+    def __init__(
+        self,
+        reading_log_repo: ReadingLogRepository,
+        reading_log_schema: Type[ReadingLogSchema],
+    ):
         super().__init__(reading_log_repo, reading_log_schema)
