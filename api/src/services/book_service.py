@@ -5,8 +5,7 @@ module: src/services/book_service.py
 
 from typing import Type
 from src.util.filters.book_filters import BookFilters
-from src.util.schemas.books.book_query_params import BookQueryParams
-from src.util.schemas.books.book import BookSchema
+from src.util.schemas.books import BookSchema, BookQueryParams
 from src.repositories.book_repo import BookRepository
 from src.services.base_service import BaseService
 

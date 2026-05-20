@@ -3,7 +3,7 @@ BaseQueryParams schema.
 module: src/util/schemas/query_params.py
 """
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 
 class BaseQueryParams(BaseModel):
@@ -18,3 +18,18 @@ class BaseQueryParams(BaseModel):
 
     limit: int = Field(20, ge=1, le=25)
     offset: int = Field(0, ge=0)
+
+    @model_validator(mode="before")
+    @classmethod
+    def strip_strings(
+        cls, values: dict[str, str | int | float]
+    ) -> dict[str, str | int | float]:
+        """
+        Remove whitespaces from field values.
+
+        :param values: The key, value pair as a dict.
+        :type values: dict[str, str | int | float]
+        :return: The key, value pair. If value is a string, whitespaces are removed.
+        :rtype: dict[str, str | int | float]
+        """
+        return {k: v.strip() if isinstance(v, str) else v for k, v in values.items()}

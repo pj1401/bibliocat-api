@@ -3,7 +3,7 @@ BookQueryParams schema.
 module: src/util/schemas/books/book_query_params.py
 """
 
-from pydantic import Field, model_validator
+from pydantic import Field
 from src.util.schemas.query_params import BaseQueryParams
 
 
@@ -16,18 +16,3 @@ class BookQueryParams(BaseQueryParams):
     language: str | None = None
     min_rating: float | None = Field(None, ge=0.0, le=5.0)
     max_rating: float | None = Field(None, ge=0.0, le=5.0)
-
-    @model_validator(mode="before")
-    @classmethod
-    def strip_strings(
-        cls, values: dict[str, str | int | float]
-    ) -> dict[str, str | int | float]:
-        """
-        Remove whitespaces from field values.
-
-        :param values: The key, value pair as a dict.
-        :type values: dict[str, str | int | float]
-        :return: The key, value pair. If value is a string, whitespaces are removed.
-        :rtype: dict[str, str | int | float]
-        """
-        return {k: v.strip() if isinstance(v, str) else v for k, v in values.items()}

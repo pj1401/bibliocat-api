@@ -4,7 +4,7 @@ module: src/blueprints/api/v1/authors/routes.py
 """
 
 from flask import Blueprint, g
-from src.util.schemas.authors.authors import AuthorSchema
+from src.util.schemas.authors.author import AuthorSchema
 from src.util.models import Author
 from src.controllers.author_controller import AuthorController
 from src.repositories.author_repo import AuthorRepository
@@ -16,7 +16,7 @@ authors_bp = Blueprint("authors", __name__)
 @authors_bp.before_request
 def before_request():
     """Create objects once per request."""
-    g.author_repo = AuthorRepository(g.db_manager, Author)
+    g.author_repo = AuthorRepository(g.db_manager, Author, g.base_url)
     g.author_service = AuthorService(g.author_repo, AuthorSchema)
     g.author_controller = AuthorController(g.author_service)
 
