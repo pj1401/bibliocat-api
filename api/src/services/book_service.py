@@ -18,22 +18,17 @@ class BookService(BaseService[BookRepository, BookQueryParams]):
     def __init__(self, book_repo: BookRepository, book_schema: Type[BookSchema]):
         super().__init__(book_repo, book_schema)
 
-    def get(self, params: BookQueryParams):
-        try:
-            filters = BookFilters(
-                limit=params.limit,
-                offset=params.offset,
-                category=params.category,
-                title=params.title,
-                isbn=params.isbn,
-                author=params.author,
-                publisher=params.publisher,
-                language=params.language,
-                min_rating=params.min_rating,
-                max_rating=params.max_rating,
-                author_id=params.author_id,
-            )
-            results = self.repository.get(filters)
-            return [self.schema.model_validate(item).model_dump() for item in results]
-        except Exception as err:
-            raise err
+    def _get_filters(self, params: BookQueryParams) -> BookFilters:
+        return BookFilters(
+            limit=params.limit,
+            offset=params.offset,
+            category=params.category,
+            title=params.title,
+            isbn=params.isbn,
+            author=params.author,
+            publisher=params.publisher,
+            language=params.language,
+            min_rating=params.min_rating,
+            max_rating=params.max_rating,
+            author_id=params.author_id,
+        )
