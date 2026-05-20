@@ -34,9 +34,7 @@ class BaseController(Generic[TService]):
         :rtype: tuple[Response, Literal[200]] | tuple[Response, int]
         """
         try:
-            # Ignore type error since pydantic validates and coerces the types.
             params = self._get_params(request)
-
             fetched = self.service.get(params)
             return jsonify({"status": 200, "data": fetched}), 200
         except Exception as err:

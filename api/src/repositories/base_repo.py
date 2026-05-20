@@ -80,6 +80,19 @@ class BaseRepository(Generic[TModel, TFilters]):
         """
         return select(self.model)
 
+    def _get_filtered_stmt(self, stmt: Select[Any], filters: TFilters) -> Select[Any]:
+        """
+        Get a statement using the filters.
+
+        :param stmt: The base statement.
+        :type stmt: Select[Any]
+        :param filters: The filters object.
+        :type filters: TFilters
+        :return: The statement using filters.
+        :rtype: Select[Any]
+        """
+        return stmt
+
     def get_by_id(self, id: int | str) -> Dict[str, Any]:
         """
         Fetch one record by matching ID.
