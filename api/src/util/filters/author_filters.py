@@ -9,4 +9,5 @@ from .base_filters import BaseFilters
 
 @dataclass
 class AuthorFilters(BaseFilters):
-    pass
+    name: str | None = None
+    book_id: int | None = None
