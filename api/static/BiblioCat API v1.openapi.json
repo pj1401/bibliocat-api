@@ -700,6 +700,94 @@
         ]
       }
     },
+    "/reading-logs/{id}": {
+      "get": {
+        "summary": "Find reading log by ID",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "reading-logs"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The ID of the reading log",
+            "required": true,
+            "example": 1,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "description": "HTTP status code",
+                      "minimum": 0,
+                      "maximum": 999,
+                      "default": 200
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/ReadingLog"
+                    }
+                  },
+                  "required": [
+                    "status",
+                    "data"
+                  ]
+                },
+                "example": {
+                  "data": {
+                    "book": {
+                      "href": "http://localhost:5000/api/v1/books/159",
+                      "id": 159
+                    },
+                    "created_at": "Thu, 21 May 2026 20:36:21 GMT",
+                    "ended_at": "Thu, 21 May 2026 01:36:17 GMT",
+                    "href": "http://localhost:5000/api/v1/reading-logs/7",
+                    "id": 7,
+                    "started_at": "Tue, 23 Dec 2025 17:39:08 GMT",
+                    "updated_at": "Thu, 21 May 2026 20:36:21 GMT",
+                    "user": {
+                      "href": "http://localhost:5000/api/v1/users/8",
+                      "id": 8
+                    }
+                  },
+                  "status": 200
+                }
+              }
+            },
+            "headers": {}
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized",
+            "description": ""
+          },
+          "404": {
+            "$ref": "#/components/responses/Not Found",
+            "description": ""
+          },
+          "500": {
+            "$ref": "#/components/responses/Internal Server Error",
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
     "/health": {
       "get": {
         "summary": "health",
