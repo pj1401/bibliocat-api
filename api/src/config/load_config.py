@@ -25,6 +25,7 @@ class TypedConfig(Config):
     JWT_PUBLIC_KEY: str
     JWT_ALGORITHM: str
     JWT_ACCESS_TOKEN_EXPIRES: timedelta
+    JWT_LEEWAY: timedelta
     BASE_URL: str
     PATH_PREFIX: str
 
@@ -71,6 +72,7 @@ def load_config(app: Flask) -> None:
             "JWT_PUBLIC_KEY": _get_env_or_secret("JWT_PUBLIC_KEY"),
             "JWT_ALGORITHM": "ES512",
             "JWT_ACCESS_TOKEN_EXPIRES": timedelta(hours=1),
+            "JWT_LEEWAY": timedelta(seconds=10),
             "BASE_URL": _get_env_or_secret("BASE_URL"),
             "PATH_PREFIX": _get_env_or_secret("PATH_PREFIX", ""),
         }
