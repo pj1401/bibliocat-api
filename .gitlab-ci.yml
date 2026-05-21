@@ -52,6 +52,7 @@ api_tests:
     - apidog run ./tests/auth.apidog-cli.json -n 1 -r html,cli --out-dir ./apidog-reports/auth
     - apidog run ./tests/books.apidog-cli.json -n 1 -r html,cli --out-dir ./apidog-reports/books
     - apidog run ./tests/authors.apidog-cli.json -n 1 -r html,cli --out-dir ./apidog-reports/authors
+    - apidog run ./tests/reading-logs.apidog-cli.json -n 1 -r html,cli --out-dir ./apidog-reports/reading-logs
 
   after_script:
     # Always runs, even if tests fail — -v removes the test volume
