@@ -72,7 +72,7 @@ def load_config(app: Flask) -> None:
             "JWT_PUBLIC_KEY": _get_env_or_secret("JWT_PUBLIC_KEY"),
             "JWT_ALGORITHM": "ES512",
             "JWT_ACCESS_TOKEN_EXPIRES": timedelta(hours=1),
-            "JWT_LEEWAY": timedelta(seconds=10),
+            "JWT_LEEWAY": timedelta(minutes=1),
             "BASE_URL": _get_env_or_secret("BASE_URL"),
             "PATH_PREFIX": _get_env_or_secret("PATH_PREFIX", ""),
         }
