@@ -3,13 +3,8 @@ Defines reading logs routes.
 module: src/blueprints/api/v1/reading_logs/routes.py
 """
 
-from flask import Blueprint, g, jsonify
-from flask_jwt_extended import get_jwt_identity, jwt_required
-from src.util.errors.error import (
-    InvalidCredentialsError,
-    convert_to_http_error,
-    log_original_error,
-)
+from flask import Blueprint, g
+from src.hooks.auth_required import auth_required
 from src.util.schemas.reading_logs.reading_log import ReadingLogSchema
 from src.util.models import ReadingLog
 from src.controllers.reading_log_controller import ReadingLogController
@@ -28,26 +23,18 @@ def before_request():
 
 
 @reading_logs_bp.route("", methods=["POST"])
-@jwt_required()
+@auth_required()
 def create_reading_log():
-    try:
-        current_user = get_jwt_identity()
-        if current_user.user_id is None or current_user.permission_level is None:
-            raise InvalidCredentialsError()
-        return g.reading_log_controller.post()
-    except Exception as err:
-        log_original_error(err)
-        http_err = convert_to_http_error(err)
-        return jsonify(http_err.to_dict()), http_err.status
+    return g.reading_log_controller.post()
 
 
 @reading_logs_bp.route("/<int:id>", methods=["GET"])
-@jwt_required()
+@auth_required()
 def get_reading_logs_by_id(id: int):
     return g.reading_log_controller.get_by_id(id)
 
 
 @reading_logs_bp.route("", methods=["GET"])
-@jwt_required()
+@auth_required()
 def get_reading_logs():
     return g.reading_log_controller.get()
