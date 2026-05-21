@@ -11,6 +11,12 @@
     },
     {
       "name": "books"
+    },
+    {
+      "name": "authors"
+    },
+    {
+      "name": "reading-logs"
     }
   ],
   "paths": {
@@ -204,7 +210,7 @@
           {
             "name": "id",
             "in": "path",
-            "description": "",
+            "description": "The ID of the book.",
             "required": true,
             "example": 159,
             "schema": {
@@ -265,7 +271,7 @@
             "required": false,
             "schema": {
               "type": "integer",
-              "default": 25,
+              "default": 20,
               "maximum": 25,
               "minimum": 1
             }
@@ -334,6 +340,39 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "min_rating",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "maximum": 5,
+              "minimum": 0
+            }
+          },
+          {
+            "name": "max_rating",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "maximum": 5,
+              "minimum": 0
+            }
+          },
+          {
+            "name": "author_id",
+            "in": "query",
+            "description": "The ID of the author resource",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "description": "The ID of the author resource",
+              "minimum": 0
+            }
           }
         ],
         "responses": {
@@ -376,6 +415,291 @@
         "security": []
       }
     },
+    "/authors/{id}": {
+      "get": {
+        "summary": "Find author by ID",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "authors"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The ID of the author.",
+            "required": true,
+            "example": 132,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "example": 132
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "description": "HTTP status code",
+                      "minimum": 0,
+                      "maximum": 999,
+                      "default": 200
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Author"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "status"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          },
+          "404": {
+            "$ref": "#/components/responses/Not Found",
+            "description": ""
+          },
+          "500": {
+            "$ref": "#/components/responses/Internal Server Error",
+            "description": ""
+          }
+        },
+        "security": []
+      }
+    },
+    "/authors": {
+      "get": {
+        "summary": "Filter authors",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "authors"
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Specifies the maximum number of items to return.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "description": "Specifies the maximum number of items to return.",
+              "default": 20,
+              "maximum": 25,
+              "minimum": 1
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "Specifies the starting index of the data.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "description": "Specifies the starting index of the data.",
+              "minimum": 0,
+              "default": 0
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "The name of the author",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "book_id",
+            "in": "query",
+            "description": "ID of book resource",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "description": "HTTP status code",
+                      "minimum": 0,
+                      "maximum": 999,
+                      "default": 200
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Author"
+                      }
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "status"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          },
+          "400": {
+            "$ref": "#/components/responses/Bad Request",
+            "description": ""
+          },
+          "500": {
+            "$ref": "#/components/responses/Internal Server Error",
+            "description": ""
+          }
+        },
+        "security": []
+      }
+    },
+    "/reading-logs": {
+      "post": {
+        "summary": "Create Reading log",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "reading-logs"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "book_id": {
+                    "type": "integer",
+                    "description": "The ID of the book",
+                    "minimum": 0
+                  },
+                  "started_at": {
+                    "type": "string"
+                  },
+                  "ended_at": {
+                    "type": "string",
+                    "nullable": true
+                  }
+                },
+                "required": [
+                  "started_at",
+                  "ended_at",
+                  "book_id"
+                ]
+              },
+              "examples": {}
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "description": "HTTP status code",
+                      "minimum": 0,
+                      "maximum": 999,
+                      "default": 201
+                    },
+                    "id": {
+                      "type": "integer",
+                      "description": "The ID of the resource",
+                      "minimum": 0
+                    },
+                    "href": {
+                      "type": "string",
+                      "description": "self-link",
+                      "title": ""
+                    },
+                    "created_at": {
+                      "type": "string",
+                      "description": "The date and time when the resource was created"
+                    },
+                    "updated_at": {
+                      "type": "string",
+                      "description": "The date and time when the resource was last modified"
+                    },
+                    "started_at": {
+                      "type": "string",
+                      "description": "The date and time for when the reading started"
+                    },
+                    "ended_at": {
+                      "type": "string",
+                      "description": "The date and time for when the reading ended",
+                      "nullable": true
+                    },
+                    "user": {
+                      "description": "The user",
+                      "$ref": "#/components/schemas/RelatedResource"
+                    },
+                    "book": {
+                      "$ref": "#/components/schemas/RelatedResource",
+                      "description": "The book"
+                    }
+                  },
+                  "required": [
+                    "status",
+                    "id",
+                    "href",
+                    "created_at",
+                    "updated_at",
+                    "started_at",
+                    "ended_at",
+                    "user",
+                    "book"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          },
+          "400": {
+            "$ref": "#/components/responses/Bad Request",
+            "description": ""
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized",
+            "description": ""
+          },
+          "500": {
+            "$ref": "#/components/responses/Internal Server Error",
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
     "/health": {
       "get": {
         "summary": "health",
@@ -415,38 +739,166 @@
         },
         "security": []
       }
-    },
-    "/docs": {
-      "get": {
-        "summary": "Swagger UI",
-        "deprecated": false,
-        "description": "",
-        "tags": [],
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "text/html": {
-                "schema": {
-                  "type": "object",
-                  "properties": {}
-                }
-              }
-            }
-          }
-        },
-        "security": []
-      }
     }
   },
   "components": {
     "schemas": {
+      "Author": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "The ID of the resource",
+            "minimum": 0
+          },
+          "href": {
+            "type": "string",
+            "description": "self-link",
+            "title": ""
+          },
+          "created_at": {
+            "type": "string",
+            "description": "The date and time when the resource was created"
+          },
+          "updated_at": {
+            "type": "string",
+            "description": "The date and time when the resource was last modified"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the author"
+          },
+          "books": {
+            "type": "string",
+            "description": "URL to filtered books collection"
+          }
+        },
+        "required": [
+          "name",
+          "id",
+          "href",
+          "created_at",
+          "updated_at"
+        ]
+      },
+      "BaseResource": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "The ID of the resource",
+            "minimum": 0
+          },
+          "href": {
+            "type": "string",
+            "description": "self-link",
+            "title": ""
+          },
+          "created_at": {
+            "type": "string",
+            "description": "The date and time when the resource was created"
+          },
+          "updated_at": {
+            "type": "string",
+            "description": "The date and time when the resource was last modified"
+          }
+        },
+        "required": [
+          "id",
+          "href",
+          "created_at",
+          "updated_at"
+        ]
+      },
+      "ReadingLog": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "The ID of the resource",
+            "minimum": 0
+          },
+          "href": {
+            "type": "string",
+            "description": "self-link",
+            "title": ""
+          },
+          "created_at": {
+            "type": "string",
+            "description": "The date and time when the resource was created"
+          },
+          "updated_at": {
+            "type": "string",
+            "description": "The date and time when the resource was last modified"
+          },
+          "started_at": {
+            "type": "string",
+            "description": "The date and time for when the reading started"
+          },
+          "ended_at": {
+            "type": "string",
+            "description": "The date and time for when the reading ended",
+            "nullable": true
+          },
+          "user": {
+            "description": "The user",
+            "$ref": "#/components/schemas/RelatedResource"
+          },
+          "book": {
+            "$ref": "#/components/schemas/RelatedResource",
+            "description": "The book"
+          }
+        },
+        "required": [
+          "started_at",
+          "ended_at",
+          "user",
+          "book",
+          "id",
+          "href",
+          "created_at",
+          "updated_at"
+        ]
+      },
+      "RelatedResource": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "The ID of the resource",
+            "minimum": 1
+          },
+          "href": {
+            "type": "string",
+            "description": "Link to the resource",
+            "title": ""
+          }
+        },
+        "required": [
+          "id",
+          "href"
+        ]
+      },
       "Book": {
         "type": "object",
         "properties": {
           "id": {
-            "type": "integer"
+            "type": "integer",
+            "description": "The ID of the resource",
+            "minimum": 0
+          },
+          "href": {
+            "type": "string",
+            "description": "self-link",
+            "title": ""
+          },
+          "created_at": {
+            "type": "string",
+            "description": "The date and time when the resource was created"
+          },
+          "updated_at": {
+            "type": "string",
+            "description": "The date and time when the resource was last modified"
           },
           "title": {
             "type": "string"
@@ -489,25 +941,14 @@
           "voters": {
             "type": "integer",
             "minimum": 0
-          },
-          "created_at": {
-            "type": "string"
-          },
-          "updated_at": {
-            "type": "string"
           }
         },
         "required": [
-          "id",
           "title",
-          "isbn",
-          "page_count",
-          "publisher_id",
-          "authors_ids",
+          "id",
+          "href",
           "created_at",
-          "updated_at",
-          "rating",
-          "voters"
+          "updated_at"
         ]
       }
     },
@@ -663,7 +1104,12 @@
         }
       }
     },
-    "securitySchemes": {}
+    "securitySchemes": {
+      "bearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
   },
   "servers": [
     {

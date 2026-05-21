@@ -5,6 +5,7 @@ module: src/util/models/base.py
 
 from datetime import datetime, timezone
 from decimal import Decimal
+from typing import Any
 from sqlalchemy import Column, DateTime, Integer
 from sqlalchemy.orm import declarative_base
 
@@ -26,7 +27,7 @@ class BaseModel(Base):
         onupdate=lambda: datetime.now(timezone.utc),
     )
 
-    def to_dict(self) -> dict[str, int | float | str | list[str | int] | None]:
+    def to_dict(self) -> dict[str, int | float | str | list[str | int] | Any | None]:
         """
         Get a dictionary that represents the database object.
         see: https://stackoverflow.com/a/11884806
