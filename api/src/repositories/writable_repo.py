@@ -24,10 +24,12 @@ class WritableRepository(
 
     def post(self, arguments: TArgs) -> Dict[str, Any]:
         """
-        Create a new resource
+        Create a new resource.
 
         :param arguments: The arguments object.
         :type arguments: Type[TSchema]
+        :return: A dictionary representing the newly created resource.
+        :rtype: Dict[str, Any]
         """
         session: Session | None = None
         try:
