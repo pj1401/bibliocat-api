@@ -3,15 +3,13 @@ The BaseController class.
 module: src/controllers/base_controller.py
 """
 
-from typing import Any, Dict, Generic, TypeVar
+from typing import Any, Generic, TypeVar
 from flask import Request, jsonify, request
-from pydantic import BaseModel as PydanticBaseModel
 from src.services.base_service import BaseService
 from src.util.schemas.query_params import BaseQueryParams
 from src.util.errors.error import convert_to_http_error, log_original_error
 
 TService = TypeVar("TService", bound=BaseService[Any, Any])
-TSchema = TypeVar("TSchema", bound=PydanticBaseModel)
 
 
 class BaseController(Generic[TService]):
@@ -27,24 +25,6 @@ class BaseController(Generic[TService]):
         :type service: TService
         """
         self.service = service
-
-    def post(self):
-        try:
-            arguments = self.get_validated_arguments(request)
-            resource = self.service.post(arguments)
-            response = self.get_post_response(resource)
-            return jsonify(response), 201
-        except Exception as err:
-            return self._error_response(err)
-
-    def get_validated_arguments(self, request: Request) -> PydanticBaseModel:
-        data = request.get_json()
-        return PydanticBaseModel(**data)
-
-    def get_post_response(self, resource: Dict[str, Any]) -> Dict[str, Any]:
-        return resource | {
-            "status": 201,
-        }
 
     def get(self):
         """

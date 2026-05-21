@@ -6,7 +6,6 @@ module: src/repositories/base_repo.py
 from typing import Any, Dict, Generic, TypeVar
 from sqlalchemy import Select, select
 from sqlalchemy.orm import Session
-from pydantic import BaseModel as PydanticBaseModel
 from src.util.filters.base_filters import BaseFilters
 from src.db.connection_manager import DatabaseConnectionManager
 from src.util.errors.error import NotFoundError
@@ -14,11 +13,9 @@ from src.util.models.base import BaseModel
 
 TModel = TypeVar("TModel", bound=BaseModel)
 TFilters = TypeVar("TFilters", bound=BaseFilters)
-TSchema = TypeVar("TSchema", bound=PydanticBaseModel)
-TArgs = TypeVar("TArgs", bound=PydanticBaseModel)
 
 
-class BaseRepository(Generic[TModel, TFilters, TArgs]):
+class BaseRepository(Generic[TModel, TFilters]):
     """
     Data-access layer.
 
@@ -44,39 +41,6 @@ class BaseRepository(Generic[TModel, TFilters, TArgs]):
         self.db_manager = db_manager
         self.model = model
         self.base_url = base_url
-
-    def post(self, arguments: TArgs) -> Dict[str, Any]:
-        """
-        Create a new resource
-
-        :param arguments: The arguments object.
-        :type arguments: Type[TSchema]
-        """
-        session: Session | None = None
-        try:
-            session = self.db_manager.get_session()
-            resource = self.get_new_model(arguments)
-            session.add(resource)
-            session.commit()
-            session.refresh(resource)
-            dict = self.model_to_dict(resource)
-            return dict
-        except Exception as err:
-            if session is not None:
-                session.rollback()
-            raise err
-        finally:
-            if session is not None:
-                session.close()
-
-    def get_new_model(self, arguments: TArgs) -> TModel:
-        """
-        Map the arguments for the database model.
-
-        :param arguments: The arguments object.
-        :type arguments: Type[TSchema]
-        """
-        return self.model()
 
     def get(self, filters: TFilters) -> list[Dict[str, Any]]:
         """

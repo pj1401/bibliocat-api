@@ -9,7 +9,7 @@ from src.util.filters.base_filters import BaseFilters
 from src.util.schemas.query_params import BaseQueryParams
 from src.repositories.base_repo import BaseRepository
 
-TRepository = TypeVar("TRepository", bound=BaseRepository[Any, Any, Any])
+TRepository = TypeVar("TRepository", bound=BaseRepository[Any, Any])
 TSchema = TypeVar("TSchema", bound=PydanticBaseModel)
 TQueryParams = TypeVar("TQueryParams", bound=BaseQueryParams)
 
@@ -30,12 +30,6 @@ class BaseService(Generic[TRepository, TQueryParams]):
         """
         self.repository = repository
         self.schema = schema
-
-    def post(self, arguments: PydanticBaseModel):
-        try:
-            return self.repository.post(arguments)
-        except Exception as err:
-            raise err
 
     def get(self, params: TQueryParams) -> list[Dict[str, Any]]:
         """

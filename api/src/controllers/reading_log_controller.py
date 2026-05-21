@@ -6,11 +6,11 @@ module: src/controllers/book_controller.py
 from flask import Request
 from flask_jwt_extended import get_jwt_identity
 from src.util.schemas.reading_logs.reading_log_params import ReadingLogParams
-from src.controllers.base_controller import BaseController
+from src.controllers.writable_controller import WritableController
 from src.services.reading_log_service import ReadingLogService
 
 
-class ReadingLogController(BaseController[ReadingLogService]):
+class ReadingLogController(WritableController[ReadingLogService]):
     """
     ReadingLogController for handling the reading-log endpoint.
     """
