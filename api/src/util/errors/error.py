@@ -34,6 +34,15 @@ class InvalidCredentialsError(CustomError):
         super().__init__(err, message)
 
 
+class ForbiddenError(CustomError):
+    def __init__(
+        self,
+        err: Exception | None = None,
+        message: str = "The request contained valid data and was understood by the server, but the server is refusing action due to the authenticated user not having the necessary permissions for the resource.",
+    ):
+        super().__init__(err, message)
+
+
 class NotFoundError(CustomError):
     def __init__(
         self,
@@ -77,6 +86,7 @@ errorHttpStatusMap = {
     "UniqueViolationError": 400,
     "ValidationError": 400,
     "InvalidCredentialsError": 401,
+    "ForbiddenError": 404,  # Don't leak information.
     "NotFoundError": 404,
 }
 
