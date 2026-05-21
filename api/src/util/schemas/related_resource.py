@@ -7,5 +7,5 @@ from pydantic import BaseModel, Field
 
 
 class RelatedResource(BaseModel):
-    id: int = Field(..., ge=1, description='The ID of the resource')
-    href: str = Field(..., description='Link to the resource')
+    id: int = Field(..., ge=1, description="The ID of the resource")
+    href: str = Field(..., description="Link to the resource")

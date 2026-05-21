@@ -16,5 +16,5 @@ class ReadingLogSchema(BaseResourceSchema):
     ended_at: date | datetime | None = Field(
         ..., description="The date and time for when the reading ended"
     )
-    book: RelatedResource = Field(..., description='The book')
-    user: RelatedResource = Field(..., description='The user')
+    book: RelatedResource = Field(..., description="The book")
+    user: RelatedResource = Field(..., description="The user")

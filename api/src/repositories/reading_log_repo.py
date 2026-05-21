@@ -3,7 +3,7 @@ The ReadingLogRepository class.
 module: src/repositories/reading_log_repo.py
 """
 
-from src.util.schemas.reading_logs.new_reading_log import NewReadingLog
+from src.util.schemas.reading_logs.reading_log_params import ReadingLogParams
 from src.util.filters.reading_log_filters import ReadingLogFilters
 from src.util.models import ReadingLog
 from src.db.connection_manager import DatabaseConnectionManager
@@ -23,8 +23,10 @@ class ReadingLogRepository(BaseRepository[ReadingLog, ReadingLogFilters]):
     ):
         super().__init__(db_manager, reading_log_model, base_url)
 
-    def get_new_model(self, arguments: NewReadingLog) -> ReadingLog:
+    def get_new_model(self, arguments: ReadingLogParams) -> ReadingLog:
         return ReadingLog(
             started_at=arguments.started_at,
             ended_at=arguments.ended_at,
+            user_id=arguments.user_id,
+            book_id=arguments.book_id,
         )

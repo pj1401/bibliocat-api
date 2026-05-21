@@ -3,7 +3,7 @@ The BaseRepository class.
 module: src/repositories/base_repo.py
 """
 
-from typing import Any, Dict, Generic, Type, TypeVar
+from typing import Any, Dict, Generic, TypeVar
 from sqlalchemy import Select, select
 from sqlalchemy.orm import Session
 from pydantic import BaseModel as PydanticBaseModel
@@ -44,7 +44,7 @@ class BaseRepository(Generic[TModel, TFilters]):
         self.model = model
         self.base_url = base_url
 
-    def post(self, arguments: Type[TSchema]):
+    def post(self, arguments: PydanticBaseModel):
         """
         Create a new resource
 
@@ -68,7 +68,7 @@ class BaseRepository(Generic[TModel, TFilters]):
             if session is not None:
                 session.close()
 
-    def get_new_model(self, arguments: Type[TSchema]):
+    def get_new_model(self, arguments: PydanticBaseModel):
         """
         Map the arguments for the database model.
 

@@ -31,7 +31,7 @@ class BaseService(Generic[TRepository, TQueryParams]):
         self.repository = repository
         self.schema = schema
 
-    def post(self, arguments: Type[TSchema]):
+    def post(self, arguments: PydanticBaseModel):
         try:
             return self.repository.post(arguments)
         except Exception as err:
