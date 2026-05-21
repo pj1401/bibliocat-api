@@ -15,9 +15,10 @@ from src.util.models.base import BaseModel
 TModel = TypeVar("TModel", bound=BaseModel)
 TFilters = TypeVar("TFilters", bound=BaseFilters)
 TSchema = TypeVar("TSchema", bound=PydanticBaseModel)
+TArgs = TypeVar("TArgs", bound=PydanticBaseModel)
 
 
-class BaseRepository(Generic[TModel, TFilters]):
+class BaseRepository(Generic[TModel, TFilters, TArgs]):
     """
     Data-access layer.
 
@@ -44,7 +45,7 @@ class BaseRepository(Generic[TModel, TFilters]):
         self.model = model
         self.base_url = base_url
 
-    def post(self, arguments: PydanticBaseModel):
+    def post(self, arguments: TArgs) -> Dict[str, Any]:
         """
         Create a new resource
 
@@ -68,14 +69,14 @@ class BaseRepository(Generic[TModel, TFilters]):
             if session is not None:
                 session.close()
 
-    def get_new_model(self, arguments: PydanticBaseModel):
+    def get_new_model(self, arguments: TArgs) -> TModel:
         """
         Map the arguments for the database model.
 
         :param arguments: The arguments object.
         :type arguments: Type[TSchema]
         """
-        return BaseModel()
+        return self.model()
 
     def get(self, filters: TFilters) -> list[Dict[str, Any]]:
         """
