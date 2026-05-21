@@ -6,6 +6,7 @@ from __future__ import annotations
 from datetime import date, datetime
 from pydantic import Field
 from src.util.schemas.base_resource import BaseResourceSchema
+from src.util.schemas.related_resource import RelatedResource
 
 
 class ReadingLogSchema(BaseResourceSchema):
@@ -15,3 +16,5 @@ class ReadingLogSchema(BaseResourceSchema):
     ended_at: date | datetime | None = Field(
         ..., description="The date and time for when the reading ended"
     )
+    book: RelatedResource = Field(..., description='The book')
+    user: RelatedResource = Field(..., description='The user')

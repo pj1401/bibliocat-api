@@ -31,14 +31,14 @@ class BaseController(Generic[TService]):
     def post(self):
         try:
             data = request.get_json()
-            arguments = self.get_post_arguments(data)
+            arguments = self.get_validated_arguments(data)
             resource = self.service.post(arguments)
             response = self.get_post_response(resource)
             return jsonify(response), 201
         except Exception as err:
             return self._error_response(err)
 
-    def get_post_arguments(self, data: Any) -> PydanticBaseModel:
+    def get_validated_arguments(self, data: Any) -> PydanticBaseModel:
         return PydanticBaseModel(**data)
 
     def get_post_response(self, resource: Dict[str, Any]) -> Dict[str, Any]:
