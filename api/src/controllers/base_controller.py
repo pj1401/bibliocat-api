@@ -4,7 +4,7 @@ module: src/controllers/base_controller.py
 """
 
 from typing import Any, Generic, TypeVar
-from flask import Request, jsonify, request
+from flask import Response, jsonify, request
 from src.services.base_service import BaseService
 from src.util.schemas.query_params import BaseQueryParams
 from src.util.errors.error import convert_to_http_error, log_original_error
@@ -26,7 +26,7 @@ class BaseController(Generic[TService]):
         """
         self.service = service
 
-    def get(self):
+    def get(self) -> tuple[Response, int]:
         """
         Get a list of records using optional query parameters.
 
@@ -34,25 +34,25 @@ class BaseController(Generic[TService]):
         :rtype: tuple[Response, Literal[200]] | tuple[Response, int]
         """
         try:
-            params = self._get_params(request)
+            params = self._get_params(request.args)
             fetched = self.service.get(params)
             return jsonify({"status": 200, "data": fetched}), 200
         except Exception as err:
             return self._error_response(err)
 
-    def _get_params(self, request: Request) -> BaseQueryParams:
+    def _get_params(self, args: dict[str, str]) -> BaseQueryParams:
         """
         Get the parameters object.
 
-        :param request: The request object that contains the query parameters.
-        :type request: Request
+        :param request: The arguments from the request.
+        :type args: dict[str, str]
         :return: The parameters in the form of BaseQueryParams or similar object.
         :rtype: BaseQueryParams
         """
         # Ignore type error since pydantic validates and coerces the types.
-        return BaseQueryParams(**request.args)  # type: ignore
+        return BaseQueryParams(**args)  # type: ignore
 
-    def get_by_id(self, id: int | str):
+    def get_by_id(self, id: int | str) -> tuple[Response, int]:
         """
         Fetch one record's data by matching ID.
 
@@ -71,7 +71,7 @@ class BaseController(Generic[TService]):
         except Exception as err:
             return self._error_response(err)
 
-    def _error_response(self, err: Exception):
+    def _error_response(self, err: Exception) -> tuple[Response, int]:
         """
         Get the error response.
 
