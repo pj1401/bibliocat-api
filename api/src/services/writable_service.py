@@ -26,7 +26,7 @@ class WritableService(
 
     def validate_related(self, arguments: TArgs):
         """
-        Check if related resources exist by calling get_by_id from the resources repository.
+        Check if related resources exist by calling get_by_id from the resource's repository.
 
         :param arguments: The arguments object that contains the IDs to the related resources.
         :type arguments: TArgs
