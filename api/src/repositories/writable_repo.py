@@ -18,6 +18,10 @@ TArgs = TypeVar("TArgs", bound=PydanticBaseModel)
 class WritableRepository(
     BaseRepository[TModel, TFilters], Generic[TModel, TFilters, TArgs]
 ):
+    """
+    Data-access layer for the read/write collections.
+    """
+
     def post(self, arguments: TArgs) -> Dict[str, Any]:
         """
         Create a new resource

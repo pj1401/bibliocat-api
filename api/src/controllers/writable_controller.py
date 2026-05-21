@@ -9,7 +9,7 @@ from pydantic import BaseModel as PydanticBaseModel
 from src.controllers.base_controller import BaseController
 from src.services.writable_service import WritableService
 
-TService = TypeVar("TService", bound=WritableService[Any, Any])
+TService = TypeVar("TService", bound=WritableService[Any, Any, Any])
 
 
 class WritableController(BaseController[TService]):
