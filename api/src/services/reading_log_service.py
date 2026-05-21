@@ -3,7 +3,7 @@ The ReadingLogService class.
 module: src/services/book_service.py
 """
 
-from typing import Type
+from typing import Any, Type
 from src.repositories import BookRepository, ReadingLogRepository, UserRepository
 from src.util.schemas.reading_logs import (
     ReadingLogSchema,
@@ -34,3 +34,8 @@ class ReadingLogService(
     def validate_related(self, arguments: ReadingLogParams):
         self.user_repo.get_by_id(arguments.user_id)
         self.book_repo.get_by_id(arguments.book_id)
+
+    def get_by_id(self, id: int | str) -> dict[str, Any]:
+        reading_log = super().get_by_id(id)
+        self.authorize(reading_log["user"]["id"])
+        return reading_log
