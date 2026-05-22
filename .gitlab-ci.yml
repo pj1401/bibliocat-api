@@ -42,11 +42,9 @@ unit_tests:
   stage: test
   tags:
     - patriciaj-rpi
-  image: python:3.12-slim
   script:
     - echo "Running unit tests..."
     - cd api
-    - pip install uv
     - uv sync --group dev
     - uv run pytest
   artifacts:
