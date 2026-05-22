@@ -168,7 +168,7 @@ uv venv
 uv pip install -r pyproject.toml
 
 # Start the app in debug mode
-uv run -- flask --app main run --debug
+uv run -- flask --app src/main run --debug
 
 # To stop the container
 docker compose down

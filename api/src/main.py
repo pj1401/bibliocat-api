@@ -1,6 +1,6 @@
 """
 The starting point of the API.
-module: main.py
+module: src/main.py
 """
 
 from typing import cast

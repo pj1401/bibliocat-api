@@ -20,7 +20,6 @@ RUN apk update && apk add --no-cache \
 
 RUN uv sync --frozen --no-dev
 
-COPY api/main.py .
 COPY api/ .
 
-CMD ["uv", "run", "gunicorn", "--bind", "0.0.0.0:5000", "--workers", "2", "main:app"]
+CMD ["uv", "run", "gunicorn", "--bind", "0.0.0.0:5000", "--workers", "2", "src.main:app"]
