@@ -4,7 +4,7 @@ module: src/blueprints/api/v1/docs/routes.py
 """
 
 import os
-from flask_swagger_ui import get_swaggerui_blueprint
+from flask_swagger_ui import get_swaggerui_blueprint  # type: ignore
 
 PATH_PREFIX = os.environ.get("PATH_PREFIX", "")
 SWAGGER_URL = f"{PATH_PREFIX}/api/v1/docs"
