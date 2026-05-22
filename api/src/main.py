@@ -48,7 +48,7 @@ def register_db_manager(app: Flask) -> None:
 
 
 def register_reverse_proxy(app: Flask):
-    app.wsgi_app = ReverseProxied(app.wsgi_app)
+    app.wsgi_app = ReverseProxied(app.wsgi_app)  # type: ignore
 
 
 def register_blueprints(app: Flask) -> None:
@@ -63,7 +63,7 @@ def register_exception_handlers(app: Flask) -> None:
 
 def init_jwt_manager(app: Flask) -> None:
     """Initialise JWT manager."""
-    jwt = JWTManager(app)
+    jwt = JWTManager(app)  # type: ignore  # noqa: F841
 
 
 def set_up_logger(app: Flask) -> None:

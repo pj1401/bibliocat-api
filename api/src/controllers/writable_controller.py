@@ -5,6 +5,7 @@ module: src/controllers/writable_controller.py
 
 from typing import Any, Dict, TypeVar
 from flask import Response, jsonify, request
+from flask_jwt_extended import get_jwt_identity
 from pydantic import BaseModel as PydanticBaseModel
 from src.controllers.base_controller import BaseController
 from src.services.writable_service import WritableService
@@ -25,19 +26,25 @@ class WritableController(BaseController[TService]):
         :rtype: tuple[Response, int]
         """
         try:
-            arguments = self.get_validated_arguments(request.get_json())
+            arguments = self.get_validated_arguments(
+                request.get_json(), get_jwt_identity()
+            )
             resource = self.service.post(arguments)
             response = self.get_post_response(resource)
             return jsonify(response), 201
         except Exception as err:
             return self._error_response(err)
 
-    def get_validated_arguments(self, data: dict[str, str]) -> PydanticBaseModel:
+    def get_validated_arguments(
+        self, data: dict[str, str], user_id: str
+    ) -> PydanticBaseModel:
         """
         Validates the arguments from the request body and returns them as a pydantic model.
 
         :param data: The arguments from the request body.
         :type data: dict[str, str]
+        :param user_id: The ID of the user.
+        :type user_id: int
         :return: The arguments as a validated pydantic model.
         :rtype: BaseModel
         """
