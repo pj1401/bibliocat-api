@@ -9,6 +9,7 @@ Bibliotekskatalog API
 - [Development](#development)
   - [Setting up the environment](#setting-up-the-environment)
   - [Instructions](#instructions)
+  - [Testing](#testing)
   - [File Structure](#file-structure)
 - [Acknowledgements](#acknowledgements)
 
@@ -194,6 +195,10 @@ docker compose up db -d
 # Run setup script
 uv run main.py
 ```
+
+### Testing
+
+see [test.md](tests/test.md)
 
 ### File Structure
 ```
