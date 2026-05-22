@@ -17,12 +17,14 @@ Bibliotekskatalog API
 
 The API is running on: [https://patriciaj.se/bibliocat-api](https://patriciaj.se/bibliocat-api)
 
+Version 1 docs: [https://patriciaj.se/bibliocat-api/api/v1/docs/](https://patriciaj.se/bibliocat-api/api/v1/docs/)
+
 ### Installation
 
 The API can be run in a docker container.
 
 **Prerequisites:**
-- docker-compose, [Docker Compose installation instructions](https://docs.docker.com/compose/install/)
+- docker compose, [Docker Compose installation instructions](https://docs.docker.com/compose/install/)
 
 **Set up secrets:**
 
@@ -84,7 +86,7 @@ docker compose -f docker-compose.dev-subset.yml up -d --build
 ## Development
 
 **Prerequisites:**
-- docker-compose, [Docker Compose installation instructions](https://docs.docker.com/compose/install/)
+- docker compose, [Docker Compose installation instructions](https://docs.docker.com/compose/install/)
 - uv, [uv installation instructions](https://docs.astral.sh/uv/getting-started/installation/)
 
 ### Setting up the environment
