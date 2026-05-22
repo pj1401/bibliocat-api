@@ -273,3 +273,4 @@ data/
 secrets/
 api_spec/
 .env.db
+test-reports/
