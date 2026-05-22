@@ -1,4 +1,5 @@
 import pytest
+from pydantic import ValidationError
 from unittest.mock import create_autospec
 from src.util.schemas.books.book_query_params import BookQueryParams
 from src.controllers.book_controller import BookController
@@ -20,3 +21,7 @@ class TestGetParams:
         params = controller._get_params({"category": "fiction"})  # pyright: ignore[reportPrivateUsage]
         assert params.category == "fiction"
         assert isinstance(params, BookQueryParams)
+
+    def test_raises_validation_error(self, controller: BookController):
+        with pytest.raises(ValidationError):
+            controller._get_params({"limit": "999"})  # pyright: ignore[reportPrivateUsage]
