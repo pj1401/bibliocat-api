@@ -3,7 +3,8 @@ from unittest.mock import create_autospec
 from src.repositories import BookRepository, ReadingLogRepository, UserRepository
 from src.services.reading_log_service import ReadingLogService
 from src.util.errors.error import ForbiddenError
-from src.util.schemas.reading_logs import ReadingLogSchema
+from src.util.filters.reading_log_filters import ReadingLogFilters
+from src.util.schemas.reading_logs import ReadingLogSchema, ReadingLogQueryParams
 
 @pytest.fixture
 def mock_repo() -> ReadingLogRepository:
@@ -35,3 +36,11 @@ class TestReadingLogAuthorize:
             reading_log_user_id = 1
             current_user_id = 2
             service.authorize(reading_log_user_id, current_user_id)
+
+class TestReadingLogFilters:
+    def test_returns_reading_log_filter(self, service: ReadingLogService):
+        filters = service._get_filters(ReadingLogQueryParams(limit=5, offset=10, book_title="meditations"))
+        assert filters.limit == 5
+        assert filters.offset == 10
+        assert filters.book_title.lower() == "meditations"
+        assert isinstance(filters, ReadingLogFilters)
