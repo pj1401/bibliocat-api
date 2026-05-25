@@ -4,6 +4,7 @@ module: src/repositories/reading_log_repo.py
 """
 
 from typing import Any, Dict
+from flask_jwt_extended import get_jwt_identity
 from sqlalchemy import Select, func, select
 from sqlalchemy.orm import selectinload
 from src.repositories.writable_repo import WritableRepository
@@ -41,6 +42,7 @@ class ReadingLogRepository(
             selectinload(ReadingLog.user),
             selectinload(ReadingLog.book),
         )
+        stmt = self._get_user_filtered_stmt(stmt, int(get_jwt_identity()))
         return self._get_filtered_stmt(stmt, filters)
 
     def _get_filtered_stmt(
@@ -68,6 +70,9 @@ class ReadingLogRepository(
 
     def _get_sorted_stmt(self, stmt: Select[Any], sort_column: str) -> Select[Any]:
         return stmt.order_by(sort_column)
+
+    def _get_user_filtered_stmt(self, stmt: Select[Any], user_id: int) -> Select[Any]:
+        return stmt.where(ReadingLog.user_id == user_id)
 
     def model_to_dict(self, model: ReadingLog) -> Dict[str, Any]:
         data = model.to_dict()
