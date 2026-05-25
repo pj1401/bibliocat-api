@@ -4,6 +4,7 @@ module: src/services/book_service.py
 """
 
 from typing import Any, Type
+from flask_jwt_extended import get_jwt_identity
 from src.repositories import BookRepository, ReadingLogRepository, UserRepository
 from src.util.filters.reading_log_filters import ReadingLogFilters
 from src.util.schemas.reading_logs import (
@@ -38,7 +39,7 @@ class ReadingLogService(
 
     def get_by_id(self, id: int | str) -> dict[str, Any]:
         reading_log = super().get_by_id(id)
-        self.authorize(reading_log["user"]["id"])
+        self.authorize(reading_log["user"]["id"], get_jwt_identity())
         return reading_log
 
     def _get_filters(self, params: ReadingLogQueryParams) -> ReadingLogFilters:
