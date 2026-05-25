@@ -11,4 +11,4 @@ from .base import BaseModel
 class Publisher(BaseModel):
     __tablename__ = "publishers"
     name = Column(String(255), nullable=False)
-    books = relationship("Book", backref="publisher")
+    books = relationship("Book", back_populates="publisher")

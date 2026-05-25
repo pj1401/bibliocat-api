@@ -9,7 +9,7 @@ from sqlalchemy.orm import selectinload
 from src.repositories.writable_repo import WritableRepository
 from src.util.schemas.reading_logs import ReadingLogParams
 from src.util.filters.reading_log_filters import ReadingLogFilters
-from src.util.models import ReadingLog
+from src.util.models import Book, ReadingLog
 from src.db.connection_manager import DatabaseConnectionManager
 
 
@@ -38,8 +38,8 @@ class ReadingLogRepository(
 
     def _get_stmt(self, filters: ReadingLogFilters):
         stmt = select(ReadingLog).options(
-            selectinload(ReadingLog.user),
-            selectinload(ReadingLog.book),
+            selectinload(ReadingLog.user_id),
+            selectinload(ReadingLog.book_id),
         )
         return self._get_filtered_stmt(stmt, filters)
 
@@ -63,7 +63,7 @@ class ReadingLogRepository(
         self, stmt: Select[Any], book_title: str
     ) -> Select[Any]:
         return stmt.where(
-            func.lower(ReadingLog.book.Book.title).contains(book_title.lower())
+            ReadingLog.book_id.has(func.lower(Book.title).contains(book_title.lower()))
         )
 
     def model_to_dict(self, model: ReadingLog) -> Dict[str, Any]:
