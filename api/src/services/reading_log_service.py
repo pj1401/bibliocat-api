@@ -5,6 +5,7 @@ module: src/services/book_service.py
 
 from typing import Any, Type
 from src.repositories import BookRepository, ReadingLogRepository, UserRepository
+from src.util.filters.reading_log_filters import ReadingLogFilters
 from src.util.schemas.reading_logs import (
     ReadingLogSchema,
     ReadingLogParams,
@@ -39,3 +40,12 @@ class ReadingLogService(
         reading_log = super().get_by_id(id)
         self.authorize(reading_log["user"]["id"])
         return reading_log
+
+    def _get_filters(self, params: ReadingLogQueryParams) -> ReadingLogFilters:
+        return ReadingLogFilters(
+            limit=params.limit,
+            offset=params.offset,
+            book_id=params.book_id,
+            book_title=params.book_title,
+            sort=params.sort,
+        )

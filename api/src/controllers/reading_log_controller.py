@@ -22,7 +22,7 @@ class ReadingLogController(WritableController[ReadingLogService]):
         data["user_id"] = user_id
         # Ignore type error since pydantic validates and coerces the types.
         return ReadingLogParams(**data)  # type: ignore[reportArgumentType]
-    
+
     def _get_params(self, args: dict[str, str]) -> ReadingLogQueryParams:
         # Ignore type error since pydantic validates and coerces the types.
         return ReadingLogQueryParams(**args)  # type: ignore[reportArgumentType]

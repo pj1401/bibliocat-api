@@ -46,6 +46,7 @@ class TestGetValidatedArguments:
                 user_id="8",
             )
 
+
 class TestGetReadingLogQueryParams:
     def test_returns_reading_log_query_params(self, controller: ReadingLogController):
         params = controller._get_params({"book_title": "meditations"})  # pyright: ignore[reportPrivateUsage]
@@ -56,6 +57,8 @@ class TestGetReadingLogQueryParams:
         with pytest.raises(ValidationError):
             controller._get_params({"limit": "999"})  # pyright: ignore[reportPrivateUsage]
 
-    def test_raises_validation_error_on_invalid_sort_value(self, controller: ReadingLogController):
+    def test_raises_validation_error_on_invalid_sort_value(
+        self, controller: ReadingLogController
+    ):
         with pytest.raises(ValidationError):
             controller._get_params({"sort": "not_sort_value"})  # pyright: ignore[reportPrivateUsage]
