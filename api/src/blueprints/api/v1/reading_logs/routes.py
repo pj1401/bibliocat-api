@@ -36,3 +36,8 @@ def create_reading_log():
 @auth_required()
 def get_reading_log_by_id(id: int):
     return g.reading_log_controller.get_by_id(id)
+
+@reading_logs_bp.route("", methods=["GET"])
+@auth_required()
+def get_reading_logs():
+    return g.reading_log_controller.get()
