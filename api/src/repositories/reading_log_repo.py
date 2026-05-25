@@ -38,8 +38,8 @@ class ReadingLogRepository(
 
     def _get_stmt(self, filters: ReadingLogFilters):
         stmt = select(ReadingLog).options(
-            selectinload(ReadingLog.user_id),
-            selectinload(ReadingLog.book_id),
+            selectinload(ReadingLog.user),
+            selectinload(ReadingLog.book),
         )
         return self._get_filtered_stmt(stmt, filters)
 
@@ -50,8 +50,8 @@ class ReadingLogRepository(
             stmt = self._get_book_id_filtered_stmt(stmt, filters.book_id)
         if filters.book_title:
             stmt = self._get_book_title_filtered_stmt(stmt, filters.book_title)
-        # if filters.sort:
-        # stmt = self._get_sorted_stmt(stmt, filters.sort)
+        if filters.sort:
+            stmt = self._get_sorted_stmt(stmt, filters.sort)
         return stmt
 
     def _get_book_id_filtered_stmt(
@@ -63,8 +63,11 @@ class ReadingLogRepository(
         self, stmt: Select[Any], book_title: str
     ) -> Select[Any]:
         return stmt.where(
-            ReadingLog.book_id.has(func.lower(Book.title).contains(book_title.lower()))
+            ReadingLog.book.has(func.lower(Book.title).contains(book_title.lower()))
         )
+
+    def _get_sorted_stmt(self, stmt: Select[Any], sort_column: str) -> Select[Any]:
+        return stmt.order_by(sort_column)
 
     def model_to_dict(self, model: ReadingLog) -> Dict[str, Any]:
         data = model.to_dict()
