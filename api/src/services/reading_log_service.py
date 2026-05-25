@@ -39,7 +39,7 @@ class ReadingLogService(
 
     def get_by_id(self, id: int | str) -> dict[str, Any]:
         reading_log = super().get_by_id(id)
-        self.authorize(reading_log["user"]["id"], get_jwt_identity())
+        self.authorize(reading_log["user"]["id"], int(get_jwt_identity()))
         return reading_log
 
     def _get_filters(self, params: ReadingLogQueryParams) -> ReadingLogFilters:
