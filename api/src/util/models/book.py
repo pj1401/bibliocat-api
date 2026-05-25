@@ -12,7 +12,7 @@ from sqlalchemy import (
     Date,
     Numeric,
 )
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import mapped_column, relationship
 from .base import BaseModel
 
 
@@ -26,11 +26,13 @@ class Book(BaseModel):
     page_count = Column(Integer, default=1)
     rating = Column(Numeric(precision=2, scale=1), default=0)
     voters = Column(Integer, default=0)  # Number of reviewers
-    publisher_id = Column(Integer, ForeignKey("publishers.id"))
+    publisher_id = mapped_column(ForeignKey("publishers.id"))
+    publisher = relationship("Publisher", back_populates="books")
     authors = relationship("Author", secondary="authors_books", back_populates="books")
     categories = relationship(
         "Category", secondary="categories_books", back_populates="books"
     )
+    reading_logs = relationship("ReadingLog", back_populates="book")
 
 
 categories_books_table = Table(

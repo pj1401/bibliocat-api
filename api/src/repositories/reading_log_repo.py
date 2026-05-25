@@ -4,10 +4,13 @@ module: src/repositories/reading_log_repo.py
 """
 
 from typing import Any, Dict
+from flask_jwt_extended import get_jwt_identity
+from sqlalchemy import Select, func, select
+from sqlalchemy.orm import selectinload
 from src.repositories.writable_repo import WritableRepository
 from src.util.schemas.reading_logs import ReadingLogParams
 from src.util.filters.reading_log_filters import ReadingLogFilters
-from src.util.models import ReadingLog
+from src.util.models import Book, ReadingLog
 from src.db.connection_manager import DatabaseConnectionManager
 
 
@@ -33,6 +36,43 @@ class ReadingLogRepository(
             user_id=arguments.user_id,
             book_id=arguments.book_id,
         )
+
+    def _get_stmt(self, filters: ReadingLogFilters):
+        stmt = select(ReadingLog).options(
+            selectinload(ReadingLog.user),
+            selectinload(ReadingLog.book),
+        )
+        stmt = self._get_user_filtered_stmt(stmt, int(get_jwt_identity()))
+        return self._get_filtered_stmt(stmt, filters)
+
+    def _get_filtered_stmt(
+        self, stmt: Select[Any], filters: ReadingLogFilters
+    ) -> Select[Any]:
+        if filters.book_id:
+            stmt = self._get_book_id_filtered_stmt(stmt, filters.book_id)
+        if filters.book_title:
+            stmt = self._get_book_title_filtered_stmt(stmt, filters.book_title)
+        if filters.sort:
+            stmt = self._get_sorted_stmt(stmt, filters.sort)
+        return stmt
+
+    def _get_book_id_filtered_stmt(
+        self, stmt: Select[Any], book_id: int
+    ) -> Select[Any]:
+        return stmt.where(ReadingLog.book_id == book_id)
+
+    def _get_book_title_filtered_stmt(
+        self, stmt: Select[Any], book_title: str
+    ) -> Select[Any]:
+        return stmt.where(
+            ReadingLog.book.has(func.lower(Book.title).contains(book_title.lower()))
+        )
+
+    def _get_sorted_stmt(self, stmt: Select[Any], sort_column: str) -> Select[Any]:
+        return stmt.order_by(sort_column)
+
+    def _get_user_filtered_stmt(self, stmt: Select[Any], user_id: int) -> Select[Any]:
+        return stmt.where(ReadingLog.user_id == user_id)
 
     def model_to_dict(self, model: ReadingLog) -> Dict[str, Any]:
         data = model.to_dict()

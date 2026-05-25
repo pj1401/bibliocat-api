@@ -5,7 +5,6 @@ module: src/services/base_service.py
 
 from typing import Any, Dict, Generic, Type, TypeVar
 from pydantic import BaseModel as PydanticBaseModel
-from flask_jwt_extended import get_jwt_identity
 from src.util.errors.error import ForbiddenError
 from src.util.filters.base_filters import BaseFilters
 from src.util.schemas.query_params import BaseQueryParams
@@ -78,13 +77,14 @@ class BaseService(Generic[TRepository, TQueryParams]):
         except Exception as err:
             raise err
 
-    def authorize(self, user_id: int) -> None:
+    def authorize(self, user_id: int, current_user_id: int) -> None:
         """
         Check if the user is the owner of a resource.
 
         :param user_id: The user ID from the resource.
         :type user_id: int
+        :param current_user_id: The user ID from the JWT.
+        :type current_user_id: int
         """
-        current_user_id = int(get_jwt_identity())
         if user_id != current_user_id:
             raise ForbiddenError()

@@ -9,4 +9,7 @@ from .base_filters import BaseFilters
 
 @dataclass
 class ReadingLogFilters(BaseFilters):
-    pass
+    book_id: int | None = None
+    book_title: str | None = None
+    sort: str | None = None
+    user_id: int | None = None

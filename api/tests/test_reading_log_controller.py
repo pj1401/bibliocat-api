@@ -4,7 +4,7 @@ from pydantic import ValidationError
 from unittest.mock import create_autospec
 from src.controllers.reading_log_controller import ReadingLogController
 from src.services.reading_log_service import ReadingLogService
-from src.util.schemas.reading_logs import ReadingLogParams
+from src.util.schemas.reading_logs import ReadingLogParams, ReadingLogQueryParams
 
 
 @pytest.fixture
@@ -45,3 +45,20 @@ class TestGetValidatedArguments:
                 },
                 user_id="8",
             )
+
+
+class TestGetReadingLogQueryParams:
+    def test_returns_reading_log_query_params(self, controller: ReadingLogController):
+        params = controller._get_params({"book_title": "meditations"})  # pyright: ignore[reportPrivateUsage]
+        assert params.book_title == "meditations"
+        assert isinstance(params, ReadingLogQueryParams)
+
+    def test_raises_validation_error(self, controller: ReadingLogController):
+        with pytest.raises(ValidationError):
+            controller._get_params({"limit": "999"})  # pyright: ignore[reportPrivateUsage]
+
+    def test_raises_validation_error_on_invalid_sort_value(
+        self, controller: ReadingLogController
+    ):
+        with pytest.raises(ValidationError):
+            controller._get_params({"sort": "not_sort_value"})  # pyright: ignore[reportPrivateUsage]
