@@ -8,6 +8,9 @@ on:
   release:
     types: [created]
 
+permissions:
+  contents: read
+
 jobs:
   lint:
     if: github.event_name == 'push' || github.event_name == 'pull_request'
@@ -73,5 +76,22 @@ jobs:
         run: docker compose -p bibliocat-test -f docker-compose.test.yml down -v
 
   build-api:
-    if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true && github.ref == 'refs/heads/main'
+    if: (github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true && github.ref == 'refs/heads/main') || github.ref_type == 'tag'
     runs-on: self-hosted
+    permissions:
+      packages: write
+    steps:
+      - name: Build API production image
+        run: docker login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} ghcr.io/${{ github.repository }}
+             docker compose -f docker-compose.prod.yml build api
+             docker compose -f docker-compose.prod.yml push api
+  build-setup:
+    if: (github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true && github.ref == 'refs/heads/main') || github.ref_type == 'tag'
+    runs-on: self-hosted
+    permissions:
+      packages: write
+    steps:
+      - name: Build setup production image
+        run: docker login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} ghcr.io/${{ github.repository }}
+             docker compose -f docker-compose.prod.yml build setup
+             docker compose -f docker-compose.prod.yml push setup
