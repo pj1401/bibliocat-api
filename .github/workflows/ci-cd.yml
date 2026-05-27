@@ -2,9 +2,15 @@ name: CI/CD
 
 on:
   push:
+  pull_request:
+    branches:
+      - main
+  release:
+    types: [created]
 
 jobs:
   lint:
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -29,3 +35,26 @@ jobs:
       - name: Run ruff
         working-directory: api
         run: uv run ruff check src
+
+  unit-tests:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install uv
+        run: pip install uv
+
+      - name: Install dependencies
+        working-directory: api
+        run: uv sync --group dev
+
+      - name: Run pytest
+        working-directory: api
+        run: uv run pytest
