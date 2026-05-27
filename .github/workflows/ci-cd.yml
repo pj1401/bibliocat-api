@@ -87,7 +87,7 @@ jobs:
           docker compose -f docker-compose.prod.yml build api
           docker compose -f docker-compose.prod.yml push api
     env:
-      CI_REGISTRY_IMAGE: ${{ env.REGISTRY_IMAGE }}
+      REGISTRY_IMAGE: $REGISTRY_IMAGE
 
   build-setup:
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref_type == 'tag')
@@ -104,7 +104,7 @@ jobs:
           docker compose -f docker-compose.prod.yml build setup
           docker compose -f docker-compose.prod.yml push setup
     env:
-      CI_REGISTRY_IMAGE: ${{ env.REGISTRY_IMAGE }}
+      REGISTRY_IMAGE: $REGISTRY_IMAGE
 
   # --- API tests ---
 
@@ -171,4 +171,4 @@ jobs:
           docker compose -f docker-compose.prod.yml pull
           docker compose -f docker-compose.prod.yml up -d
     env:
-      CI_REGISTRY_IMAGE: ${{ env.REGISTRY_IMAGE }}
+      REGISTRY_IMAGE: $REGISTRY_IMAGE
