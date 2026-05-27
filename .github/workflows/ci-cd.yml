@@ -68,7 +68,7 @@ jobs:
              apidog run ./tests/authors.apidog-cli.json -n 1 -r html,cli --out-dir ./apidog-reports/authors
              apidog run ./tests/reading-logs.apidog-cli.json -n 1 -r html,cli --out-dir ./apidog-reports/reading-logs
   api-tests-teardown:
-    if: always()
+    if: always() && github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true && github.ref == 'refs/heads/main'
     needs: api-tests
     runs-on: self-hosted
     steps:
@@ -81,6 +81,8 @@ jobs:
     permissions:
       packages: write
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
       - name: Build API production image
         run: docker login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} ghcr.io/${{ github.repository }}
              docker compose -f docker-compose.prod.yml build api
@@ -91,7 +93,30 @@ jobs:
     permissions:
       packages: write
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
       - name: Build setup production image
-        run: docker login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} ghcr.io/${{ github.repository }}
+        run: docker login ghcr.io/${{ github.repository }} -u ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }}
              docker compose -f docker-compose.prod.yml build setup
              docker compose -f docker-compose.prod.yml push setup
+
+  release:
+    if: github.ref_type == 'tag'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Release
+        uses: softprops/action-gh-release@v3
+
+  deploy:
+    if: github.event_name == 'release'
+    runs-on: self-hosted
+    steps:
+      - name: Get images from the registry
+        run: docker login ghcr.io/${{ github.repository }} -u ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }}
+             docker compose -f docker-compose.prod.yml pull
+      - name: Restart containers
+        run: docker compose -f docker-compose.prod.yml up -d
