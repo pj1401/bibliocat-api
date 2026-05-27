@@ -1,0 +1,31 @@
+name: CI/CD
+
+on:
+  push:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install uv
+        run: pip install uv
+
+      - name: Install dependencies
+        working-directory: api
+        run: uv sync --group dev
+
+      - name: Run pyright
+        working-directory: api
+        run: uv run pyright
+
+      - name: Run ruff
+        working-directory: api
+        run: uv run ruff check src
