@@ -15,23 +15,18 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-
       - name: Install uv
         run: pip install uv
-
       - name: Install dependencies
         working-directory: api
         run: uv sync --group dev
-
       - name: Run pyright
         working-directory: api
         run: uv run pyright
-
       - name: Run ruff
         working-directory: api
         run: uv run ruff check src
@@ -42,19 +37,41 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-
       - name: Install uv
         run: pip install uv
-
       - name: Install dependencies
         working-directory: api
         run: uv sync --group dev
-
       - name: Run pytest
         working-directory: api
         run: uv run pytest
+
+  api-tests:
+    if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true && github.ref == 'refs/heads/main'
+    runs-on: self-hosted
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Build test images
+        run: docker compose -p bibliocat-test -f docker-compose.test.yml up -d --build --wait
+      - name: Run API tests
+        run: apidog run ./tests/collection.apidog-cli.json -n 1 -r html,cli --out-dir ./apidog-reports/collection
+             apidog run ./tests/auth.apidog-cli.json -n 1 -r html,cli --out-dir ./apidog-reports/auth
+             apidog run ./tests/books.apidog-cli.json -n 1 -r html,cli --out-dir ./apidog-reports/books
+             apidog run ./tests/authors.apidog-cli.json -n 1 -r html,cli --out-dir ./apidog-reports/authors
+             apidog run ./tests/reading-logs.apidog-cli.json -n 1 -r html,cli --out-dir ./apidog-reports/reading-logs
+  api-tests-teardown:
+    if: always()
+    needs: api-tests
+    runs-on: self-hosted
+    steps:
+      - name: Remove test volume
+        run: docker compose -p bibliocat-test -f docker-compose.test.yml down -v
+
+  build-api:
+    if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true && github.ref == 'refs/heads/main'
+    runs-on: self-hosted
