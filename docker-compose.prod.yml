@@ -20,7 +20,7 @@ services:
       retries: 5
 
   setup:
-    image: $CI_REGISTRY_IMAGE/setup:latest
+    image: $REGISTRY_IMAGE/setup:latest
     build:
       context: .
       dockerfile: setup/dockerfile
@@ -44,7 +44,7 @@ services:
     restart: "no"
 
   api:
-    image: $CI_REGISTRY_IMAGE/api:latest
+    image: $REGISTRY_IMAGE/api:latest
     build:
       context: .
       dockerfile: api/dockerfile
