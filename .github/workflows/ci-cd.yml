@@ -43,7 +43,9 @@ jobs:
 
       - name: Run ruff
         working-directory: api
-        run: uv run ruff check src
+        run: |
+          uv run ruff check src
+          uv run ruff format --diff
 
   # --- Unit tests ---
 
