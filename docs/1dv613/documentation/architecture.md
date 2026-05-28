@@ -1,3 +1,5 @@
+# Architecture
+
 ## System overview
 
 *One paragraph: what does the system do and how do the main parts connect?*

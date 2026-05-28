@@ -1,3 +1,5 @@
+# Contributing
+
 ## Getting started
 
 *How do I clone and run this project locally?*
