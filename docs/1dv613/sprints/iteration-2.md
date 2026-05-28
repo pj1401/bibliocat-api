@@ -13,13 +13,27 @@ Set up the project foundation - vision, initial requirements, repo structure, an
 
 ## Time summary
 
+### By category
+
 I denna iteraions milestone finns ingen issue för grupparbetet, så tidsräkningen i milestone är inte helt korrekt.
 
 | Label | Issues | Estimated (h) | Actual (h) |
 |---|---|---|---|
-| `development` | #4 | 2 | 3 |
-| `documentation` | #6 | 2 | 3 |
-| `learning` | #5 | - | 3 |
+| `development` | [#4] | 2 | 3 |
+| `documentation` | [#6] | 2 | 3 |
+| `learning` | [#5] | - | 3 |
 | `meeting` |  | - | 3 |
 | | **Total** | 4 | 12 |
 | | **Total project** | | 13 |
+
+### Issues
+
+| Issue | Title | Estimated (h) | Actual (h) |
+|---|---|---|---|
+| [#4] | Set up project repository and development environment | 2 | 3 |
+| [#5] | Set up test environment | 4 | 3 |
+| [#6] | Specify requirements | 2 | 3 |
+
+[#4]: https://gitlab.lnu.se/1dv613/student/pj222uc/project-hub/-/issues/4
+[#5]: https://gitlab.lnu.se/1dv613/student/pj222uc/project-hub/-/issues/5
+[#6]: https://gitlab.lnu.se/1dv613/student/pj222uc/project-hub/-/issues/6

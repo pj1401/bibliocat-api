@@ -12,7 +12,7 @@ Jag hade problem med att få igång produktions servern. Jag tänker använda en
 Vissa av kraven har inte så mycket information än, så jag får utveckla dem mer. Det behövs nog läggas till icke-funktionella krav, tex. krav på att APIet ska testas.  
 För att testa APIet tänker jag använda Apidog.
 
-**Går över till Iteration 2:** Att få igång APIet på produktionsservern.
+**Går över till Iteration 4:** Att få igång APIet på produktionsservern.
 
 ## Goals this iteration
 
@@ -24,11 +24,31 @@ För att testa APIet tänker jag använda Apidog.
 
 ## Time summary
 
+### By category
+
 | Label | Issues | Estimated (h) | Actual (h) |
 |---|---|---|---|
-| `development` | [#12](https://gitlab.lnu.se/1dv613/student/pj222uc/project-hub/-/issues/12) [#15](https://gitlab.lnu.se/1dv613/student/pj222uc/project-hub/-/issues/15) | 14 | 12h 30m |
-| `documentation` | [#13](https://gitlab.lnu.se/1dv613/student/pj222uc/project-hub/-/issues/13) [#14](https://gitlab.lnu.se/1dv613/student/pj222uc/project-hub/-/issues/14) | 2 | 3h 40m |
+| `development` | [#12], [#15] | 14 | 12h 30m |
+| `documentation` | [#13], [#14] | 2 | 3h 40m |
 | `learning` |  | - | 1 |
-| `meeting` | [#23](https://gitlab.lnu.se/1dv613/student/pj222uc/project-hub/-/issues/23)[#24](https://gitlab.lnu.se/1dv613/student/pj222uc/project-hub/-/issues/24) | - | 4 |
+| `meeting` | [#23], [#24] | - | 4 |
 | | **Total** | 16 | 20h 10m |
 | | **Total project** | | 33 |
+
+### Issues
+
+| Issue | Title | Estimated (h) | Actual (h) |
+|---|---|---|---|
+| [#12] | Set up database |  | 8h 30m |
+| [#13] | Set up test environment |  | 1 |
+| [#14] | Specify requirements |  | 2h 40m |
+| [#15] | Set up production server |  | 4 |
+| [#23] | Grupparbete vecka 3 |  | 3 |
+| [#14] | Examination |  | 1 |
+
+[#12]: https://gitlab.lnu.se/1dv613/student/pj222uc/project-hub/-/issues/12
+[#13]: https://gitlab.lnu.se/1dv613/student/pj222uc/project-hub/-/issues/13
+[#14]: https://gitlab.lnu.se/1dv613/student/pj222uc/project-hub/-/issues/14
+[#15]: https://gitlab.lnu.se/1dv613/student/pj222uc/project-hub/-/issues/15
+[#23]: https://gitlab.lnu.se/1dv613/student/pj222uc/project-hub/-/issues/23
+[#24]: https://gitlab.lnu.se/1dv613/student/pj222uc/project-hub/-/issues/24
