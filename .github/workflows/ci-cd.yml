@@ -157,6 +157,9 @@ jobs:
   deploy:
     if: github.event_name == 'release'
     runs-on: self-hosted
+    environment:
+      name: production
+      url: https://patriciaj.se/bibliocat-api/
     permissions:
       packages: read
     steps:
