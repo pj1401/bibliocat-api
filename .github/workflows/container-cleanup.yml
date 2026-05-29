@@ -16,7 +16,7 @@ jobs:
         uses: snok/container-retention-policy@v3.0.1
         with:
           account: user
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PAT }}
           image-names: "bibliocat-api*"
           image-tags: "!latest"            # Don't target latest images
           cut-off: 60min
