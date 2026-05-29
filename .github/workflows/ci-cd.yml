@@ -5,8 +5,6 @@ on:
   pull_request:
     branches:
       - main
-  release:
-    types: [created]
 
 permissions:
   contents: read
@@ -157,7 +155,8 @@ jobs:
   # --- Deploy ---
 
   deploy:
-    if: github.event_name == 'release'
+    if: github.event_name == 'push' && github.ref_type == 'tag'
+    needs: [release]
     runs-on: self-hosted
     environment:
       name: production
