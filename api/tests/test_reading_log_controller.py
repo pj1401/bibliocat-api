@@ -27,6 +27,12 @@ class TestGetValidatedArguments:
         assert params.ended_at == date(2026, 5, 21)
         assert isinstance(params, ReadingLogParams)
 
+    def test_reading_log_ended_at_is_empty(self, controller: ReadingLogController):
+        data = {"book_id": "2", "started_at": "2026-01-21"}
+        params = controller.get_validated_arguments(data, user_id="8")
+        assert params.ended_at is None
+        assert isinstance(params, ReadingLogParams)
+
     def test_raises_validation_error_on_missing_field(
         self, controller: ReadingLogController
     ):

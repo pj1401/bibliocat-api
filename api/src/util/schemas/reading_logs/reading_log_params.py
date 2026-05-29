@@ -15,5 +15,5 @@ class ReadingLogParams(BaseModel):
         ..., description="The date and time for when the reading started"
     )
     ended_at: date | datetime | None = Field(
-        ..., description="The date and time for when the reading ended"
+        None, description="The date and time for when the reading ended"
     )
