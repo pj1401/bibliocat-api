@@ -66,6 +66,6 @@ class WritableController(BaseController[TService]):
     def delete(self, id: int):
         try:
             self.service.delete(id)
-            return 204
+            return Response(None, 204)
         except Exception as err:
             return self._error_response(err)

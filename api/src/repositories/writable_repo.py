@@ -4,10 +4,11 @@ module: src/services/writable_repo.py
 """
 
 from typing import Any, Dict, Generic, TypeVar
-from sqlalchemy import delete
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 from pydantic import BaseModel as PydanticBaseModel
 from src.repositories.base_repo import BaseRepository
+from src.util.errors.error import NotFoundError
 from src.util.filters.base_filters import BaseFilters
 from src.util.models.base import BaseModel
 
@@ -62,8 +63,11 @@ class WritableRepository(
         session: Session | None = None
         try:
             session = self.db_manager.get_session()
-            stmt = delete(self.model).where(self.model.id == id)
-            session.scalars(stmt).first()
+            stmt = select(self.model).where(self.model.id == id)
+            result = session.scalars(stmt).first()
+            if result is None:
+                raise NotFoundError()
+            session.delete(result)
             session.commit()
         except Exception as err:
             if session is not None:
