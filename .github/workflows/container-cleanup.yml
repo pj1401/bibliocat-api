@@ -10,7 +10,7 @@ jobs:
     permissions:
       packages: write
     runs-on: ubuntu-latest
-    name: Delete old images
+    name: Delete old untagged images
     steps:
       - name: Container Retention Policy
         uses: snok/container-retention-policy@v3.0.1
@@ -20,4 +20,3 @@ jobs:
           image-names: "bibliocat-api*"
           image-tags: "!latest"            # Don't target latest images
           cut-off: 60min
-          dry-run: true
