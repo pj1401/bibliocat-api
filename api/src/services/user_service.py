@@ -76,8 +76,6 @@ class UserService(WritableService[UserRepository, BaseQueryParams, UserArguments
         """
         try:
             user = self.repository.get_user_by_username(user_login.username)
-            if user is None:
-                raise InvalidCredentialsError()
             password_matches = bcrypt.checkpw(
                 user_login.password.encode("utf-8"), user.password_hash.encode("utf-8")
             )
