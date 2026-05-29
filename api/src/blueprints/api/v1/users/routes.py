@@ -4,6 +4,7 @@ module: src/blueprints/api/v1/users/routes.py
 """
 
 from flask import Blueprint, g
+from src.hooks.auth_required import auth_required
 from src.util.models.user import User
 from src.util.schemas.user import UserModel
 from src.controllers.user_controller import UserController
@@ -29,3 +30,9 @@ def create_user():
 @users_bp.route("/login", methods=["POST"])
 def login_user():
     return g.user_controller.login()
+
+
+@users_bp.route("/<int:id>", methods=["DELETE"])
+@auth_required()
+def delete(id: int):
+    return g.user_controller.delete(id)

@@ -6,12 +6,12 @@ module: src/controllers/user_controller.py
 from typing import cast
 from flask import jsonify, request
 from flask_jwt_extended import create_access_token  # type: ignore
-from src.controllers.base_controller import BaseController
+from src.controllers.writable_controller import WritableController
 from src.util.schemas.user import UserArguments, UserLogin
 from src.services.user_service import UserService
 
 
-class UserController(BaseController[UserService]):
+class UserController(WritableController[UserService]):
     """
     HTTP controller for user-related routes.
 

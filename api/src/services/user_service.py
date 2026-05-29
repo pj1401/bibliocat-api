@@ -4,9 +4,9 @@ module: src/services/user_service.py
 """
 
 from typing import Type
-
 import bcrypt
-from src.services.base_service import BaseService
+from flask_jwt_extended import get_jwt_identity
+from src.services.writable_service import WritableService
 from src.util.models.user import User
 from src.util.errors.error import InvalidCredentialsError
 from src.util.schemas.query_params import BaseQueryParams
@@ -14,7 +14,7 @@ from src.util.schemas.user import NewUser, UserArguments, UserLogin, UserModel
 from src.repositories.user_repo import UserRepository
 
 
-class UserService(BaseService[UserRepository, BaseQueryParams]):
+class UserService(WritableService[UserRepository, BaseQueryParams, UserArguments]):
     """
     Business logic for user registration and authentication.
 
@@ -84,5 +84,12 @@ class UserService(BaseService[UserRepository, BaseQueryParams]):
             if not password_matches:
                 raise InvalidCredentialsError()
             return user
+        except Exception as err:
+            raise err
+
+    def delete(self, id: int):
+        try:
+            self.authorize(id, int(get_jwt_identity()))
+            self.repository.delete(id)
         except Exception as err:
             raise err
