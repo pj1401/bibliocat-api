@@ -6,7 +6,9 @@ module: src/services/user_service.py
 from typing import Type
 import bcrypt
 from flask_jwt_extended import get_jwt_identity
+from src.repositories.reading_log_repo import ReadingLogRepository
 from src.services.writable_service import WritableService
+from src.util.filters.reading_log_filters import ReadingLogFilters
 from src.util.models.user import User
 from src.util.errors.error import InvalidCredentialsError
 from src.util.schemas.query_params import BaseQueryParams
@@ -24,7 +26,12 @@ class UserService(WritableService[UserRepository, BaseQueryParams, UserArguments
     bcrypt.
     """
 
-    def __init__(self, user_repo: UserRepository, user_schema: Type[UserModel]):
+    def __init__(
+        self,
+        user_repo: UserRepository,
+        user_schema: Type[UserModel],
+        reading_log_repo: ReadingLogRepository,
+    ):
         """
         Initialize the service with its repository dependency.
 
@@ -32,6 +39,7 @@ class UserService(WritableService[UserRepository, BaseQueryParams, UserArguments
         :type user_repo: UserRepository
         """
         super().__init__(user_repo, user_schema)
+        self.reading_log_repo = reading_log_repo
 
     def create_user(self, user_arguments: UserArguments):
         """
@@ -88,6 +96,17 @@ class UserService(WritableService[UserRepository, BaseQueryParams, UserArguments
     def delete(self, id: int):
         try:
             self.authorize(id, int(get_jwt_identity()))
+            self.delete_reading_logs(id)
             self.repository.delete(id)
+        except Exception as err:
+            raise err
+
+    def delete_reading_logs(self, user_id: int):
+        try:
+            reading_logs = self.reading_log_repo.get(
+                ReadingLogFilters(limit=25, user_id=user_id)
+            )
+            for reading_log in reading_logs:
+                self.reading_log_repo.delete(reading_log["id"])
         except Exception as err:
             raise err
