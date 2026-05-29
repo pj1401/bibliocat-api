@@ -67,11 +67,11 @@ api_tests:
     - docker compose -p bibliocat-test -f docker-compose.test.yml up -d --build --wait
 
     - echo "Running API tests..."
-    - apidog run ./tests/collection.apidog-cli.json -n 1 -r html,cli --out-dir ./apidog-reports/collection
-    - apidog run ./tests/auth.apidog-cli.json -n 1 -r html,cli --out-dir ./apidog-reports/auth
-    - apidog run ./tests/books.apidog-cli.json -n 1 -r html,cli --out-dir ./apidog-reports/books
-    - apidog run ./tests/authors.apidog-cli.json -n 1 -r html,cli --out-dir ./apidog-reports/authors
-    - apidog run ./tests/reading-logs.apidog-cli.json -n 1 -r html,cli --out-dir ./apidog-reports/reading-logs
+    - apidog run ./tests/testing-env/collection.apidog-cli.json -n 1 -r html,cli --out-dir ./apidog-reports/collection
+    - apidog run ./tests/testing-env/auth.apidog-cli.json -n 1 -r html,cli --out-dir ./apidog-reports/auth
+    - apidog run ./tests/testing-env/books.apidog-cli.json -n 1 -r html,cli --out-dir ./apidog-reports/books
+    - apidog run ./tests/testing-env/authors.apidog-cli.json -n 1 -r html,cli --out-dir ./apidog-reports/authors
+    - apidog run ./tests/testing-env/reading-logs.apidog-cli.json -n 1 -r html,cli --out-dir ./apidog-reports/reading-logs
 
   after_script:
     # Always runs, even if tests fail — -v removes the test volume

@@ -62,3 +62,10 @@ class WritableController(BaseController[TService]):
         return resource | {
             "status": 201,
         }
+
+    def delete(self, id: int):
+        try:
+            self.service.delete(id)
+            return Response(None, 204)
+        except Exception as err:
+            return self._error_response(err)
