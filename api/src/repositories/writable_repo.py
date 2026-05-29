@@ -4,6 +4,7 @@ module: src/services/writable_repo.py
 """
 
 from typing import Any, Dict, Generic, TypeVar
+from sqlalchemy import delete
 from sqlalchemy.orm import Session
 from pydantic import BaseModel as PydanticBaseModel
 from src.repositories.base_repo import BaseRepository
@@ -56,3 +57,18 @@ class WritableRepository(
         :type arguments: Type[TSchema]
         """
         return self.model()
+
+    def delete(self, id: int):
+        session: Session | None = None
+        try:
+            session = self.db_manager.get_session()
+            stmt = delete(self.model).where(self.model.id == id)
+            session.scalars(stmt).first()
+            session.commit()
+        except Exception as err:
+            if session is not None:
+                session.rollback()
+            raise err
+        finally:
+            if session is not None:
+                session.close()

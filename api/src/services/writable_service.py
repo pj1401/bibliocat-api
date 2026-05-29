@@ -4,6 +4,7 @@ module: src/services/writable_service.py
 """
 
 from typing import Any, Generic, TypeVar
+from flask_jwt_extended import get_jwt_identity
 from pydantic import BaseModel as PydanticBaseModel
 from src.util.schemas.query_params import BaseQueryParams
 from src.repositories.writable_repo import WritableRepository
@@ -41,3 +42,11 @@ class WritableService(
         :type arguments: TArgs
         """
         pass
+
+    def delete(self, id: int):
+        try:
+            resource = self.repository.get_by_id(id)
+            self.authorize(resource["user"]["id"], int(get_jwt_identity()))
+            self.repository.delete(id)
+        except Exception as err:
+            raise err
