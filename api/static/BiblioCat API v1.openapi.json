@@ -17,6 +17,9 @@
     },
     {
       "name": "reading-logs"
+    },
+    {
+      "name": "users"
     }
   ],
   "paths": {
@@ -24,7 +27,7 @@
       "post": {
         "summary": "login",
         "deprecated": false,
-        "description": "",
+        "description": "Log in to get a generated JWT.",
         "tags": [
           "auth"
         ],
@@ -93,11 +96,11 @@
           },
           "401": {
             "$ref": "#/components/responses/Unauthorized",
-            "description": ""
+            "description": "Credentials invalid or not provided."
           },
           "500": {
             "$ref": "#/components/responses/Internal Server Error",
-            "description": ""
+            "description": "The server encountered an unexpected condition that prevented it from fulfilling the request."
           }
         },
         "security": []
@@ -107,7 +110,7 @@
       "post": {
         "summary": "register",
         "deprecated": false,
-        "description": "",
+        "description": "Register a new account.",
         "tags": [
           "auth"
         ],
@@ -188,11 +191,11 @@
           },
           "400": {
             "$ref": "#/components/responses/Bad Request",
-            "description": ""
+            "description": "The request cannot or will not be processed due to something that is perceived to be a client error (for example validation error)."
           },
           "500": {
             "$ref": "#/components/responses/Internal Server Error",
-            "description": ""
+            "description": "The server encountered an unexpected condition that prevented it from fulfilling the request."
           }
         },
         "security": []
@@ -202,7 +205,7 @@
       "get": {
         "summary": "Find book by ID",
         "deprecated": false,
-        "description": "",
+        "description": "Get a book by ID.",
         "tags": [
           "books"
         ],
@@ -245,11 +248,11 @@
           },
           "404": {
             "$ref": "#/components/responses/Not Found",
-            "description": ""
+            "description": "The requested resource was not found."
           },
           "500": {
             "$ref": "#/components/responses/Internal Server Error",
-            "description": ""
+            "description": "The server encountered an unexpected condition that prevented it from fulfilling the request."
           }
         },
         "security": []
@@ -259,7 +262,7 @@
       "get": {
         "summary": "Find books",
         "deprecated": false,
-        "description": "",
+        "description": "Get a list of books using optional filters.",
         "tags": [
           "books"
         ],
@@ -405,11 +408,11 @@
           },
           "400": {
             "$ref": "#/components/responses/Bad Request",
-            "description": ""
+            "description": "The request cannot or will not be processed due to something that is perceived to be a client error (for example validation error)."
           },
           "500": {
             "$ref": "#/components/responses/Internal Server Error",
-            "description": ""
+            "description": "The server encountered an unexpected condition that prevented it from fulfilling the request."
           }
         },
         "security": []
@@ -419,7 +422,7 @@
       "get": {
         "summary": "Find author by ID",
         "deprecated": false,
-        "description": "",
+        "description": "Find an author by ID.",
         "tags": [
           "authors"
         ],
@@ -467,11 +470,11 @@
           },
           "404": {
             "$ref": "#/components/responses/Not Found",
-            "description": ""
+            "description": "The requested resource was not found."
           },
           "500": {
             "$ref": "#/components/responses/Internal Server Error",
-            "description": ""
+            "description": "The server encountered an unexpected condition that prevented it from fulfilling the request."
           }
         },
         "security": []
@@ -481,7 +484,7 @@
       "get": {
         "summary": "Filter authors",
         "deprecated": false,
-        "description": "",
+        "description": "Get a list of authors using optional filters.",
         "tags": [
           "authors"
         ],
@@ -533,7 +536,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "Successful operation.",
             "content": {
               "application/json": {
                 "schema": {
@@ -564,11 +567,11 @@
           },
           "400": {
             "$ref": "#/components/responses/Bad Request",
-            "description": ""
+            "description": "The request cannot or will not be processed due to something that is perceived to be a client error (for example validation error)."
           },
           "500": {
             "$ref": "#/components/responses/Internal Server Error",
-            "description": ""
+            "description": "The server encountered an unexpected condition that prevented it from fulfilling the request."
           }
         },
         "security": []
@@ -578,7 +581,7 @@
       "post": {
         "summary": "Create Reading log",
         "deprecated": false,
-        "description": "",
+        "description": "Create a reading log to keep track of a read book.",
         "tags": [
           "reading-logs"
         ],
@@ -587,26 +590,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "book_id": {
-                    "type": "integer",
-                    "description": "The ID of the book",
-                    "minimum": 0
-                  },
-                  "started_at": {
-                    "type": "string"
-                  },
-                  "ended_at": {
-                    "type": "string",
-                    "nullable": true
-                  }
-                },
-                "required": [
-                  "started_at",
-                  "ended_at",
-                  "book_id"
-                ]
+                "$ref": "#/components/schemas/ReadingLogPayload"
               },
               "examples": {}
             }
@@ -682,15 +666,133 @@
           },
           "400": {
             "$ref": "#/components/responses/Bad Request",
-            "description": ""
+            "description": "The request cannot or will not be processed due to something that is perceived to be a client error (for example validation error)."
           },
           "401": {
             "$ref": "#/components/responses/Unauthorized",
-            "description": ""
+            "description": "Credentials invalid or not provided."
           },
           "500": {
             "$ref": "#/components/responses/Internal Server Error",
-            "description": ""
+            "description": "The server encountered an unexpected condition that prevented it from fulfilling the request."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      },
+      "get": {
+        "summary": "Filter reading logs",
+        "deprecated": false,
+        "description": "Get a list of reading logs using optional filters.",
+        "tags": [
+          "reading-logs"
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Specifies the maximum number of items to return.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "description": "Specifies the maximum number of items to return.",
+              "default": 20,
+              "maximum": 25,
+              "minimum": 1
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "Specifies the starting index of the data.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "description": "Specifies the starting index of the data.",
+              "minimum": 0,
+              "default": 0
+            }
+          },
+          {
+            "name": "book_id",
+            "in": "query",
+            "description": "The ID of the book",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "book_title",
+            "in": "query",
+            "description": "The title of the book",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Specifies the column to sort by",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "started_at",
+                "ended_at",
+                "created_at",
+                "updated_at"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "description": "HTTP status code",
+                      "minimum": 0,
+                      "maximum": 999,
+                      "default": 200
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ReadingLog"
+                      }
+                    }
+                  },
+                  "required": [
+                    "status",
+                    "data"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          },
+          "400": {
+            "$ref": "#/components/responses/Bad Request",
+            "description": "The request cannot or will not be processed due to something that is perceived to be a client error (for example validation error)."
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized",
+            "description": "Credentials invalid or not provided."
+          },
+          "500": {
+            "$ref": "#/components/responses/Internal Server Error",
+            "description": "The server encountered an unexpected condition that prevented it from fulfilling the request."
           }
         },
         "security": [
@@ -704,7 +806,7 @@
       "get": {
         "summary": "Find reading log by ID",
         "deprecated": false,
-        "description": "",
+        "description": "Get a specific reading log.",
         "tags": [
           "reading-logs"
         ],
@@ -723,7 +825,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "Successful operation.",
             "content": {
               "application/json": {
                 "schema": {
@@ -748,17 +850,17 @@
                 "example": {
                   "data": {
                     "book": {
-                      "href": "http://localhost:5000/api/v1/books/159",
+                      "href": "https://patriciaj.se/bibliocat-api/api/v1/books/159",
                       "id": 159
                     },
                     "created_at": "Thu, 21 May 2026 20:36:21 GMT",
                     "ended_at": "Thu, 21 May 2026 01:36:17 GMT",
-                    "href": "http://localhost:5000/api/v1/reading-logs/7",
+                    "href": "https://patriciaj.se/bibliocat-api/api/v1/reading-logs/7",
                     "id": 7,
                     "started_at": "Tue, 23 Dec 2025 17:39:08 GMT",
                     "updated_at": "Thu, 21 May 2026 20:36:21 GMT",
                     "user": {
-                      "href": "http://localhost:5000/api/v1/users/8",
+                      "href": "https://patriciaj.se/bibliocat-api/api/v1/users/8",
                       "id": 8
                     }
                   },
@@ -770,15 +872,61 @@
           },
           "401": {
             "$ref": "#/components/responses/Unauthorized",
-            "description": ""
+            "description": "Credentials invalid or not provided."
           },
           "404": {
             "$ref": "#/components/responses/Not Found",
-            "description": ""
+            "description": "The requested resource was not found."
           },
           "500": {
             "$ref": "#/components/responses/Internal Server Error",
-            "description": ""
+            "description": "The server encountered an unexpected condition that prevented it from fulfilling the request."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/users/{id}": {
+      "delete": {
+        "summary": "Delete a user",
+        "deprecated": false,
+        "description": "Delete a user by ID. Requires authentication.  \nReading logs owned by the user will also be deleted.",
+        "tags": [
+          "users"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The ID of the user.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "The ID of the user",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "The server successfully processed the request and is not returning any content.",
+            "headers": {}
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized",
+            "description": "Credentials invalid or not provided."
+          },
+          "404": {
+            "$ref": "#/components/responses/Not Found",
+            "description": "The requested resource was not found."
+          },
+          "500": {
+            "$ref": "#/components/responses/Internal Server Error",
+            "description": "The server encountered an unexpected condition that prevented it from fulfilling the request."
           }
         },
         "security": [
@@ -967,6 +1115,29 @@
           "href"
         ]
       },
+      "ReadingLogPayload": {
+        "type": "object",
+        "properties": {
+          "book_id": {
+            "type": "integer",
+            "description": "The ID of the book",
+            "minimum": 1
+          },
+          "started_at": {
+            "type": "string",
+            "description": "The date and time for when the reading started"
+          },
+          "ended_at": {
+            "type": "string",
+            "description": "The date and time for when the reading ended",
+            "nullable": true
+          }
+        },
+        "required": [
+          "started_at",
+          "book_id"
+        ]
+      },
       "Book": {
         "type": "object",
         "properties": {
@@ -1042,7 +1213,7 @@
     },
     "responses": {
       "Bad Request": {
-        "description": "",
+        "description": "The request cannot or will not be processed due to something that is perceived to be a client error (for example validation error).",
         "content": {
           "application/json": {
             "schema": {
@@ -1079,7 +1250,7 @@
         }
       },
       "Unauthorized": {
-        "description": "",
+        "description": "Credentials invalid or not provided.",
         "content": {
           "application/json": {
             "schema": {
@@ -1117,7 +1288,7 @@
         }
       },
       "Internal Server Error": {
-        "description": "",
+        "description": "The server encountered an unexpected condition that prevented it from fulfilling the request.",
         "content": {
           "application/json": {
             "schema": {
@@ -1154,7 +1325,7 @@
         }
       },
       "Not Found": {
-        "description": "",
+        "description": "The requested resource was not found.",
         "content": {
           "application/json": {
             "schema": {
