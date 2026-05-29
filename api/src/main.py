@@ -20,7 +20,7 @@ from src.blueprints.router import router_bp
 
 def create_app() -> Flask:
     """Set up the application."""
-    app = Flask(__name__)
+    app = Flask(__name__, static_folder="../static")
     load_config(app)
     register_db_manager(app)
     register_reverse_proxy(app)
