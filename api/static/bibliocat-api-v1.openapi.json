@@ -23,9 +23,9 @@
     }
   ],
   "paths": {
-    "/users/login": {
+    "/auth/login": {
       "post": {
-        "summary": "login",
+        "summary": "Log in a user",
         "deprecated": false,
         "description": "Log in to get a generated JWT.",
         "tags": [
@@ -106,9 +106,9 @@
         "security": []
       }
     },
-    "/users/register": {
+    "/auth/register": {
       "post": {
-        "summary": "register",
+        "summary": "Register a new account",
         "deprecated": false,
         "description": "Register a new account.",
         "tags": [
@@ -163,20 +163,24 @@
                       "title": ""
                     },
                     "id": {
-                      "type": "integer"
+                      "type": "integer",
+                      "description": "The ID of the resource",
+                      "minimum": 0
                     },
                     "username": {
-                      "type": "string"
+                      "type": "string",
+                      "description": "The user's username."
                     },
                     "email": {
-                      "type": "string"
+                      "type": "string",
+                      "description": "The user's email address."
                     }
                   },
                   "required": [
                     "status",
-                    "id",
                     "username",
-                    "email"
+                    "email",
+                    "id"
                   ]
                 },
                 "example": {
@@ -241,6 +245,47 @@
                     "status",
                     "data"
                   ]
+                },
+                "example": {
+                  "data": {
+                    "authors": [
+                      {
+                        "href": "https://patriciaj.se/bibliocat-api/api/v1/authors/132",
+                        "id": 132
+                      }
+                    ],
+                    "categories": [
+                      {
+                        "href": "https://patriciaj.se/bibliocat-api/api/v1/categories/6",
+                        "id": 6
+                      },
+                      {
+                        "href": "https://patriciaj.se/bibliocat-api/api/v1/categories/25",
+                        "id": 25
+                      },
+                      {
+                        "href": "https://patriciaj.se/bibliocat-api/api/v1/categories/85",
+                        "id": 85
+                      }
+                    ],
+                    "created_at": "Mon, 25 May 2026 13:10:50 GMT",
+                    "description": "This carefully crafted ebook: \"The Art of War (The Classic Lionel Giles Translation)” is formatted for your eReader with a functional table of contents. The Art of War is an ancient ...",
+                    "href": "https://patriciaj.se/bibliocat-api/api/v1/books/159",
+                    "id": 159,
+                    "isbn": "9788074844553",
+                    "language": "English",
+                    "page_count": 80,
+                    "published_date": "Sat, 02 Jun 2012 00:00:00 GMT",
+                    "publisher": {
+                      "href": "https://patriciaj.se/bibliocat-api/api/v1/publishers/21",
+                      "id": 21
+                    },
+                    "rating": 4.6,
+                    "title": "The Art of War (The Classic Lionel Giles Translation)",
+                    "updated_at": "Mon, 25 May 2026 13:10:50 GMT",
+                    "voters": 24
+                  },
+                  "status": 200
                 }
               }
             },
@@ -293,7 +338,7 @@
           {
             "name": "category",
             "in": "query",
-            "description": "",
+            "description": "The category the book belongs to.",
             "required": false,
             "schema": {
               "type": "string"
@@ -302,7 +347,7 @@
           {
             "name": "title",
             "in": "query",
-            "description": "",
+            "description": "The book title.",
             "required": false,
             "schema": {
               "type": "string"
@@ -311,7 +356,7 @@
           {
             "name": "isbn",
             "in": "query",
-            "description": "",
+            "description": "The book ISBN.",
             "required": false,
             "schema": {
               "type": "string"
@@ -320,7 +365,7 @@
           {
             "name": "author",
             "in": "query",
-            "description": "",
+            "description": "The name of the author.",
             "required": false,
             "schema": {
               "type": "string"
@@ -329,7 +374,7 @@
           {
             "name": "publisher",
             "in": "query",
-            "description": "",
+            "description": "The name of the publisher.",
             "required": false,
             "schema": {
               "type": "string"
@@ -369,7 +414,7 @@
           {
             "name": "author_id",
             "in": "query",
-            "description": "The ID of the author resource",
+            "description": "The ID of the author resource.",
             "required": false,
             "schema": {
               "type": "integer",
@@ -401,6 +446,91 @@
                     "status",
                     "data"
                   ]
+                },
+                "example": {
+                  "data": [
+                    {
+                      "authors": [
+                        {
+                          "href": "https://patriciaj.se/bibliocat-api/api/v1/authors/11",
+                          "id": 11
+                        }
+                      ],
+                      "categories": [
+                        {
+                          "href": "https://patriciaj.se/bibliocat-api/api/v1/categories/2",
+                          "id": 2
+                        },
+                        {
+                          "href": "https://patriciaj.se/bibliocat-api/api/v1/categories/11",
+                          "id": 11
+                        },
+                        {
+                          "href": "https://patriciaj.se/bibliocat-api/api/v1/categories/18",
+                          "id": 18
+                        },
+                        {
+                          "href": "https://patriciaj.se/bibliocat-api/api/v1/categories/19",
+                          "id": 19
+                        }
+                      ],
+                      "created_at": "Mon, 25 May 2026 13:10:50 GMT",
+                      "description": "Geralt is a witcher, a man whose magic powers, enhanced by long training and a mysterious elixir, have made him a brilliant fighter and a merciless assassin. . .",
+                      "href": "https://patriciaj.se/bibliocat-api/api/v1/books/11",
+                      "id": 11,
+                      "isbn": "9781473211551",
+                      "language": "English",
+                      "page_count": 400,
+                      "published_date": "Thu, 21 May 2015 00:00:00 GMT",
+                      "publisher": {
+                        "href": "https://patriciaj.se/bibliocat-api/api/v1/publishers/9",
+                        "id": 9
+                      },
+                      "rating": 4.8,
+                      "title": "Sword of Destiny: Witcher 2: Tales of the Witcher",
+                      "updated_at": "Mon, 25 May 2026 13:10:50 GMT",
+                      "voters": 383
+                    },
+                    {
+                      "authors": [
+                        {
+                          "href": "https://patriciaj.se/bibliocat-api/api/v1/authors/15",
+                          "id": 15
+                        }
+                      ],
+                      "categories": [
+                        {
+                          "href": "https://patriciaj.se/bibliocat-api/api/v1/categories/2",
+                          "id": 2
+                        },
+                        {
+                          "href": "https://patriciaj.se/bibliocat-api/api/v1/categories/11",
+                          "id": 11
+                        },
+                        {
+                          "href": "https://patriciaj.se/bibliocat-api/api/v1/categories/14",
+                          "id": 14
+                        }
+                      ],
+                      "created_at": "Mon, 25 May 2026 13:10:50 GMT",
+                      "description": "The Wheel of Time ® is a PBS Great American Read Selection! Now in development for TV! Since its debut in 1990, The Wheel ...",
+                      "href": "https://patriciaj.se/bibliocat-api/api/v1/books/16",
+                      "id": 16,
+                      "isbn": "9781429960748",
+                      "language": "English",
+                      "page_count": 704,
+                      "published_date": "Tue, 20 Jul 2010 00:00:00 GMT",
+                      "publisher": {
+                        "href": "https://patriciaj.se/bibliocat-api/api/v1/publishers/12",
+                        "id": 12
+                      },
+                      "rating": 4.4,
+                      "title": "Crossroads of Twilight: Book Ten of 'The Wheel of Time'",
+                      "updated_at": "Mon, 25 May 2026 13:10:50 GMT",
+                      "voters": 427
+                    }
+                  ],
+                  "status": 200
                 }
               }
             },
@@ -463,6 +593,17 @@
                     "data",
                     "status"
                   ]
+                },
+                "example": {
+                  "data": {
+                    "books": "https://patriciaj.se/bibliocat-api/api/v1/books?author_id=132",
+                    "created_at": "Mon, 25 May 2026 13:10:50 GMT",
+                    "href": "https://patriciaj.se/bibliocat-api/api/v1/authors/132",
+                    "id": 132,
+                    "name": "Sun Tzu",
+                    "updated_at": "Mon, 25 May 2026 13:10:50 GMT"
+                  },
+                  "status": 200
                 }
               }
             },
@@ -560,6 +701,27 @@
                     "data",
                     "status"
                   ]
+                },
+                "example": {
+                  "data": [
+                    {
+                      "books": "https://patriciaj.se/bibliocat-api/api/v1/books?author_id=6",
+                      "created_at": "Mon, 25 May 2026 13:10:50 GMT",
+                      "href": "https://patriciaj.se/bibliocat-api/api/v1/authors/6",
+                      "id": 6,
+                      "name": "George R.R. Martin",
+                      "updated_at": "Mon, 25 May 2026 13:10:50 GMT"
+                    },
+                    {
+                      "books": "https://patriciaj.se/bibliocat-api/api/v1/books?author_id=7",
+                      "created_at": "Mon, 25 May 2026 13:10:50 GMT",
+                      "href": "https://patriciaj.se/bibliocat-api/api/v1/authors/7",
+                      "id": 7,
+                      "name": "J.M. Barlog",
+                      "updated_at": "Mon, 25 May 2026 13:10:50 GMT"
+                    }
+                  ],
+                  "status": 200
                 }
               }
             },
@@ -659,6 +821,23 @@
                     "user",
                     "book"
                   ]
+                },
+                "example": {
+                  "book": {
+                    "href": "https://patriciaj.se/bibliocat-api/api/v1/books/179",
+                    "id": 179
+                  },
+                  "created_at": "Sun, 31 May 2026 16:46:29 GMT",
+                  "ended_at": null,
+                  "href": "https://patriciaj.se/bibliocat-api/api/v1/reading-logs/15",
+                  "id": 15,
+                  "started_at": "Sat, 30 May 2026 23:51:21 GMT",
+                  "status": 201,
+                  "updated_at": "Sun, 31 May 2026 16:46:29 GMT",
+                  "user": {
+                    "href": "https://patriciaj.se/bibliocat-api/api/v1/users/65",
+                    "id": 65
+                  }
                 }
               }
             },
@@ -777,6 +956,43 @@
                     "status",
                     "data"
                   ]
+                },
+                "example": {
+                  "data": [
+                    {
+                      "book": {
+                        "href": "https://patriciaj.se/bibliocat-api/api/v1/books/159",
+                        "id": 159
+                      },
+                      "created_at": "Sun, 31 May 2026 16:46:24 GMT",
+                      "ended_at": "Sat, 30 May 2026 19:28:27 GMT",
+                      "href": "https://patriciaj.se/bibliocat-api/api/v1/reading-logs/14",
+                      "id": 14,
+                      "started_at": "Thu, 26 Feb 2026 04:20:19 GMT",
+                      "updated_at": "Sun, 31 May 2026 16:46:24 GMT",
+                      "user": {
+                        "href": "https://patriciaj.se/bibliocat-api/api/v1/users/65",
+                        "id": 65
+                      }
+                    },
+                    {
+                      "book": {
+                        "href": "https://patriciaj.se/bibliocat-api/api/v1/books/179",
+                        "id": 179
+                      },
+                      "created_at": "Sun, 31 May 2026 16:46:29 GMT",
+                      "ended_at": null,
+                      "href": "https://patriciaj.se/bibliocat-api/api/v1/reading-logs/15",
+                      "id": 15,
+                      "started_at": "Sat, 30 May 2026 23:51:21 GMT",
+                      "updated_at": "Sun, 31 May 2026 16:46:29 GMT",
+                      "user": {
+                        "href": "https://patriciaj.se/bibliocat-api/api/v1/users/65",
+                        "id": 65
+                      }
+                    }
+                  ],
+                  "status": 200
                 }
               }
             },
@@ -938,7 +1154,7 @@
     },
     "/health": {
       "get": {
-        "summary": "health",
+        "summary": "API health check",
         "deprecated": false,
         "description": "",
         "tags": [],
@@ -1162,26 +1378,29 @@
           "title": {
             "type": "string"
           },
-          "authors_ids": {
+          "authors": {
             "type": "array",
             "items": {
-              "type": "integer"
-            }
+              "$ref": "#/components/schemas/RelatedResource"
+            },
+            "description": "The author(s) of the book."
           },
           "isbn": {
             "type": "string"
           },
-          "publisher_id": {
-            "type": "integer"
+          "publisher": {
+            "$ref": "#/components/schemas/RelatedResource",
+            "description": "The publisher."
           },
           "published_date": {
             "type": "string"
           },
-          "categories_ids": {
+          "categories": {
             "type": "array",
             "items": {
-              "type": "integer"
-            }
+              "$ref": "#/components/schemas/RelatedResource"
+            },
+            "description": "The categories the book belongs to."
           },
           "description": {
             "type": "string"
@@ -1199,7 +1418,8 @@
           },
           "voters": {
             "type": "integer",
-            "minimum": 0
+            "minimum": 0,
+            "description": "The number of reviewers."
           }
         },
         "required": [
