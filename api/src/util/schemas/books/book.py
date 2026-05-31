@@ -5,7 +5,7 @@
 from __future__ import annotations
 from datetime import date
 from pydantic import Field
-from src.util.schemas.base_resource import BaseResourceSchema
+from src.util.schemas import BaseResourceSchema, RelatedResource
 
 
 class BookSchema(BaseResourceSchema):
@@ -17,6 +17,10 @@ class BookSchema(BaseResourceSchema):
     page_count: int
     rating: float = Field(..., ge=0.0, le=5.0)
     voters: int = Field(..., ge=0)
-    authors_ids: list[int]
-    categories_ids: list[int] | None = None
-    publisher_id: int
+    authors: list[RelatedResource] = Field(
+        ..., description="The author(s) of the book."
+    )
+    publisher: RelatedResource = Field(..., description="The publisher.")
+    categories: list[RelatedResource] | None = Field(
+        None, description="The categories the book belongs to."
+    )

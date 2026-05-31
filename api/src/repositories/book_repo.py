@@ -115,7 +115,27 @@ class BookRepository(BaseRepository[Book, BookFilters]):
     def model_to_dict(self, model: Book) -> Dict[str, Any]:
         data = model.to_dict()
         data["href"] = f"{self.base_url}/api/v1/books/{model.id}"
-        data["authors_ids"] = [a.id for a in model.authors]
-        data["categories_ids"] = [c.id for c in model.categories]
-        data["publisher_id"] = model.publisher.id if model.publisher else None
+        data["authors"] = [
+            {
+                "id": a.id,
+                "href": f"{self.base_url}/api/v1/authors/{a.id}",
+            }
+            for a in model.authors
+        ]
+        data["categories"] = [
+            {
+                "id": c.id,
+                "href": f"{self.base_url}/api/v1/categories/{c.id}",
+            }
+            for c in model.categories
+        ]
+        data["publisher"] = (
+            {
+                "id": model.publisher.id,
+                "href": f"{self.base_url}/api/v1/publishers/{model.publisher.id}",
+            }
+            if model.publisher
+            else None
+        )
+        data.pop("publisher_id")
         return data
