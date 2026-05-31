@@ -81,17 +81,17 @@ services:
 
 secrets:
   db_name:
-    file: /srv/bibliocat-api/secrets/db_name.txt
+    file: /srv/bibliocat-api/secrets/testing-env/db_name.txt
   db_user:
-    file: /srv/bibliocat-api/secrets/db_user.txt
+    file: /srv/bibliocat-api/secrets/testing-env/db_user.txt
   db_password:
-    file: /srv/bibliocat-api/secrets/db_password.txt
+    file: /srv/bibliocat-api/secrets/testing-env/db_password.txt
   flask_secret_key:
-    file: /srv/bibliocat-api/secrets/flask_secret_key.txt
+    file: /srv/bibliocat-api/secrets/testing-env/flask_secret_key.txt
   jwt_private_key:
-    file: /srv/bibliocat-api/secrets/bibliocat-api-jwt-key
+    file: /srv/bibliocat-api/secrets/testing-env/bibliocat-api-jwt-key
   jwt_public_key:
-    file: /srv/bibliocat-api/secrets/bibliocat-api-jwt-key.pub
+    file: /srv/bibliocat-api/secrets/testing-env/bibliocat-api-jwt-key.pub
 
 volumes:
   postgres_test_data:
