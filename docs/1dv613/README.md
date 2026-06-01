@@ -27,7 +27,7 @@ For requirements progress, see: [Requirements](https://github.com/users/pj1401/p
 - [Requirements](./documentation/requirements.md)
 - [Architecture](./documentation/architecture.md)
 - [Design](./documentation/design.md)
-- [Contributing](./documentation/contributing.md)
+- [Contributing](../../CONTRIBUTING.md)
 
 #### Testing
 - [Test Specification](./testing/test-specification.md)
