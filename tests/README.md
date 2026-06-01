@@ -9,11 +9,11 @@
 # Change to the api directory
 cd api
 
-# Install the project
-uv pip install -e .
+# Create venv and install
+uv sync --group dev
 
 # Run tests
-pytest
+uv run pytest
 ```
 
 ## Apidog

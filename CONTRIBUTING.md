@@ -4,53 +4,211 @@
 
 *How do I clone and run this project locally?*
 
+**Prerequisites:**
+- docker compose, [Docker Compose installation instructions](https://docs.docker.com/compose/install/)
+- uv for development, [uv installation instructions](https://docs.astral.sh/uv/getting-started/installation/)
+
 ```bash
 # ssh
 git clone git@github.com:pj1401/bibliocat-api.git
 
 # change directory
 cd bibliocat-api
+
+# Copy from .example.env to .env
+cp .example.env .env
 ```
 
-## Environment variables
+### Environment variables
 
 *Never commit secrets or API keys. Copy `.env.example` to `.env` and fill in your values.*
 
 | Variable | Description |
 |---|---|
-| `CSV_PATH` | |
-| `CHUNK_SIZE` | |
-| `POSTGRES_HOST` | |
-| `POSTGRES_PORT` | |
-| `POSTGRES_DB` | |
-| `POSTGRES_USER` | |
-| `POSTGRES_PASSWORD` | |
-| `BASE_URL` | |
-| `FLASK_DEBUG` | |
-| `FLASK_HOST` | |
-| `FLASK_PORT` | |
-| `FLASK_SECRET_KEY` | |
+| `CSV_PATH` | The path to the CSV file. Only used in setup. |
+| `CHUNK_SIZE` | Specifies how many rows are loaded from the CSV file at a time. Only used in setup. |
+| `POSTGRES_HOST` | The PostgreSQL host. |
+| `POSTGRES_PORT` | The port to the PostgreSQL container. Defaults to 5432. |
+| `POSTGRES_DB` | The database name. |
+| `POSTGRES_USER` | The database username. |
+| `POSTGRES_PASSWORD` | The password for the database user. |
+| `BASE_URL` | The base URL of the application. Example: 'http://localhost:5000' for develop mode. |
+| `FLASK_DEBUG` | Whether debug mode is enabled. Defaults to 'False'. |
+| `FLASK_HOST` | The hostname to listen on. Set this to '0.0.0.0' to have the server available externally as well. Defaults to '127.0.0.1'. |
+| `FLASK_PORT` | The port of the webserver. Defaults to 5000. |
+| `FLASK_SECRET_KEY` | A secret key used for signing session cookies. |
 | `JWT_PRIVATE_KEY` | An EC private key used for signing JWTs. |
 | `JWT_PUBLIC_KEY` | An EC public key. |
+
+**Set up secrets:**
+
+Set up secrets for docker compose. The secrets are stored in the `secrets` directory which is not version controlled.
+
+```bash
+mkdir secrets
+echo -n "library-postgres" > secrets/db_name.txt
+echo -n "username" > secrets/db_user.txt
+echo -n "password" > secrets/db_password.txt
+echo "random-string" > secrets/flask_secret_key.txt
+```
+
+**There can't be any trailing newlines in `secrets/db_name.txt`, `secrets/db_user.txt` or `secrets/db_password.txt`. The database initialisation won't work if there is. Use `echo -n` to suppress the trailing newline.**
+
+Any random string should work for the `FLASK_SECRET_KEY` environment variable. One way is to generate a random string using Python:
+
+```python
+>>> import os
+>>> os.urandom(16).hex()
+'aacddd29dfe77708800856e643ef2426'
+```
+
+The app uses ECDSA for JWT signing.  
+To generate the key pair:
+
+```bash
+# Generate private key
+openssl ecparam -name secp521r1 -genkey -noout -out secrets/bibliocat-api-jwt-key
+
+# Extract public key
+openssl ec -in secrets/bibliocat-api-jwt-key -pubout -out secrets/bibliocat-api-jwt-key.pub
+```
+
+**Use full dataset (optional):**
+
+A PostgreSQL database is used to store data. Book data has to be inserted into the database before running the API. A subset of the books dataset is included in `setup/data-subset/`.
+
+The full dataset can be downloaded here: [Google Books Dataset](https://www.kaggle.com/datasets/bilalyussef/google-books-dataset)  
+
+To use the full dataset:
+ - Place the `google_books_1299.csv` file into the `setup/data` directory. (gitignored)
+ - Use `docker-compose.yml` when building with docker compose.
+
+### Start API
+
+**Using docker compose:**
+
+```powershell
+# Start the services in detached mode
+docker compose -f docker-compose.dev-subset.yml up -d
+
+# Remove '-f docker-compose.dev-subset.yml' if the full dataset is used:
+docker compose up -d
+```
+
+The API can be accessed here: [127.0.0.1:5000](http://127.0.0.1:5000/)
+
+**To stop containers:**
+
+```powershell
+docker compose down
+docker compose down -v # Removes volumes (data)
+```
+
+**Rebuild images:**
+
+To build images after code changes:
+
+```powershell
+docker compose -f docker-compose.dev-subset.yml up -d --build
+```
+
+**Using uv:**
+
+The secrets have to be copied to the `.env` file if using uv.
+
+```powershell
+# Change to the api directory
+cd api/
+
+# Create venv and install
+uv sync --group dev
+
+# Start the database if it's not running
+docker compose up db setup -d
+
+# Start the app in debug mode
+uv run -- flask --app src/main run --debug
+
+# To stop the container
+docker compose down
+docker compose down -v # Removes volumes (data)
+```
+
+**For debugging setup:**
+
+```powershell
+# Change to setup directory
+cd setup
+
+# Create venv and install
+uv sync --group dev
+
+# Start database in detached mode
+docker compose up db -d
+
+# Run setup script
+uv run main.py
+```
 
 ## Folder structure
 
 *Brief map of the repo - what lives where.*
 
 ```
-/
-├── src/        # application source
-├── tests/      # test files
-└── ...
+bibliocat-api
+├── api/                        # Main project directory
+│  ├── src/
+│  │   ├── blueprints/          # Flask blueprints
+│  │   │   ├── api/
+│  │   │   │   └── v1/          # API v1 routes
+│  │   │   │       ├── users/
+|  |   |   |       |   └── routes.py
+|  |   |   |       └── router.py
+│  │   │   └── router.py
+│  │   ├── config/
+│  │   ├── controllers/         # API controllers
+│  │   │   └── user_controller.py
+│  │   ├── db/                  # Database connection manager
+│  │   ├── hooks/               # Flask decorators.
+│  │   ├── repositories/        # Database interactions
+│  │   │   └── user_repo.py
+│  │   ├── services/            # Business logic
+│  │   │   └── user_service.py
+│  │   └── util/
+│  │       ├── errors/
+│  │       ├── models/          # SQL Alchemy models
+│  │       └── schemas/         # Pydantic models
+│  ├── dockerfile
+│  ├── main.py
+│  ├── pyproject.toml
+│  ├── requirements.txt
+│  └── uv.lock
+├── setup/
+│  ├── data/                    # Dataset for loading database
+│  ├── data-subset/
+│  ├── src/
+│  │   ├── database_loader.py
+│  │   ├── extractor.py
+│  │   └── transformer.py
+│  ├── dockerfile
+│  ├── main.py
+│  ├── pyproject.toml
+│  ├── requirements.txt
+│  └── uv.lock
+├── .dockerignore
+├── .example.env
+├── .gitignore
+├── docker-compose.yml
+└── README.md
 ```
 
 ## Coding style
 
 *What conventions are you following? Link to a style guide if there is one.*
 
-- Language/framework style guide:
-- Linting tool:
-- Formatting tool:
+- Language/framework style guide: python, flask
+- Linting tool: pyright strict
+- Formatting tool: ruff
 
 ## Branching
 
@@ -77,11 +235,9 @@ Before merging a feature branch:
 
 ## Running tests
 
-```bash
-# add your test command here
-```
+see [test.md](tests/README.md)
 
-## Time tracking
+## Time tracking (GitLab)
 
 Every issue should have an estimate and logged time. Use quick actions in issue comments:
 
