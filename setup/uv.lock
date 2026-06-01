@@ -12,7 +12,7 @@ resolution-markers = [
 
 [[package]]
 name = "books-to-postgres"
-version = "2026.0.0"
+version = "1.0.0"
 source = { virtual = "." }
 dependencies = [
     { name = "dotenv" },
