@@ -22,7 +22,7 @@ uv run pytest
  - docker compose, [Docker Compose installation instructions](https://docs.docker.com/compose/install/)
  - Node.js, [Download Node.js](https://nodejs.org/en/download)
  - Apidog CLI, [Installing and Running Apidog CLI](https://docs.apidog.com/installing-and-running-apidog-cli-605135m0)
- - Environment and secret variables have been set up. See [Installation: Set up secrets](../README.md#installation)
+ - Environment and secret variables have been set up. See [Contributing: Getting started](../CONTRIBUTING.md#getting-started)
 
 Start containers:
 
