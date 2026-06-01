@@ -22,7 +22,7 @@ def create_app() -> Flask:
     """
     Set up the application.
     Flask application factory template: https://github.com/cookiecutter-flask/cookiecutter-flask/blob/master/%7B%7Bcookiecutter.app_name%7D%7D/%7B%7Bcookiecutter.app_name%7D%7D/app.py
-    
+
     :return: The Flask app.
     :rtype: Flask
     """
