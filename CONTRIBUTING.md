@@ -5,8 +5,11 @@
 *How do I clone and run this project locally?*
 
 ```bash
-git clone <repo-url>
-# add steps here
+# ssh
+git clone git@github.com:pj1401/bibliocat-api.git
+
+# change directory
+cd bibliocat-api
 ```
 
 ## Environment variables
@@ -15,8 +18,20 @@ git clone <repo-url>
 
 | Variable | Description |
 |---|---|
-| `DATABASE_URL` | |
-| `SECRET_KEY` | |
+| `CSV_PATH` | |
+| `CHUNK_SIZE` | |
+| `POSTGRES_HOST` | |
+| `POSTGRES_PORT` | |
+| `POSTGRES_DB` | |
+| `POSTGRES_USER` | |
+| `POSTGRES_PASSWORD` | |
+| `BASE_URL` | |
+| `FLASK_DEBUG` | |
+| `FLASK_HOST` | |
+| `FLASK_PORT` | |
+| `FLASK_SECRET_KEY` | |
+| `JWT_PRIVATE_KEY` | An EC private key used for signing JWTs. |
+| `JWT_PUBLIC_KEY` | An EC public key. |
 
 ## Folder structure
 
