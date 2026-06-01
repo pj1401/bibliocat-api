@@ -78,5 +78,4 @@ bibliocat-api
 ## Acknowledgements
 
 - Full dataset: [Google Books Dataset](https://www.kaggle.com/datasets/bilalyussef/google-books-dataset)
-- [Flask application factory](https://github.com/cookiecutter-flask/cookiecutter-flask/blob/master/%7B%7Bcookiecutter.app_name%7D%7D/%7B%7Bcookiecutter.app_name%7D%7D/app.py): used as a template for [api/main.py](./api/main.py)
 - [README template](https://gist.github.com/ramantehlan/602ad8525699486e097092e4158c5bf1)
