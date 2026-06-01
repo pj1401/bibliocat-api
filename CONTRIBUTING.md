@@ -235,7 +235,7 @@ Before merging a feature branch:
 
 ## Running tests
 
-see [test.md](tests/README.md)
+see [tests README](tests/README.md)
 
 ## Time tracking (GitLab)
 

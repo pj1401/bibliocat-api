@@ -23,7 +23,7 @@ see [Contributing](CONTRIBUTING.md)
 
 ### Testing
 
-see [test.md](tests/README.md)
+see [tests README](tests/README.md)
 
 ### File Structure
 ```
