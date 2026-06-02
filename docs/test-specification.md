@@ -84,7 +84,8 @@ Requirements:
 - BR-5 Users should have the ability to keep track of read books
 - FR-1 Users should have the ability to delete their user information
 
-<img src="./img/api-tests-reading-logs.png" alt="Reading logs API test steps" width="500">
+<img src="./img/api-tests-reading-logs-1.png" alt="Reading logs API test steps part 1" width="500">
+<img src="./img/api-tests-reading-logs-2.png" alt="Reading logs API test steps part 2" width="500">
 
 [#7]: https://github.com/pj1401/bibliocat-api/issues/7
 [#8]: https://github.com/pj1401/bibliocat-api/issues/8
