@@ -1121,6 +1121,68 @@
           }
         ]
       },
+      "put": {
+        "summary": "Update a ReadingLog",
+        "deprecated": false,
+        "description": "Edit a reading log.",
+        "tags": [
+          "reading-logs"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The ID of the reading log.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReadingLogPayload"
+              },
+              "example": {
+                "book_id": 159,
+                "started_at": "2026-01-31",
+                "ended_at": "2026-05-30"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "The server successfully processed the request and is not returning any content.",
+            "headers": {}
+          },
+          "400": {
+            "$ref": "#/components/responses/Bad Request",
+            "description": "The request cannot or will not be processed due to something that is perceived to be a client error (for example validation error)."
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized",
+            "description": "Credentials invalid or not provided."
+          },
+          "404": {
+            "$ref": "#/components/responses/Not Found",
+            "description": "The requested resource was not found."
+          },
+          "500": {
+            "$ref": "#/components/responses/Internal Server Error",
+            "description": "The server encountered an unexpected condition that prevented it from fulfilling the request."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      },
       "delete": {
         "summary": "Delete a Reading Log",
         "deprecated": false,

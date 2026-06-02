@@ -4,7 +4,7 @@ module: src/services/writable_repo.py
 """
 
 from typing import Any, Dict, Generic, TypeVar
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.orm import Session
 from pydantic import BaseModel as PydanticBaseModel
 from src.repositories.base_repo import BaseRepository
@@ -59,7 +59,51 @@ class WritableRepository(
         """
         return self.model()
 
+    def update(self, id: int, arguments: TArgs):
+        """
+        Update a resource.
+
+        :param id: The id of the resource.
+        :type id: int
+        :param arguments: The arguments object.
+        :type arguments: TArgs
+        """
+        session: Session | None = None
+        try:
+            session = self.db_manager.get_session()
+            stmt = self._get_update_stmt(id, arguments)
+            session.execute(stmt)
+            session.commit()
+        except Exception as err:
+            if session is not None:
+                session.rollback()
+            raise err
+        finally:
+            if session is not None:
+                session.close()
+
+    def _get_update_stmt(self, id: int, arguments: TArgs):
+        """
+        Get the statement for updating the resource.
+
+        :param id: The id of the resource.
+        :type id: int
+        :param arguments: The arguments object.
+        :type arguments: TArgs
+        :return: The update statement.
+        :rtype: Update
+        """
+        return (
+            update(self.model).where(self.model.id == id).values(arguments.model_dump())
+        )
+
     def delete(self, id: int):
+        """
+        Delete a resource.
+
+        :param id: The id of the resource.
+        :type id: int
+        """
         session: Session | None = None
         try:
             session = self.db_manager.get_session()
