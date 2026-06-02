@@ -63,6 +63,16 @@ class WritableController(BaseController[TService]):
             "status": 201,
         }
 
+    def update(self, id: int):
+        try:
+            arguments = self.get_validated_arguments(
+                request.get_json(), get_jwt_identity()
+            )
+            self.service.update(id, arguments)
+            return Response(None, 204)
+        except Exception as err:
+            return self._error_response(err)
+
     def delete(self, id: int):
         try:
             self.service.delete(id)

@@ -43,6 +43,14 @@ class WritableService(
         """
         pass
 
+    def update(self, id: int, arguments: TArgs):
+        try:
+            resource = self.repository.get_by_id(id)
+            self.authorize(resource["user"]["id"], int(get_jwt_identity()))
+            self.repository.update(id, arguments)
+        except Exception as err:
+            raise err
+
     def delete(self, id: int):
         try:
             resource = self.repository.get_by_id(id)

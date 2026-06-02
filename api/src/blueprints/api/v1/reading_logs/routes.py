@@ -44,6 +44,12 @@ def get_reading_logs():
     return g.reading_log_controller.get()
 
 
+@reading_logs_bp.route("/<int:id>", methods=["PUT"])
+@auth_required()
+def update(id: int):
+    return g.reading_log_controller.update(id)
+
+
 @reading_logs_bp.route("/<int:id>", methods=["DELETE"])
 @auth_required()
 def delete_reading_log(id: int):
