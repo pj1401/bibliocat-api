@@ -59,21 +59,21 @@ Requirements:
 - BR-4 Users should have the ability to create and manage an account
 - FR-1 Users should have the ability to delete their user information
 
-<img src="./img/api-tests-auth.png" alt="Auth API test steps" width="420">
+<img src="./img/api-tests-auth.png" alt="Auth API test steps" width="500">
 
 **Books API tests:**
 
 Requirements:
 - BR-1 Users should have the ability to search for books
 
-<img src="./img/api-tests-books.png" alt="Books API test steps" width="421">
+<img src="./img/api-tests-books.png" alt="Books API test steps" width="500">
 
 **Authors API tests:**
 
 Requirements:
 - BR-1 Users should have the ability to search for books
 
-<img src="./img/api-tests-authors.png" alt="Authors API test steps" width="418">
+<img src="./img/api-tests-authors.png" alt="Authors API test steps" width="500">
 
 **Reading logs API tests:**
 
@@ -82,7 +82,7 @@ Requirements:
 - BR-5 Users should have the ability to keep track of read books
 - FR-1 Users should have the ability to delete their user information
 
-<img src="./img/api-tests-reading-logs.png" alt="Reading logs API test steps" width="420">
+<img src="./img/api-tests-reading-logs.png" alt="Reading logs API test steps" width="500">
 
 [#7]: https://github.com/pj1401/bibliocat-api/issues/7
 [#8]: https://github.com/pj1401/bibliocat-api/issues/8
