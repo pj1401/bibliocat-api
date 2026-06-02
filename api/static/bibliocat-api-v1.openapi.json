@@ -754,7 +754,23 @@
               "schema": {
                 "$ref": "#/components/schemas/ReadingLogPayload"
               },
-              "examples": {}
+              "examples": {
+                "1": {
+                  "value": {
+                    "book_id": 159,
+                    "started_at": "2026-01-31",
+                    "ended_at": "2026-04-25"
+                  },
+                  "summary": "Example"
+                },
+                "2": {
+                  "value": {
+                    "book_id": 179,
+                    "started_at": "2026-03-27"
+                  },
+                  "summary": "Example whithout ended_at"
+                }
+              }
             }
           },
           "required": true
@@ -1084,6 +1100,49 @@
                 }
               }
             },
+            "headers": {}
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized",
+            "description": "Credentials invalid or not provided."
+          },
+          "404": {
+            "$ref": "#/components/responses/Not Found",
+            "description": "The requested resource was not found."
+          },
+          "500": {
+            "$ref": "#/components/responses/Internal Server Error",
+            "description": "The server encountered an unexpected condition that prevented it from fulfilling the request."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      },
+      "delete": {
+        "summary": "Delete a Reading Log",
+        "deprecated": false,
+        "description": "Delete a reading log by ID. Requires authentication.",
+        "tags": [
+          "reading-logs"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The ID of the reading log.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "The server successfully processed the request and is not returning any content.",
             "headers": {}
           },
           "401": {
