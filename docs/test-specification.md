@@ -34,6 +34,8 @@ Coverage matrix - which requirements does each test cover?
 | TC-FR1.1 |  |  |  | ✓ |  | ✓ |  | ✓ |
 | **Coverage** |  | | | 4 cases | 1 | 4 | 1 | 1 |
 
+---
+
 ### Automatic tests
 
 Instructions for running tests: [tests/README](../tests/README.md)
@@ -47,6 +49,8 @@ Instructions for running tests: [tests/README](../tests/README.md)
 | Authors | ✓ |  |  |  |  |  |
 | Reading logs |  |  |  | ✓ | ✓ | ✓ |
 
+---
+
 Test step name format: `HTTP method` `Endpoint title` (`test case title`)
 
 **Auth API tests:**
@@ -55,21 +59,21 @@ Requirements:
 - BR-4 Users should have the ability to create and manage an account
 - FR-1 Users should have the ability to delete their user information
 
-![api-tests-auth](./img/api-tests-auth.png){width=420 height=384}
+<img src="./img/api-tests-auth.png" alt="Auth API test steps" width="420">
 
 **Books API tests:**
 
 Requirements:
 - BR-1 Users should have the ability to search for books
 
-![api-tests-books](./img/api-tests-books.png){width=421 height=226}
+<img src="./img/api-tests-books.png" alt="Books API test steps" width="421">
 
 **Authors API tests:**
 
 Requirements:
 - BR-1 Users should have the ability to search for books
 
-![api-tests-authors](./img/api-tests-authors.png){width=418 height=161}
+<img src="./img/api-tests-authors.png" alt="Authors API test steps" width="418">
 
 **Reading logs API tests:**
 
@@ -78,7 +82,7 @@ Requirements:
 - BR-5 Users should have the ability to keep track of read books
 - FR-1 Users should have the ability to delete their user information
 
-![api-tests-reading-logs](./img/api-tests-reading-logs.png){width=420 height=539}
+<img src="./img/api-tests-reading-logs.png" alt="Reading logs API test steps" width="420">
 
 [#7]: https://github.com/pj1401/bibliocat-api/issues/7
 [#8]: https://github.com/pj1401/bibliocat-api/issues/8
