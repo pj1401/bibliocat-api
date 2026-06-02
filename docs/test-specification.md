@@ -2,8 +2,6 @@
 
 ## Test plan
 
-*Brief description of your testing strategy - what will be tested, how, and with what tools.*
-
 | Aspect | Description |
 |---|---|
 | Testing tools | API: Apidog, unit tests: pytest |
@@ -57,21 +55,21 @@ Requirements:
 - BR-4 Users should have the ability to create and manage an account
 - FR-1 Users should have the ability to delete their user information
 
-![api-tests-auth](uploads/55124c28b573867aeecc688ab2319d5a/api-tests-auth.png){width=420 height=384}
+![api-tests-auth](./img/api-tests-auth.png){width=420 height=384}
 
 **Books API tests:**
 
 Requirements:
 - BR-1 Users should have the ability to search for books
 
-![api-tests-books](uploads/dab54c3baf55b393a9294772394e1653/api-tests-books.png){width=421 height=226}
+![api-tests-books](./img/api-tests-books.png){width=421 height=226}
 
 **Authors API tests:**
 
 Requirements:
 - BR-1 Users should have the ability to search for books
 
-![api-tests-authors](uploads/bb21815f9af79953791066568cf5a793/api-tests-authors.png){width=418 height=161}
+![api-tests-authors](./img/api-tests-authors.png){width=418 height=161}
 
 **Reading logs API tests:**
 
@@ -80,7 +78,7 @@ Requirements:
 - BR-5 Users should have the ability to keep track of read books
 - FR-1 Users should have the ability to delete their user information
 
-![api-tests-reading-logs](uploads/49dd7c13b5b38ce422729a7596133f3e/api-tests-reading-logs.png){width=420 height=539}
+![api-tests-reading-logs](./img/api-tests-reading-logs.png){width=420 height=539}
 
 [#7]: https://github.com/pj1401/bibliocat-api/issues/7
 [#8]: https://github.com/pj1401/bibliocat-api/issues/8
