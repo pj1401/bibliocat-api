@@ -2,8 +2,6 @@
 
 ## Test plan
 
-*Brief description of your testing strategy - what will be tested, how, and with what tools.*
-
 | Aspect | Description |
 |---|---|
 | Testing tools | API: Apidog, unit tests: pytest |
@@ -16,6 +14,8 @@
 ### Manual tests
 
 [GitHub Project Manual tests view](https://github.com/users/pj1401/projects/2/views/5)
+
+The instructions for the manual tests are in the issue descriptions.
 
 | ID | Title | Issue link | Requirement(s) |
 | -- | ----- | ---------- | -------------- |
@@ -36,6 +36,8 @@ Coverage matrix - which requirements does each test cover?
 | TC-FR1.1 |  |  |  | ✓ |  | ✓ |  | ✓ |
 | **Coverage** |  | | | 4 cases | 1 | 4 | 1 | 1 |
 
+---
+
 ### Automatic tests
 
 Instructions for running tests: [tests/README](../tests/README.md)
@@ -49,6 +51,8 @@ Instructions for running tests: [tests/README](../tests/README.md)
 | Authors | ✓ |  |  |  |  |  |
 | Reading logs |  |  |  | ✓ | ✓ | ✓ |
 
+---
+
 Test step name format: `HTTP method` `Endpoint title` (`test case title`)
 
 **Auth API tests:**
@@ -57,21 +61,21 @@ Requirements:
 - BR-4 Users should have the ability to create and manage an account
 - FR-1 Users should have the ability to delete their user information
 
-![api-tests-auth](uploads/55124c28b573867aeecc688ab2319d5a/api-tests-auth.png){width=420 height=384}
+<img src="./img/api-tests-auth.png" alt="Auth API test steps" width="500">
 
 **Books API tests:**
 
 Requirements:
 - BR-1 Users should have the ability to search for books
 
-![api-tests-books](uploads/dab54c3baf55b393a9294772394e1653/api-tests-books.png){width=421 height=226}
+<img src="./img/api-tests-books.png" alt="Books API test steps" width="500">
 
 **Authors API tests:**
 
 Requirements:
 - BR-1 Users should have the ability to search for books
 
-![api-tests-authors](uploads/bb21815f9af79953791066568cf5a793/api-tests-authors.png){width=418 height=161}
+<img src="./img/api-tests-authors.png" alt="Authors API test steps" width="500">
 
 **Reading logs API tests:**
 
@@ -80,7 +84,7 @@ Requirements:
 - BR-5 Users should have the ability to keep track of read books
 - FR-1 Users should have the ability to delete their user information
 
-![api-tests-reading-logs](uploads/49dd7c13b5b38ce422729a7596133f3e/api-tests-reading-logs.png){width=420 height=539}
+<img src="./img/api-tests-reading-logs.png" alt="Reading logs API test steps" width="500">
 
 [#7]: https://github.com/pj1401/bibliocat-api/issues/7
 [#8]: https://github.com/pj1401/bibliocat-api/issues/8
