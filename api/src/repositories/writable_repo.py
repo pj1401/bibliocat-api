@@ -64,9 +64,7 @@ class WritableRepository(
         try:
             session = self.db_manager.get_session()
             stmt = self._get_update_stmt(id, arguments)
-            result = session.scalars(stmt).first()
-            if result is None:
-                raise NotFoundError()
+            session.execute(stmt)
             session.commit()
         except Exception as err:
             if session is not None:
@@ -77,7 +75,9 @@ class WritableRepository(
                 session.close()
 
     def _get_update_stmt(self, id: int, arguments: TArgs):
-        return update(self.model).where(self.model.id == id)
+        return (
+            update(self.model).where(self.model.id == id).values(arguments.model_dump())
+        )
 
     def delete(self, id: int):
         session: Session | None = None
