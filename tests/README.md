@@ -18,6 +18,8 @@ uv run pytest
 
 ## Apidog
 
+### Local testing
+
 **Prerequisites:**
  - docker compose, [Docker Compose installation instructions](https://docs.docker.com/compose/install/)
  - Node.js, [Download Node.js](https://nodejs.org/en/download)
@@ -48,4 +50,22 @@ Stop containers and remove data:
 
 ```powershell
 docker compose down -v
+```
+
+### Production environment
+
+Tests can be run against the production server.
+
+**Prerequisites:**
+ - Node.js, [Download Node.js](https://nodejs.org/en/download)
+ - Apidog CLI, [Installing and Running Apidog CLI](https://docs.apidog.com/installing-and-running-apidog-cli-605135m0)
+
+Run API tests:
+
+```powershell
+apidog run ./tests/prod-env/collection.apidog-cli.json -n 1
+apidog run ./tests/prod-env/auth.apidog-cli.json -n 1
+apidog run ./tests/prod-env/books.apidog-cli.json -n 1
+apidog run ./tests/prod-env/authors.apidog-cli.json -n 1
+apidog run ./tests/prod-env/reading-logs.apidog-cli.json -n 1
 ```
