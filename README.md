@@ -12,9 +12,10 @@ For the list of requirements, see: [Requirements](docs/requirements.md)
 - [Usage](#usage)
 - [Development](#development)
   - [Contributing](#contributing)
+  - [Requirements](#requirements)
   - [Testing](#testing)
-  - [File Structure](#file-structure)
 - [Acknowledgements](#acknowledgements)
+- [License](#license)
 
 ## Usage
 
@@ -28,9 +29,14 @@ Version 1 docs: [https://patriciaj.se/bibliocat-api/api/v1/docs/](https://patric
 
 see [Contributing](CONTRIBUTING.md)
 
+### Requirements
+
+List of requirements: [Requirements](docs/requirements.md)
+
 ### Testing
 
-see [tests README](tests/README.md)
+List of tests: [Test Specification](docs/test-specification.md)
+Instructions on running automatic tests: [Testing](tests/README.md)
 
 ## Acknowledgements
 
