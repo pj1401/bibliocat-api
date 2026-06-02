@@ -35,7 +35,7 @@ List of requirements: [Requirements](docs/requirements.md)
 
 ### Testing
 
-List of tests: [Test Specification](docs/test-specification.md)
+List of tests: [Test Specification](docs/test-specification.md)  
 Instructions on running automatic tests: [Testing](tests/README.md)
 
 ## Acknowledgements
