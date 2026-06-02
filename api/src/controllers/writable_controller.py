@@ -64,6 +64,14 @@ class WritableController(BaseController[TService]):
         }
 
     def update(self, id: int):
+        """
+        Update by using the PUT method.
+
+        :param id: The id of the resource.
+        :type id: int
+        :return: Only the status code if the operation was successful. Returns the error response otherwise.
+        :rtype: Response | tuple[Response, int]
+        """
         try:
             arguments = self.get_validated_arguments(
                 request.get_json(), get_jwt_identity()
@@ -74,6 +82,14 @@ class WritableController(BaseController[TService]):
             return self._error_response(err)
 
     def delete(self, id: int):
+        """
+        Delete a resource.
+
+        :param id: The id of the resource.
+        :type id: int
+        :return: Only the status code if the operation was successful. Returns the error response otherwise.
+        :rtype: Response | tuple[Response, int]
+        """
         try:
             self.service.delete(id)
             return Response(None, 204)

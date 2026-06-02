@@ -44,6 +44,14 @@ class WritableService(
         pass
 
     def update(self, id: int, arguments: TArgs):
+        """
+        Update a resource. Uses JWT to authorize.
+
+        :param id: The id of the resource.
+        :type id: int
+        :param arguments: The arguments object.
+        :type arguments: TArgs
+        """
         try:
             resource = self.repository.get_by_id(id)
             self.authorize(resource["user"]["id"], int(get_jwt_identity()))
@@ -52,6 +60,12 @@ class WritableService(
             raise err
 
     def delete(self, id: int):
+        """
+        Delete a resource. Uses JWT to authorize.
+
+        :param id: The id of the resource.
+        :type id: int
+        """
         try:
             resource = self.repository.get_by_id(id)
             self.authorize(resource["user"]["id"], int(get_jwt_identity()))

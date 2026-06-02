@@ -60,6 +60,14 @@ class WritableRepository(
         return self.model()
 
     def update(self, id: int, arguments: TArgs):
+        """
+        Update a resource.
+
+        :param id: The id of the resource.
+        :type id: int
+        :param arguments: The arguments object.
+        :type arguments: TArgs
+        """
         session: Session | None = None
         try:
             session = self.db_manager.get_session()
@@ -75,11 +83,27 @@ class WritableRepository(
                 session.close()
 
     def _get_update_stmt(self, id: int, arguments: TArgs):
+        """
+        Get the statement for updating the resource.
+
+        :param id: The id of the resource.
+        :type id: int
+        :param arguments: The arguments object.
+        :type arguments: TArgs
+        :return: The update statement.
+        :rtype: Update
+        """
         return (
             update(self.model).where(self.model.id == id).values(arguments.model_dump())
         )
 
     def delete(self, id: int):
+        """
+        Delete a resource.
+
+        :param id: The id of the resource.
+        :type id: int
+        """
         session: Session | None = None
         try:
             session = self.db_manager.get_session()
