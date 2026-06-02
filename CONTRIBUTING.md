@@ -1,8 +1,20 @@
 # Contributing
 
-## Getting started
+## Contents
 
-*How do I clone and run this project locally?*
+- [Getting started](#getting-started)
+  - [Environment variables](#environment-variables)
+  - [Start API](#start-api)
+- [Folder structure](#folder-structure)
+- [Coding style](#coding-style)
+- [Branching](#branching)
+- [Commit messages](#commit-messages)
+- [Merging to main](#merging-to-main)
+- [Running tests](#running-tests)
+- [Time tracking (GitLab)](#time-tracking-gitlab)
+- [Versioning](#versioning)
+
+## Getting started
 
 **Prerequisites:**
 - docker compose, [Docker Compose installation instructions](https://docs.docker.com/compose/install/)
@@ -20,8 +32,6 @@ cp .example.env .env
 ```
 
 ### Environment variables
-
-*Never commit secrets or API keys. Copy `.env.example` to `.env` and fill in your values.*
 
 | Variable | Description |
 |---|---|
@@ -152,8 +162,6 @@ uv run main.py
 
 ## Folder structure
 
-*Brief map of the repo - what lives where.*
-
 ```
 bibliocat-api
 ├── api/                        # Main project directory
@@ -196,8 +204,6 @@ bibliocat-api
 ```
 
 ## Coding style
-
-*What conventions are you following? Link to a style guide if there is one.*
 
 - Language/framework style guide: python, flask, SQLAlchemy
 - Linting tool: pyright strict (used in main API project, not in setup script)
