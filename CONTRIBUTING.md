@@ -161,19 +161,13 @@ bibliocat-api
 │  │   ├── blueprints/          # Flask blueprints
 │  │   │   ├── api/
 │  │   │   │   └── v1/          # API v1 routes
-│  │   │   │       ├── users/
-|  |   |   |       |   └── routes.py
-|  |   |   |       └── router.py
 │  │   │   └── router.py
 │  │   ├── config/
 │  │   ├── controllers/         # API controllers
-│  │   │   └── user_controller.py
 │  │   ├── db/                  # Database connection manager
 │  │   ├── hooks/               # Flask decorators.
 │  │   ├── repositories/        # Database interactions
-│  │   │   └── user_repo.py
 │  │   ├── services/            # Business logic
-│  │   │   └── user_service.py
 │  │   └── util/
 │  │       ├── errors/
 │  │       ├── models/          # SQL Alchemy models
@@ -195,7 +189,6 @@ bibliocat-api
 │  ├── pyproject.toml
 │  ├── requirements.txt
 │  └── uv.lock
-├── .dockerignore
 ├── .example.env
 ├── .gitignore
 ├── docker-compose.yml
@@ -206,9 +199,23 @@ bibliocat-api
 
 *What conventions are you following? Link to a style guide if there is one.*
 
-- Language/framework style guide: python, flask
-- Linting tool: pyright strict
+- Language/framework style guide: python, flask, SQLAlchemy
+- Linting tool: pyright strict (used in main API project, not in setup script)
 - Formatting tool: ruff
+
+Pyright and ruff is installed with the other dependencies.
+
+Code in the `main` branch should always be formatted. Before opening a pull request run these:
+
+```
+# Only in the api directory
+uv run pyright
+
+# Ruff is used in both the setup/ and api/ directories
+uv run ruff check
+
+uv run ruff format
+```
 
 ## Branching
 
@@ -280,6 +287,7 @@ git describe --tags --dirty
 # -> v1.0.0-4-gabcde-dirty (uncommitted changes)
 ```
 
+Only repository admins are allowed to create tags in this repository.  
 To tag a release:
 
 ```bash
