@@ -15,6 +15,8 @@
 
 [GitHub Project Manual tests view](https://github.com/users/pj1401/projects/2/views/5)
 
+The instructions for the manual tests are in the issue descriptions.
+
 | ID | Title | Issue link | Requirement(s) |
 | -- | ----- | ---------- | -------------- |
 | TC-NFR3.1 | API health check | [#14] | [#10] |
