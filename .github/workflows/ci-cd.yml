@@ -174,18 +174,18 @@ jobs:
           docker compose -f docker-compose.prod.yml up -d
 
   redeploy:
-  if: github.event_name == 'workflow_dispatch'
-  runs-on: self-hosted
-  environment:
-    name: production
-    url: https://patriciaj.se/bibliocat-api/
-  permissions:
-    packages: read
-  steps:
-    - uses: actions/checkout@v6
-
-    - name: Pull images and restart containers
-      run: |
-        docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
-        docker compose -f docker-compose.prod.yml pull
-        docker compose -f docker-compose.prod.yml up -d
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: self-hosted
+    environment:
+      name: production
+      url: https://patriciaj.se/bibliocat-api/
+    permissions:
+      packages: read
+    steps:
+      - uses: actions/checkout@v6
+  
+      - name: Pull images and restart containers
+        run: |
+          docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
+          docker compose -f docker-compose.prod.yml pull
+          docker compose -f docker-compose.prod.yml up -d
