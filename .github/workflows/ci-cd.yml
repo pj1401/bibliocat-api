@@ -155,9 +155,7 @@ jobs:
   # --- Deploy ---
 
   deploy:
-    if: |
-      (github.event_name == 'push' && github.ref_type == 'tag') ||
-      github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'push' && github.ref_type == 'tag'
     needs: [release]
     runs-on: self-hosted
     environment:
@@ -169,6 +167,23 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
+      - name: Pull images and restart containers
+        run: |
+          docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
+          docker compose -f docker-compose.prod.yml pull
+          docker compose -f docker-compose.prod.yml up -d
+
+  redeploy:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: self-hosted
+    environment:
+      name: production
+      url: https://patriciaj.se/bibliocat-api/
+    permissions:
+      packages: read
+    steps:
+      - uses: actions/checkout@v6
+  
       - name: Pull images and restart containers
         run: |
           docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
