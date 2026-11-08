@@ -17,6 +17,7 @@ dependencies = [
     "flask-jwt-extended>=4.7.1",
     "flask-swagger-ui>=5.32.5",
     "gunicorn>=26.0.0",
+    "models>=0.1.0",
     "psycopg2-binary>=2.9.11",
     "pydantic[email]>=2.13.3",
     "sqlalchemy>=2.0.49",
@@ -30,6 +31,9 @@ dev = [
     "pytest>=9.0.3",
     "ruff>=0.15.4",
 ]
+
+[tool.uv.sources]
+models = { path = "../models", editable = true }
 
 [tool.pyright]
 include = ["src"]

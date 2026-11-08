@@ -7,3 +7,17 @@ from .category import Category
 from .publisher import Publisher
 from .reading_log import ReadingLog
 from .user import User
+from .filters import ReadingLogFilters
+
+__all__ = [
+    "Author",
+    "BaseModel",
+    "Book",
+    "Category",
+    "Publisher",
+    "ReadingLog",
+    "User",
+    "authors_books_table",
+    "categories_books_table",
+    "ReadingLogFilters",
+]

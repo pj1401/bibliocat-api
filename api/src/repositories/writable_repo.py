@@ -9,8 +9,8 @@ from sqlalchemy.orm import Session
 from pydantic import BaseModel as PydanticBaseModel
 from src.repositories.base_repo import BaseRepository
 from src.util.errors.error import NotFoundError
-from src.util.filters.base_filters import BaseFilters
-from src.util.models.base import BaseModel
+from models.filters.base_filters import BaseFilters
+from models.base import BaseModel
 
 TModel = TypeVar("TModel", bound=BaseModel)
 TFilters = TypeVar("TFilters", bound=BaseFilters)

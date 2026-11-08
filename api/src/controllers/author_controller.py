@@ -5,7 +5,7 @@ module: src/controllers/author_controller.py
 
 from src.controllers.base_controller import BaseController
 from src.services.author_service import AuthorService
-from src.util.schemas.authors import AuthorQueryParams
+from models.schemas.authors import AuthorQueryParams
 
 
 class AuthorController(BaseController[AuthorService]):

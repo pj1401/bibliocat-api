@@ -8,9 +8,9 @@ from flask_jwt_extended import get_jwt_identity
 from sqlalchemy import Select, func, select
 from sqlalchemy.orm import selectinload
 from src.repositories.writable_repo import WritableRepository
-from src.util.schemas.reading_logs import ReadingLogParams
-from src.util.filters.reading_log_filters import ReadingLogFilters
-from src.util.models import Book, ReadingLog
+from models.schemas.reading_logs import ReadingLogParams
+from models.filters.reading_log_filters import ReadingLogFilters
+from models import Book, ReadingLog
 from src.db.connection_manager import DatabaseConnectionManager
 
 

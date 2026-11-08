@@ -1,7 +1,7 @@
 import pytest
 from pydantic import ValidationError
 from unittest.mock import create_autospec
-from src.util.schemas.books.book_query_params import BookQueryParams
+from models.schemas.books.book_query_params import BookQueryParams
 from src.controllers.book_controller import BookController
 from src.services.book_service import BookService
 

@@ -4,7 +4,7 @@ module: src/util/schemas/books/book_query_params.py
 """
 
 from pydantic import Field
-from src.util.schemas.query_params import BaseQueryParams
+from .. import BaseQueryParams
 
 
 class BookQueryParams(BaseQueryParams):

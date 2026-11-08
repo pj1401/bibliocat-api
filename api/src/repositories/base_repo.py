@@ -6,10 +6,10 @@ module: src/repositories/base_repo.py
 from typing import Any, Dict, Generic, TypeVar
 from sqlalchemy import Select, select
 from sqlalchemy.orm import Session
-from src.util.filters.base_filters import BaseFilters
+from models.filters.base_filters import BaseFilters
 from src.db.connection_manager import DatabaseConnectionManager
 from src.util.errors.error import NotFoundError
-from src.util.models.base import BaseModel
+from models.base import BaseModel
 
 TModel = TypeVar("TModel", bound=BaseModel)
 TFilters = TypeVar("TFilters", bound=BaseFilters)

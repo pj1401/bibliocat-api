@@ -3,8 +3,8 @@ from unittest.mock import create_autospec
 from src.repositories import BookRepository, ReadingLogRepository, UserRepository
 from src.services.reading_log_service import ReadingLogService
 from src.util.errors.error import ForbiddenError
-from src.util.filters.reading_log_filters import ReadingLogFilters
-from src.util.schemas.reading_logs import ReadingLogSchema, ReadingLogQueryParams
+from models.filters.reading_log_filters import ReadingLogFilters
+from models.schemas.reading_logs import ReadingLogSchema, ReadingLogQueryParams
 
 
 @pytest.fixture

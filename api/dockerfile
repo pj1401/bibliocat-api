@@ -5,6 +5,7 @@ COPY --from=ghcr.io/astral-sh/uv:0.10.5 /uv /uvx /bin/
 WORKDIR /app
 
 COPY api/uv.lock api/pyproject.toml ./
+COPY models /models
 
 RUN apk add --no-cache curl
 

@@ -3,7 +3,7 @@ The BookController class.
 module: src/controllers/book_controller.py
 """
 
-from src.util.schemas.books.book_query_params import BookQueryParams
+from models.schemas.books.book_query_params import BookQueryParams
 from src.controllers.base_controller import BaseController
 from src.services.book_service import BookService
 

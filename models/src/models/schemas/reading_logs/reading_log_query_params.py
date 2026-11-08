@@ -4,7 +4,7 @@ module: src/util/schemas/reading_logs/reading_log_query_params.py
 """
 
 from enum import StrEnum
-from src.util.schemas import BaseQueryParams
+from .. import BaseQueryParams
 
 
 class ReadingLogSort(StrEnum):

@@ -7,9 +7,9 @@ from sqlalchemy import exc, select
 from sqlalchemy.orm import Session
 from src.repositories.writable_repo import WritableRepository
 from src.util.errors.error import InvalidCredentialsError, UniqueViolationError
-from src.util.filters.base_filters import BaseFilters
-from src.util.models.user import User
-from src.util.schemas.user import NewUser, UserArguments
+from models.filters.base_filters import BaseFilters
+from models.user import User
+from models.schemas.user import NewUser, UserArguments
 from src.db.connection_manager import DatabaseConnectionManager
 
 

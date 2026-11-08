@@ -4,7 +4,7 @@ from pydantic import ValidationError
 from unittest.mock import create_autospec
 from src.controllers.reading_log_controller import ReadingLogController
 from src.services.reading_log_service import ReadingLogService
-from src.util.schemas.reading_logs import ReadingLogParams, ReadingLogQueryParams
+from models.schemas.reading_logs import ReadingLogParams, ReadingLogQueryParams
 
 
 @pytest.fixture

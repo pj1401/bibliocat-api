@@ -6,7 +6,7 @@ module: src/services/writable_service.py
 from typing import Any, Generic, TypeVar
 from flask_jwt_extended import get_jwt_identity
 from pydantic import BaseModel as PydanticBaseModel
-from src.util.schemas.query_params import BaseQueryParams
+from models.schemas.query_params import BaseQueryParams
 from src.repositories.writable_repo import WritableRepository
 from src.services.base_service import BaseService
 

@@ -5,7 +5,7 @@
 from __future__ import annotations
 from datetime import date
 from pydantic import Field
-from src.util.schemas import BaseResourceSchema, RelatedResource
+from .. import BaseResourceSchema, RelatedResource
 
 
 class BookSchema(BaseResourceSchema):

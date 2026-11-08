@@ -7,7 +7,7 @@ from typing import cast
 from flask import jsonify, request
 from flask_jwt_extended import create_access_token  # type: ignore
 from src.controllers.writable_controller import WritableController
-from src.util.schemas.user import UserArguments, UserLogin
+from models.schemas.user import UserArguments, UserLogin
 from src.services.user_service import UserService
 
 

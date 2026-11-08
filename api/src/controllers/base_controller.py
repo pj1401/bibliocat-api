@@ -6,7 +6,7 @@ module: src/controllers/base_controller.py
 from typing import Any, Generic, TypeVar
 from flask import Response, jsonify, request
 from src.services.base_service import BaseService
-from src.util.schemas.query_params import BaseQueryParams
+from models.schemas.query_params import BaseQueryParams
 from src.util.errors.error import convert_to_http_error, log_original_error
 
 TService = TypeVar("TService", bound=BaseService[Any, Any])
