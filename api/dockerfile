@@ -10,6 +10,7 @@ RUN apk add --no-cache curl
 
 RUN uv sync --frozen --no-dev
 
+COPY models /models
 COPY api/src ./src
 COPY api/static ./static
 
