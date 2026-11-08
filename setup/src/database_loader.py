@@ -10,7 +10,7 @@ from sqlalchemy import Table, create_engine, inspect
 from sqlalchemy.orm import sessionmaker, DeclarativeBase
 from sqlalchemy.exc import SQLAlchemyError
 
-from src.models import (
+from models import (
     Author,
     Book,
     Category,

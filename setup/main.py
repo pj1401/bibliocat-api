@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 from src.transformer import transform_data
 from src.extractor import read_csv_data
 from src.database_loader import DatabaseLoader
-from src.models.base import BaseModel
+from models import BaseModel
 
 # Load environment variables
 load_dotenv()

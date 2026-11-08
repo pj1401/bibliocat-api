@@ -13,8 +13,8 @@ RUN uv sync --frozen --no-dev
 COPY setup/src ./src
 COPY setup/main.py .
 
-# Copy models from api directory
-COPY api/src/util/models/ ./src/models/
+# Copy models
+COPY models /models
 
 # Set PYTHONPATH to include /app
 ENV PYTHONPATH=/app
