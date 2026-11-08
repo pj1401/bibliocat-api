@@ -5,8 +5,8 @@
 from __future__ import annotations
 from datetime import date, datetime
 from pydantic import Field
-from src.util.schemas.base_resource import BaseResourceSchema
-from src.util.schemas.related_resource import RelatedResource
+from schemas.base_resource import BaseResourceSchema
+from schemas.related_resource import RelatedResource
 
 
 class ReadingLogSchema(BaseResourceSchema):

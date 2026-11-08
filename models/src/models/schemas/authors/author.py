@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 from pydantic import Field
-from src.util.schemas.base_resource import BaseResourceSchema
+from schemas.base_resource import BaseResourceSchema
 
 
 class AuthorSchema(BaseResourceSchema):
