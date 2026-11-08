@@ -3,7 +3,7 @@ The ReadingLogController class.
 module: src/controllers/book_controller.py
 """
 
-from src.util.schemas.reading_logs import ReadingLogParams, ReadingLogQueryParams
+from models.schemas.reading_logs import ReadingLogParams, ReadingLogQueryParams
 from src.controllers.writable_controller import WritableController
 from src.services.reading_log_service import ReadingLogService
 

@@ -4,8 +4,8 @@ module: src/services/author_service.py
 """
 
 from typing import Type
-from src.util.filters.author_filters import AuthorFilters
-from src.util.schemas.authors import AuthorSchema, AuthorQueryParams
+from models.filters.author_filters import AuthorFilters
+from models.schemas.authors import AuthorSchema, AuthorQueryParams
 from src.repositories.author_repo import AuthorRepository
 from src.services.base_service import BaseService
 

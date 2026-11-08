@@ -6,8 +6,8 @@ module: src/blueprints/api/v1/reading_logs/routes.py
 from flask import Blueprint, g
 from src.repositories import BookRepository, ReadingLogRepository, UserRepository
 from src.hooks.auth_required import auth_required
-from src.util.schemas.reading_logs.reading_log import ReadingLogSchema
-from src.util.models import Book, ReadingLog, User
+from models.schemas.reading_logs.reading_log import ReadingLogSchema
+from models import Book, ReadingLog, User
 from src.controllers.reading_log_controller import ReadingLogController
 from src.services.reading_log_service import ReadingLogService
 

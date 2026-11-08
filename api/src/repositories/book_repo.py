@@ -6,8 +6,8 @@ module: src/repositories/book_repo.py
 from typing import Any, Dict
 from sqlalchemy import Select, func, select
 from sqlalchemy.orm import selectinload
-from src.util.filters.book_filters import BookFilters
-from src.util.models import Author, Book, Category, Publisher
+from models.filters.book_filters import BookFilters
+from models import Author, Book, Category, Publisher
 from src.db.connection_manager import DatabaseConnectionManager
 from src.repositories.base_repo import BaseRepository
 

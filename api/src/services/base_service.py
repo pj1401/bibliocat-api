@@ -6,8 +6,8 @@ module: src/services/base_service.py
 from typing import Any, Dict, Generic, Type, TypeVar
 from pydantic import BaseModel as PydanticBaseModel
 from src.util.errors.error import ForbiddenError
-from src.util.filters.base_filters import BaseFilters
-from src.util.schemas.query_params import BaseQueryParams
+from models.filters.base_filters import BaseFilters
+from models.schemas.query_params import BaseQueryParams
 from src.repositories.base_repo import BaseRepository
 
 TRepository = TypeVar("TRepository", bound=BaseRepository[Any, Any])

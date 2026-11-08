@@ -7,10 +7,10 @@ from typing import Type
 import bcrypt
 from flask_jwt_extended import get_jwt_identity
 from src.services.writable_service import WritableService
-from src.util.models.user import User
+from models.user import User
 from src.util.errors.error import InvalidCredentialsError
-from src.util.schemas.query_params import BaseQueryParams
-from src.util.schemas.user import NewUser, UserArguments, UserLogin, UserModel
+from models.schemas.query_params import BaseQueryParams
+from models.schemas.user import NewUser, UserArguments, UserLogin, UserModel
 from src.repositories.user_repo import UserRepository
 
 

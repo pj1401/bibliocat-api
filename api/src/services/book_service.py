@@ -4,8 +4,8 @@ module: src/services/book_service.py
 """
 
 from typing import Type
-from src.util.filters.book_filters import BookFilters
-from src.util.schemas.books import BookSchema, BookQueryParams
+from models.filters import BookFilters
+from models.schemas.books import BookSchema, BookQueryParams
 from src.repositories.book_repo import BookRepository
 from src.services.base_service import BaseService
 

@@ -6,8 +6,8 @@ module: src/services/book_service.py
 from typing import Any, Type
 from flask_jwt_extended import get_jwt_identity
 from src.repositories import BookRepository, ReadingLogRepository, UserRepository
-from src.util.filters.reading_log_filters import ReadingLogFilters
-from src.util.schemas.reading_logs import (
+from models.filters.reading_log_filters import ReadingLogFilters
+from models.schemas.reading_logs import (
     ReadingLogSchema,
     ReadingLogParams,
     ReadingLogQueryParams,
