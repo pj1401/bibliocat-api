@@ -6,15 +6,15 @@ WORKDIR /app
 
 COPY setup/uv.lock setup/pyproject.toml ./
 
+# Copy models
+COPY models /models
+
 # Sync dependencies
 RUN uv sync --frozen --no-dev
 
 # Copy the src directory and main.py
 COPY setup/src ./src
 COPY setup/main.py .
-
-# Copy models
-COPY models /models
 
 # Set PYTHONPATH to include /app
 ENV PYTHONPATH=/app

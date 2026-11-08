@@ -5,7 +5,7 @@ module: src/blueprints/api/v1/auth/routes.py
 
 from flask import Blueprint, g
 from models import User
-from models.schemas.user import UserModel
+from models.schemas import UserModel
 from src.controllers.user_controller import UserController
 from src.repositories.user_repo import UserRepository
 from src.services.user_service import UserService
